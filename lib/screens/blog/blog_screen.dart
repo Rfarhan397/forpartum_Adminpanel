@@ -1,9 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../constant.dart';
 import '../../controller/menu_App_Controller.dart';
+import '../../model/blog_post/blog_model.dart';
 import '../../model/res/components/blogPostCard.dart';
 import '../../model/res/components/custom_appBar.dart';
 import '../../model/res/components/pagination.dart';
@@ -11,6 +14,7 @@ import '../../model/res/widgets/app_text.dart.dart';
 import '../../provider/blog/blog_provider.dart';
 import '../../provider/chip/chip_provider.dart';
 import '../../provider/dropDOwn/dropdown.dart';
+import '../../provider/stream/streamProvider.dart';
 
 class BlogScreen extends StatefulWidget {
    BlogScreen({super.key});
@@ -21,16 +25,6 @@ class BlogScreen extends StatefulWidget {
 
 class _BlogScreenState extends State<BlogScreen> {
 
-  @override
-  void initState() {
-    super.initState();
-    // Fetch data from Firebase when the widget is initialized
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final blogProvider = Provider.of<BlogPostProvider>(context, listen: false);
-      blogProvider.fetchBlog();
-      blogProvider.fetchCategories();
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -174,49 +168,131 @@ class _BlogScreenState extends State<BlogScreen> {
                   //     ),
                   //   ),
                   // ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 80.0),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: blogPostProvider.categories.map((category) {
-                          final isSelected = chipProvider.selectedCategory == category;
-                          final isHovered = chipProvider.hoveredCategory == category;
+                  Consumer<StreamDataProvider>(
+                      builder: (context, productProvider, child) {
+                        return StreamBuilder<List<BlogCategory>>(
+                            stream: productProvider.getBlogCategory(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return Center(child: CircularProgressIndicator());
+                              }
+                              if (snapshot.hasError) {
+                                return Center(child: Text('Error: ${snapshot.error}'));
+                              }
+                              if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                return Center(child: Text('No Blog Category found'));
+                              }
+                              List<BlogCategory> blogCategory= snapshot.data!;
+                              blogCategory.sort((a, b) => a.createdAt.compareTo(b.createdAt)); // Sort by datetime
 
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: MouseRegion(
-                              onEnter: (_) {
-                                chipProvider.setHoveredCategory(category);
-                              },
-                              onExit: (_) {
-                                chipProvider.clearHoveredCategory();
-                              },
-                              child: GestureDetector(
-                                onTap: () {
-                                  chipProvider.selectCategory(category);
-                                  blogPostProvider.filterPostsByCategory(category);  // Filter posts
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 14.0),
-                                  decoration: BoxDecoration(
-                                    color: isSelected ? primaryColor : isHovered ? primaryColor : secondaryColor,
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                  child: AppTextWidget(
-                                    text: category,
-                                    color: isSelected ? Colors.white : isHovered ? Colors.white : Colors.black,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ),
+                              log("Length of Blog Categories are :: ${snapshot.data!.length}");
+                              return SizedBox(
+                                height: 4.h,
+                                width: 80.w,
+                                child: ListView.builder(
+                                    shrinkWrap: true,
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: blogCategory.length,
+                                    itemBuilder: (context, index) {
+                                      BlogCategory model = blogCategory[index];
+                                      final isSelected = chipProvider.selectedCategory.toString() == blogCategory[index].category;
+                                      final isHovered = chipProvider.hoveredCategory == blogCategory[index].createdAt;
+                                      return InkWell(
+                                        splashColor: Colors.transparent,
+                                        highlightColor: Colors.transparent,
+                                        onTap: () {
+                                          chipProvider.selectCategory(blogCategory[index].category);
+                                          if(blogCategory[index].category.toLowerCase() == "all"){
+                                            Provider.of<DropdownProviderN>(context,listen: false)
+                                                .setSelectedCategory(
+                                                blogCategory[index].category, "");
+                                          }else{
+                                            Provider.of<DropdownProviderN>(context,listen: false)
+                                                .setSelectedCategory(
+                                                blogCategory[index].category, blogCategory[index].id);
+                                          }
+
+                                          log("Category Id: ${blogCategory[index].id}");
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 5.0, horizontal: 10.0),
+                                            decoration: BoxDecoration(
+                                              color:
+                                              isSelected
+                                                  ? primaryColor
+                                                  : isHovered
+                                                  ? primaryColor
+                                                  :
+                                              secondaryColor,
+                                              borderRadius: BorderRadius.circular(6.0),
+                                            ),
+                                            child: Center(
+                                              child: AppTextWidget(
+                                                text: model.category,
+                                                color:
+                                                isSelected
+                                                    ? Colors.white
+                                                    : isHovered
+                                                    ? Colors.white
+                                                    :
+                                                Colors.black,
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }),
+                              );
+                            });
+                      }),
+
+                  // Padding(
+                  //   padding: const EdgeInsets.symmetric(horizontal: 80.0),
+                  //   child: SingleChildScrollView(
+                  //     scrollDirection: Axis.horizontal,
+                  //     child: Row(
+                  //       mainAxisAlignment: MainAxisAlignment.start,
+                  //       children: blogPostProvider.categories.map((category) {
+                  //         final isSelected = chipProvider.selectedCategory == category;
+                  //         final isHovered = chipProvider.hoveredCategory == category;
+                  //
+                  //         return Padding(
+                  //           padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  //           child: MouseRegion(
+                  //             onEnter: (_) {
+                  //               chipProvider.setHoveredCategory(category);
+                  //             },
+                  //             onExit: (_) {
+                  //               chipProvider.clearHoveredCategory();
+                  //             },
+                  //             child: GestureDetector(
+                  //               onTap: () {
+                  //                 chipProvider.selectCategory(category);
+                  //                 blogPostProvider.filterPostsByCategory(category);  // Filter posts
+                  //               },
+                  //               child: Container(
+                  //                 padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 14.0),
+                  //                 decoration: BoxDecoration(
+                  //                   color: isSelected ? primaryColor : isHovered ? primaryColor : secondaryColor,
+                  //                   borderRadius: BorderRadius.circular(8.0),
+                  //                 ),
+                  //                 child: AppTextWidget(
+                  //                   text: category,
+                  //                   color: isSelected ? Colors.white : isHovered ? Colors.white : Colors.black,
+                  //                   fontWeight: FontWeight.w400,
+                  //                 ),
+                  //               ),
+                  //             ),
+                  //           ),
+                  //         );
+                  //       }).toList(),
+                  //     ),
+                  //   ),
+                  // ),
                   BlogPostGrid(posts: blogPostProvider.filteredPosts),
                   Align(
                     alignment: Alignment.bottomRight,

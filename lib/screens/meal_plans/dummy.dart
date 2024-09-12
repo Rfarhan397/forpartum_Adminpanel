@@ -83,8 +83,7 @@ class AddMealScreen extends StatelessWidget {
                         context,
                             () {
                           currentP.setCurrentType("Breakfast");
-                          _uploadBreakFast(context);
-                        },
+                          _uploadBreakFast  (context);                      },
                         'Breakfast',
                         breakFastController,
                         proteinController,
@@ -93,8 +92,7 @@ class AddMealScreen extends StatelessWidget {
                         recipeController,
                         ingredientsController,
                       ),
-                      buildMealFields(
-                        context,
+                      buildMealFields(context,
                             () {
                           currentP.setCurrentType("Lunch");
                           _uploadLunch(context);
@@ -107,11 +105,10 @@ class AddMealScreen extends StatelessWidget {
                         lunchRecipeController,
                         lunchIngredientsController,
                       ),
-                      buildMealFields(
-                        context,
+                      buildMealFields(context,
                             () {
                           currentP.setCurrentType("Snack");
-                          _uploadsnack(context);
+                          _uploadSnack(context);
                         },
                         'Snack',
                         snackController,
@@ -284,10 +281,10 @@ class AddMealScreen extends StatelessWidget {
   }
   Widget buildUploadImagedButton(BuildContext context, String mealType) {
     return GestureDetector(
-     onTap: () async{
-       Provider.of<CloudinaryProvider>(context,listen: false).setCurrentType(mealType);
-       _pickAndUploadImage(context,mealType);
-     },
+      onTap: () async{
+        Provider.of<CloudinaryProvider>(context,listen: false).setCurrentType(mealType);
+        _pickAndUploadImage(context,mealType);
+      },
 
       child: Container(
         padding: EdgeInsets.all(15),
@@ -399,118 +396,233 @@ class AddMealScreen extends StatelessWidget {
 
     uploadInput.click(); // Trigger the file picker dialog
   }
-
-
-  Future<void> _uploadMeal(BuildContext context, String mealType,
-      TextEditingController mealController,
-      TextEditingController proteinController,
-      TextEditingController carbsController,
-      TextEditingController fatController,
-      TextEditingController recipeController,
-      TextEditingController ingredientsController,
-      Uint8List? mealImageData
-      ) async {
-    ActionProvider.startLoading();
+  Future<void> _uploadBreakFast(BuildContext context) async {
     final cloudinaryProvider = Provider.of<CloudinaryProvider>(context, listen: false);
-    if (mealController.text.isEmpty ||
+    log('breakfast:${breakFastController.text.toString()}');
+    log('protein:${proteinController.text.toString()}');
+    log('image:$_imageData');
+    log('carbs:${carbsController.text.toString()}');
+    log('fat:${fatController.text.toString()}');
+    log('recipe:${recipeController.text.toString()}');
+    log('ingredients:${ingredientsController.text.toString()}');
+    log('image url: ${cloudinaryProvider.imageUrl}');
+    log('image data of b: ${cloudinaryProvider.imageData}');
+
+
+
+    if (breakFastController.text.isEmpty ||
         proteinController.text.isEmpty ||
         carbsController.text.isEmpty ||
-        fatController.text.isEmpty ||
+        fatController.text.isEmpty||
         recipeController.text.isEmpty ||
         ingredientsController.text.isEmpty ||
-        mealImageData == null) {
+        cloudinaryProvider.imageData == null) {
       ActionProvider.stopLoading();
       AppUtils().showToast(text: 'Please fill all fields and upload an image',);
       return;
     }
 
     try {
-      await cloudinaryProvider.uploadImage(mealImageData);
-      var mealId = FirebaseFirestore.instance.collection('addMeal').doc().id.toString();
-
+      await cloudinaryProvider.uploadImage(cloudinaryProvider.imageData!);
+      var breakFastId = FirebaseFirestore.instance.collection('addMeal').doc().id.toString();
       if (cloudinaryProvider.imageUrl.isNotEmpty) {
-        // Save the Meal data to Firebase
-        await FirebaseFirestore.instance.collection('addMeal').doc(mealId).set({
-          'mealType': mealType.toLowerCase(),
-          'name': mealController.text,
+        //  Save the Meal data to Firebase
+        // Example Firebase code:
+        await FirebaseFirestore.instance.collection('addMeal').doc(breakFastId).set({
+          'mealType' : 'breakfast',
+          'name': breakFastController.text,
           'protein': proteinController.text,
           'carbs': carbsController.text,
           'fat': fatController.text,
           'imageUrl': cloudinaryProvider.imageUrl.toString(),
           'createdAt': DateTime.now().millisecondsSinceEpoch.toString(),
-          'Id': mealId.toString(),
+          'Id': breakFastId.toString(),
           'ingredients': ingredientsController.text,
           'recipe': recipeController.text,
-        });
 
+
+        });
         ActionProvider.stopLoading();
-        AppUtils().showToast(text: '$mealType uploaded successfully');
+        AppUtils().showToast(text: 'Meal uploaded successfully');
       } else {
         ActionProvider.stopLoading();
-        AppUtils().showToast(text: 'Image upload failed');
+        AppUtils().showToast(text: 'Image upload failed',);
       }
     } catch (e) {
-      log('Error uploading $mealType: $e');
+      log('Error uploading Meal: $e');
       ActionProvider.stopLoading();
-      AppUtils().showToast(text: 'Failed to upload $mealType');
+      AppUtils().showToast(text: 'Failed to upload Meal', );
     }
   }
-
-
-
-  Future<void> _uploadBreakFast(BuildContext context) async {
-    await _uploadMeal(
-        context,
-        'Breakfast',
-        breakFastController,
-        proteinController,
-        carbsController,
-        fatController,
-        recipeController,
-        ingredientsController,
-        Provider.of<CloudinaryProvider>(context, listen: false).imageData
-    );
-  }
-
   Future<void> _uploadLunch(BuildContext context) async {
-    await _uploadMeal(
-        context,
-        'Lunch',
-        lunchController,
-        lunchProteinController,
-        lunchCarbsController,
-        lunchFatController,
-        lunchRecipeController,
-        lunchIngredientsController,
-        Provider.of<CloudinaryProvider>(context, listen: false).luchImageData
-    );
-  }
+    final cloudinaryProvider = Provider.of<CloudinaryProvider>(context, listen: false);
+    log('Lunch:${lunchController.text.toString()}');
+    log('lunch protein:${lunchProteinController.text.toString()}');
+    log('lunch image:$_imageData');
+    log('lunch carbs:${lunchCarbsController.text.toString()}');
+    log('lunch fat:${lunchFatController.text.toString()}');
+    log('lunch recipe:${lunchRecipeController.text.toString()}');
+    log('lunch ingredients:${lunchIngredientsController.text.toString()}');
+    log('lunch image url: ${cloudinaryProvider.imageUrl}');
+    log('lunch image data of l: ${cloudinaryProvider.luchImageData}');
 
-// Similar refactor for other meals
-  Future<void> _uploadsnack(BuildContext context) async {
-    await _uploadMeal(
-        context,
-        'Snack',
-        snackController,
-        snackProteinController,
-        snackCarbsController,
-        snackFatController,
-        snackRecipeController,
-        snackIngredientsController,
-        Provider.of<CloudinaryProvider>(context, listen: false).snackImageData
-    );
-  }Future<void> _uploadDinner(BuildContext context) async {
-    await _uploadMeal(
-        context,
-        'Dinner',
-        dinnerController,
-        dinnerProteinController,
-        dinnerCarbsController,
-        dinnerFatController,
-        dinnerRecipeController,
-        dinnerIngredientsController,
-        Provider.of<CloudinaryProvider>(context, listen: false).dinnerImageData
-    );
-  }
 
+
+    if (lunchController.text.isEmpty ||
+        lunchProteinController.text.isEmpty ||
+        lunchCarbsController.text.isEmpty ||
+        lunchFatController.text.isEmpty||
+        lunchRecipeController.text.isEmpty ||
+        lunchIngredientsController.text.isEmpty ||
+        cloudinaryProvider.imageData == null) {
+      ActionProvider.stopLoading();
+      AppUtils().showToast(text: 'Please fill all fields and upload an image',);
+      return;
+    }
+
+    try {
+      await cloudinaryProvider.uploadImage(cloudinaryProvider.imageData!);
+      var lunchId = FirebaseFirestore.instance.collection('addMeal').doc().id.toString();
+      if (cloudinaryProvider.imageUrl.isNotEmpty) {
+        //  Save the Meal data to Firebase
+        // Example Firebase code:
+        await FirebaseFirestore.instance.collection('addMeal').doc(lunchId).set({
+          'mealType' : 'lunch',
+          'name': lunchController.text,
+          'protein': lunchProteinController.text,
+          'carbs': lunchCarbsController.text,
+          'fat': lunchFatController.text,
+          'imageUrl': cloudinaryProvider.imageUrl.toString(),
+          'createdAt': DateTime.now().millisecondsSinceEpoch.toString(),
+          'Id': lunchId.toString(),
+          'ingredients': lunchIngredientsController.text,
+          'recipe': lunchRecipeController.text,
+
+        });
+        ActionProvider.stopLoading();
+        AppUtils().showToast(text: 'Meal uploaded successfully');
+      } else {
+        ActionProvider.stopLoading();
+        AppUtils().showToast(text: 'Image upload failed',);
+      }
+    } catch (e) {
+      log('Error uploading Meal: $e');
+      ActionProvider.stopLoading();
+      AppUtils().showToast(text: 'Failed to upload Meal', );
+    }
+  }
+  Future<void> _uploadSnack(BuildContext context) async {
+    final cloudinaryProvider = Provider.of<CloudinaryProvider>(context, listen: false);
+    log('snack:${snackController.text.toString()}');
+    log('snackprotein:${snackProteinController.text.toString()}');
+    log('snackimage:$_imageData');
+    log('snackcarbs:${snackCarbsController.text.toString()}');
+    log('snackfat:${snackFatController.text.toString()}');
+    log('snackrecipe:${snackRecipeController.text.toString()}');
+    log('snackingredients:${snackIngredientsController.text.toString()}');
+    log('snackimage url od snack is: ${cloudinaryProvider.imageUrl}');
+    log('snackimage data of s: ${cloudinaryProvider.snackImageData}');
+
+
+
+    if (snackController.text.isEmpty ||
+        snackProteinController.text.isEmpty ||
+        snackCarbsController.text.isEmpty ||
+        snackFatController.text.isEmpty||
+        snackRecipeController.text.isEmpty ||
+        snackIngredientsController.text.isEmpty ||
+        cloudinaryProvider.imageData == null) {
+      ActionProvider.stopLoading();
+      AppUtils().showToast(text: 'Please fill all fields and upload an image',);
+      return;
+    }
+
+    try {
+      await cloudinaryProvider.uploadImage(cloudinaryProvider.imageData!);
+      var snackId = FirebaseFirestore.instance.collection('addMeal').doc().id.toString();
+      if (cloudinaryProvider.imageUrl.isNotEmpty) {
+        //  Save the Meal data to Firebase
+        // Example Firebase code:
+        await FirebaseFirestore.instance.collection('addMeal').doc(snackId).set({
+          'mealType' : 'snack',
+          'name': snackController.text,
+          'protein': snackProteinController.text,
+          'carbs': snackCarbsController.text,
+          'fat': snackFatController.text,
+          'imageUrl': cloudinaryProvider.imageUrl.toString(),
+          'createdAt': DateTime.now().millisecondsSinceEpoch.toString(),
+          'Id': snackId.toString(),
+          'ingredients': snackIngredientsController.text,
+          'recipe': snackRecipeController.text,
+
+        });
+        ActionProvider.stopLoading();
+        AppUtils().showToast(text: 'Meal uploaded successfully');
+      } else {
+        ActionProvider.stopLoading();
+        AppUtils().showToast(text: 'Image upload failed',);
+      }
+    } catch (e) {
+      log('Error uploading Meal: $e');
+      ActionProvider.stopLoading();
+      AppUtils().showToast(text: 'Failed to upload Meal', );
+    }
+  }
+  Future<void> _uploadDinner(BuildContext context) async {
+    final cloudinaryProvider = Provider.of<CloudinaryProvider>(context, listen: false);
+    log('dinner:${dinnerController.text.toString()}');
+    log('dinner protein:${dinnerProteinController.text.toString()}');
+    log('dinner image:$_imageData');
+    log('dinner carbs:${dinnerCarbsController.text.toString()}');
+    log('dinner fat:${dinnerFatController.text.toString()}');
+    log('dinner recipe:${dinnerRecipeController.text.toString()}');
+    log('dinner ingredients:${dinnerIngredientsController.text.toString()}');
+    log('dinner image data: ${cloudinaryProvider.dinnerImageData}');
+    log('dinner image url: ${cloudinaryProvider.imageUrl}');
+
+
+
+    if (dinnerController.text.isEmpty ||
+        dinnerProteinController.text.isEmpty ||
+        dinnerCarbsController.text.isEmpty ||
+        dinnerFatController.text.isEmpty||
+        dinnerRecipeController.text.isEmpty ||
+        dinnerIngredientsController.text.isEmpty ||
+        cloudinaryProvider.dinnerImageData == null) {
+      ActionProvider.stopLoading();
+      AppUtils().showToast(text: 'Please fill all fields and upload an image',);
+      return;
+    }
+
+    try {
+      await cloudinaryProvider.uploadImage(cloudinaryProvider.imageData!);
+      var dinnerId = FirebaseFirestore.instance.collection('addMeal').doc().id.toString();
+      if (cloudinaryProvider.imageUrl.isNotEmpty) {
+        //  Save the Meal data to Firebase
+        // Example Firebase code:
+        await FirebaseFirestore.instance.collection('addMeal').doc(dinnerId).set({
+          'mealType' : 'dinner',
+          'name': dinnerController.text,
+          'protein': dinnerProteinController.text,
+          'carbs': dinnerCarbsController.text,
+          'fat': dinnerFatController.text,
+          'imageUrl': cloudinaryProvider.imageUrl.toString(),
+          'createdAt': DateTime.now().millisecondsSinceEpoch.toString(),
+          'Id': dinnerId.toString(),
+          'ingredients': dinnerIngredientsController.text,
+          'recipe': dinnerRecipeController.text,
+
+        });
+        ActionProvider.stopLoading();
+        AppUtils().showToast(text: 'Meal uploaded successfully');
+      } else {
+        ActionProvider.stopLoading();
+        AppUtils().showToast(text: 'Image upload failed',);
+      }
+    } catch (e) {
+      log('Error uploading Meal: $e');
+      ActionProvider.stopLoading();
+      AppUtils().showToast(text: 'Failed to upload Meal', );
+    }
+  }
 }

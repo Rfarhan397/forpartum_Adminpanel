@@ -7,7 +7,7 @@ class ChipProvider with ChangeNotifier {
   String get selectedCategory => _selectedCategory;
   String get hoveredCategory => _hoveredCategory;
 
-  void selectCategory(String category) {
+  void selectCategory( String category) {
     _selectedCategory = category;
     notifyListeners();
   }

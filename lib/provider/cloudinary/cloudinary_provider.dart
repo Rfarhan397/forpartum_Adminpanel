@@ -10,6 +10,7 @@ class CloudinaryProvider with ChangeNotifier {
   final String _uploadPreset = 'Article'; // Set up an unsigned upload preset in Cloudinary
 
   String _imageUrl = '';
+  String _currentType = '';
   Uint8List? _imageData;
   Uint8List? _luchImageData;
   Uint8List? _snackImageData;
@@ -17,14 +18,30 @@ class CloudinaryProvider with ChangeNotifier {
 
 
   String get imageUrl => _imageUrl;
+  String get currentType => _currentType;
   Uint8List? get imageData => _imageData;
   Uint8List? get luchImageData => _luchImageData;
   Uint8List? get snackImageData => _snackImageData;
   Uint8List? get dinnerImageData => _dinnerImageData;
 
+
+  void setCurrentType(String type) {
+    _currentType = type;
+    notifyListeners();
+  }
+
   //to display image in container
   void setImageData(Uint8List data) {
     _imageData = data;
+    _luchImageData = data;
+    _snackImageData = data;
+    _dinnerImageData = data;
+    notifyListeners();
+  }
+
+  // clear image
+  void clearImage() {
+    _imageData = null;
     notifyListeners();
   }
 

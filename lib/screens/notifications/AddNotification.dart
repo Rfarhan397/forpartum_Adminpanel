@@ -59,15 +59,15 @@ appBar: CustomAppbar(text: 'Create New Notification'),
                         children: [
                           //buildDropDown(context, 2),
 
-                          Consumer<DropdownProviderN>(
-                            builder: (context, dropdownProvider, child) {
-                              return CustomDropdownWidget(
-                                index: 2,
-                                items: [ 'Email', 'SMS', 'Push Notification ',],
-                               dropdownType: 'Type',
-                              );
-                            },
-                          ),
+                          // Consumer<DropdownProviderN>(
+                          //   builder: (context, dropdownProvider, child) {
+                          //     return CustomDropdownWidget(
+                          //       index: 2,
+                          //       items: [ 'Email', 'SMS', 'Push Notification ',],
+                          //      dropdownType: 'Type',
+                          //     );
+                          //   },
+                          // ),
                         ],
                       ),
                     ),

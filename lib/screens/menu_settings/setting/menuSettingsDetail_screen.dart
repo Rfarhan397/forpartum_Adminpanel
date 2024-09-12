@@ -65,11 +65,11 @@ class MenuSettingsDetailScreen extends StatelessWidget {
                             ),
                             // buildDropDown(context, 2),
                             //CategoryPopupMenu(),
-                            CustomDropdownWidget(
-                              index: 1,
-                              items: ['English', 'French'],
-                              dropdownType: 'Language',
-                            ),
+                            // CustomDropdownWidget(
+                            //   index: 1,
+                            //   items: ['English', 'French'],
+                            //   dropdownType: 'Language',
+                            // ),
                           ],
                         ),
                         SizedBox(
@@ -84,11 +84,11 @@ class MenuSettingsDetailScreen extends StatelessWidget {
                             SizedBox(
                               width: 0.5.w,
                             ),
-                            CustomDropdownWidget(
-                              index: 2,
-                              items: ['Uk', 'France'],
-                             dropdownType: 'TimeZone',
-                            ),                             //buildDropDownT(context, 3),
+                            // CustomDropdownWidget(
+                            //   index: 2,
+                            //   items: ['Uk', 'France'],
+                            //  dropdownType: 'TimeZone',
+                            // ),                             //buildDropDownT(context, 3),
                           ],
                         ),
                         SizedBox(

@@ -100,7 +100,7 @@ class AddNewFaq extends StatelessWidget {
         'question': _questionController.text,  // Ensure the controller text is used
         'answer': _answerController.text,  // Ensure the controller text is used
         'id': id,
-        'created_at': DateTime.now(),
+        'created_at': DateTime.now().millisecondsSinceEpoch.toString(),
       });
       ActionProvider.stopLoading();
       AppUtils().showToast(text: 'Privacy updated successfully');

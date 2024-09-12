@@ -166,7 +166,7 @@ class AddMealCategory extends StatelessWidget {
                                           margin: const EdgeInsets.all(10),
                                           child: InkWell(
                                               onTap: () {
-                                                blogPostProvider.deleteCategory(context);
+                                                // blogPostProvider.deleteCategory(context);
                                               },
                                               child: const Center(
                                                 child: AppTextWidget(
@@ -258,9 +258,9 @@ class AddMealCategory extends StatelessWidget {
               ButtonWidget(
                 text: 'Update',
                 onClicked: () {
-                  blogPostProvider.updateCategory(
-                    context,
-                  );
+                  // blogPostProvider.updateCategory(
+                  //   context,
+                  // );
                 },
                 width: 100,
                 height: 50,
@@ -296,7 +296,7 @@ class AddMealCategory extends StatelessWidget {
             .doc(id)
             .set({
           'mealCategory': _categoryController.text,
-          'createdAt': Timestamp.now(),
+          'createdAt': DateTime.now().millisecondsSinceEpoch.toString(),
           'Id': id.toString(),
         });
         ActionProvider.stopLoading();

@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:forpartum_adminpanel/model/res/components/add_button.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
@@ -22,7 +23,7 @@ class Notifications extends StatelessWidget {
     final notifications = Provider.of<NotificationProviderForNotifications>(context).notifications;
 
     return Scaffold(
-      appBar: CustomAppbar(text: 'Notifications Overview'),
+      appBar: const CustomAppbar(text: 'Notifications Overview'),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -34,29 +35,15 @@ class Notifications extends StatelessWidget {
               padding: const EdgeInsets.all(12.0),
               child: Column(
                 children: [
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Provider.of<MenuAppController>(context, listen: false)
-                              .changeScreen(20);
-                          //Get.toNamed(RoutesName.addNewNotifications);
-                        },
-                        child: Container(
-                          width: 25,
-                          height: 25,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: primaryColor,
-                          ),
-                          child: Center(
-                            child: Icon(Icons.add,size:20,color: Colors.white,),
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 5,),
-                      AppTextWidget(text: 'Create New Notifcation',fontSize: 14,color: Colors.black,)
-                    ],
+                  InkWell(
+                    hoverColor: Colors.transparent,
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    onTap: () {
+                      Provider.of<MenuAppController>(context, listen: false)
+                          .changeScreen(20);
+                    },
+                    child: AddButton(text: 'Create New Notification')
                   ),
                   SizedBox( height: 4.h,),
                    Row(
@@ -208,7 +195,7 @@ class Notifications extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            AppTextWidget(
+                            const AppTextWidget(
                               text: 'Notifications Settings',
                               fontSize: 20,
                               textAlign: TextAlign.start,
@@ -219,7 +206,7 @@ class Notifications extends StatelessWidget {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                AppTextWidget(text: 'Notification Types:',fontWeight: FontWeight.w700,),
+                                const AppTextWidget(text: 'Notification Types:',fontWeight: FontWeight.w700,),
                                 Icon(Icons.more_vert,size: 20,color: Colors.grey[500],)
 
                               ],),
@@ -237,7 +224,7 @@ class Notifications extends StatelessWidget {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  AppTextWidget(text: 'Frequency Settings:',fontWeight: FontWeight.w700,),
+                                  const AppTextWidget(text: 'Frequency Settings:',fontWeight: FontWeight.w700,),
                                   Icon(Icons.more_vert,size: 20,color: Colors.grey[500],)
 
                                 ],),
@@ -319,14 +306,14 @@ class Notifications extends StatelessWidget {
     return Container(
       //margin: EdgeInsets.symmetric(horizontal:10.w),
       width: 18.w,
-      padding: EdgeInsets.all(8),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30),
           color: Colors.white,
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1), // Adjust opacity for softer shadow
-              offset: Offset(0, 5), // Shadow is offset to the bottom
+              offset: const Offset(0, 5), // Shadow is offset to the bottom
               blurRadius: 8,
             )
           ]

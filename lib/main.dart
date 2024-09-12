@@ -12,6 +12,7 @@ import 'package:forpartum_adminpanel/provider/dropDOwn/dropdown.dart';
 import 'package:forpartum_adminpanel/provider/libraryCard/card_provider.dart';
 import 'package:forpartum_adminpanel/provider/navigation/navigationProvider.dart';
 import 'package:forpartum_adminpanel/provider/notification_provider/notification_provider.dart';
+import 'package:forpartum_adminpanel/provider/stream/streamProvider.dart';
 import 'package:forpartum_adminpanel/provider/textColor/text_color_provider.dart';
 import 'package:forpartum_adminpanel/provider/theme/theme_provider.dart';
 import 'package:forpartum_adminpanel/provider/user_provider/user_provider.dart';
@@ -87,6 +88,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => FaqProvider()),
         ChangeNotifierProvider(create: (_) => NotificationProviderForNotifications()),
         ChangeNotifierProvider(create: (_) => CloudinaryProvider()),
+        ChangeNotifierProvider(create: (_) => StreamDataProvider()),
       ],
       child: Consumer<ThemeLanguageProvider>(
         builder: (context,provider,child){

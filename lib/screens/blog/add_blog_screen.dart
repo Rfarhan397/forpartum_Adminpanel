@@ -17,11 +17,27 @@ import '../../provider/blog/blog_provider.dart';
 import '../../provider/cloudinary/cloudinary_provider.dart';
 import '../../provider/dropDOwn/dropdown.dart';
 
-class AddBlogScreen extends StatelessWidget {
+class AddBlogScreen extends StatefulWidget {
   AddBlogScreen({super.key});
-  Uint8List? _imageData; // Store image data
+
+  @override
+  State<AddBlogScreen> createState() => _AddBlogScreenState();
+}
+
+class _AddBlogScreenState extends State<AddBlogScreen> {
+  Uint8List? _imageData;
+ // Store image data
  TextEditingController _titleController = TextEditingController();
+
  TextEditingController _contentController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    final blogPostProvider = Provider.of<BlogPostProvider>(context, listen: false);
+    blogPostProvider.fetchCategories();
+  }
+
   @override
   Widget build(BuildContext context) {
     final blogPostProvider = Provider.of<BlogPostProvider>(context);
@@ -43,7 +59,7 @@ class AddBlogScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-        
+
                     const AppTextWidget(
                       text: 'Article title',
                       fontSize: 14,
@@ -64,10 +80,14 @@ class AddBlogScreen extends StatelessWidget {
                           ),
                         ),
                          SizedBox(width: 5.w),
-                        Consumer<DropdownProviderN>(
+
+                        Consumer<DropdownProvider>(
                           builder: (context, dropdownProvider, child) {
-                            return CustomDropdownWidget(
-                              index: 0,
+                            log('blogPost categories are::${blogPostProvider.categories}');
+                            log('blogPost category ids are::${blogPostProvider.categoriesIds}');
+                            return
+                              CustomDropdownWidget(
+                              index: 1,
                               items: blogPostProvider.categories,
                               dropdownType: 'Category',
                             );
@@ -176,6 +196,7 @@ class AddBlogScreen extends StatelessWidget {
       ),
     );
   }
+
   Future<void> _pickAndUploadImage(BuildContext context) async {
     final html.FileUploadInputElement uploadInput = html.FileUploadInputElement();
     uploadInput.accept = 'image/*'; // Accept only images
@@ -227,14 +248,19 @@ class AddBlogScreen extends StatelessWidget {
         await FirebaseFirestore.instance.collection('blogs').doc(id).set({
           'title': _titleController.text,
           'content': _contentController.text,
+          'categoryId': dropdownProvider.selectedCategoryId,
           'category': dropdownProvider.selectedCategory,
           'imageUrl': cloudinaryProvider.imageUrl.toString(),
           'readTime': '5 mints'.toString(),
-          'createdAt': Timestamp.now(),
-          'Id': id.toString(),
+          'createdAt': DateTime.now().millisecondsSinceEpoch.toString(),
+          'id': id.toString(),
 
         });
         ActionProvider.stopLoading();
+        _titleController.clear();
+        _contentController.clear();
+        cloudinaryProvider.clearImage();
+
         AppUtils().showToast(text: 'Blog uploaded successfully');
       } else {
         ActionProvider.stopLoading();
@@ -246,29 +272,4 @@ class AddBlogScreen extends StatelessWidget {
       AppUtils().showToast(text: 'Failed to upload blog', );
     }
   }
-// Future<void> _pickAndUploadImage(BuildContext context) async {
-  //   // Create an input element and simulate a file picker
-  //   final html.FileUploadInputElement uploadInput = html.FileUploadInputElement();
-  //   uploadInput.accept = 'image/*'; // Accept only images
-  //
-  //   uploadInput.onChange.listen((e) async {
-  //     final files = uploadInput.files;
-  //     if (files!.isEmpty) return;
-  //
-  //     final reader = html.FileReader();
-  //     reader.readAsArrayBuffer(files[0]);
-  //     // reader.onLoadEnd.listen((e) async {
-  //     //   final bytes = reader.result as Uint8List;
-  //     //
-  //     //   // Use Provider to upload the image
-  //     //   final cloudinaryProvider = Provider.of<CloudinaryProvider>(context, listen: false);
-  //     //   await cloudinaryProvider.uploadImage(bytes);
-  //     //   AppUtils().showToast(text: 'Image uploaded successfully : ${cloudinaryProvider.imageUrl}');
-  //     //
-  //     // });
-  //   });
-  //
-  //   uploadInput.click(); // Trigger the file picker dialog
-  // }
-
 }

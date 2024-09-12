@@ -2,6 +2,8 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:forpartum_adminpanel/model/blog_post/blog_model.dart';
+import 'package:forpartum_adminpanel/provider/stream/streamProvider.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import '../../constant.dart';
@@ -66,24 +68,33 @@ class AddCategory extends StatelessWidget {
                       height: 2.h,
                     ),
                     SizedBox(height: 5.h),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 70.0),
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: ButtonWidget(
-                          onClicked: () {
-                            ActionProvider().setLoading(true);
-                            _uploadCategory(context);
-                          },
-                          text: ('Upload'),
-                          height: 5.h,
-                          width: 10.w,
-                          textColor: Colors.white,
-                          radius: 25,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
+                   Consumer<BlogPostProvider>(
+                       builder: (context,provider, child){
+                         return  Padding(
+                           padding: const EdgeInsets.symmetric(horizontal: 70.0),
+                           child: Align(
+                             alignment: Alignment.centerRight,
+                             child: ButtonWidget(
+                               onClicked: () async{
+                                 ActionProvider().setLoading(true);
+                                 if(provider.isUpdate){
+                                    provider.updateCategory(context, provider.id, _categoryController.text.toString());
+                                 }else{
+                                   _uploadCategory(context);
+                                 }
+
+                               },
+                               text: (provider.isUpdate ? "Update"  :  'Upload'),
+                               height: 5.h,
+                               width: 10.w,
+                               textColor: Colors.white,
+                               radius: 25,
+                               fontWeight: FontWeight.w500,
+                             ),
+                           ),
+                         );
+                       }
+                   ),
                     SizedBox(height: 10.h),
                     AppTextWidget(
                       text: 'Available Categories :',
@@ -120,52 +131,124 @@ class AddCategory extends StatelessWidget {
                         )
                       ],
                     ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: blogPostProvider.categories.map((category) {
-                        return Table(
-                            border:
-                                TableBorder.all(color: Colors.black, width: 2),
-                            children: [
-                              TableRow(children: [
-                                Container(
-                                  padding: const EdgeInsets.all(10),
-                                  child: Center(
-                                    child: AppTextWidget(
-                                      text: category,
-                                      textAlign: TextAlign.start,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                    padding: const EdgeInsets.all(10),
-                                    child: InkWell(
-                                      onTap: () {
-                                        buildShowModalBottomSheet(
-                                            context, blogPostProvider,);
-                                      },
-                                      child: const Center(
+                    // Column(
+                    //   mainAxisAlignment: MainAxisAlignment.start,
+                    //   children: blogPostProvider.categories.map((category) {
+                    //     return Table(
+                    //         border:
+                    //             TableBorder.all(color: Colors.black, width: 2),
+                    //         children: [
+                    //           TableRow(children: [
+                    //             Container(
+                    //               padding: const EdgeInsets.all(10),
+                    //               child: Center(
+                    //                 child: AppTextWidget(
+                    //                   text: category,
+                    //                   textAlign: TextAlign.start,
+                    //                   color: Colors.black,
+                    //                   fontWeight: FontWeight.w400,
+                    //                 ),
+                    //               ),
+                    //             ),
+                    //             Container(
+                    //                 padding: const EdgeInsets.all(10),
+                    //                 child: InkWell(
+                    //                   onTap: () {
+                    //                     // buildShowModalBottomSheet(
+                    //                     //     context, blogPostProvider,);
+                    //                     _categoryController.text = blogPostProvider.categories[1];
+                    //                   },
+                    //                   child: const Center(
+                    //                       child: AppTextWidget(
+                    //                     text: "Update",
+                    //                   )),
+                    //                 )),
+                    //             Container(
+                    //                 padding: const EdgeInsets.all(10),
+                    //                 child: InkWell(
+                    //                   onTap: () {
+                    //                     blogPostProvider
+                    //                         .deleteCategory(context);
+                    //                   },
+                    //                   child: const Center(
+                    //                       child: AppTextWidget(
+                    //                     text: "Delete ",
+                    //                   )),
+                    //                 )),
+                    //           ])
+                    //         ]);
+                    //   }).toList(),
+                    // ),
+                    Consumer<StreamDataProvider>(
+                      builder: (context, productProvider, child) {
+                        return StreamBuilder<List<BlogCategory>>(
+                          stream: productProvider.getBlogCategory(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return Center(child: CircularProgressIndicator());
+                            }
+                            if (snapshot.hasError) {
+                              return Center(child: Text('Error: ${snapshot.error}'));
+                            }
+                            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                              return Center(child: Text('No category found'));
+                            }
+
+                            List<BlogCategory> blogCategory = snapshot.data!;
+                            log("Length:: ${snapshot.data!.length}");
+                            return ListView.builder(
+                              itemCount: blogCategory.length,
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, index) {
+                                BlogCategory model = blogCategory[index];
+                                return Table(
+                                  border: TableBorder.all(color: Colors.black, width: 2),
+                                  children: [
+                                    TableRow(children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(10),
+                                        child: Center(
                                           child: AppTextWidget(
-                                        text: "Update",
-                                      )),
-                                    )),
-                                Container(
-                                    padding: const EdgeInsets.all(10),
-                                    child: InkWell(
-                                      onTap: () {
-                                        blogPostProvider
-                                            .deleteCategory(context);
-                                      },
-                                      child: const Center(
-                                          child: AppTextWidget(
-                                        text: "Delete ",
-                                      )),
-                                    )),
-                              ])
-                            ]);
-                      }).toList(),
+                                            text: model.category,
+                                            textAlign: TextAlign.start,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.all(10),
+                                        child: InkWell(
+                                          onTap: () {
+                                            // Logic for updating category
+                                            _categoryController.text = model.category;
+                                            blogPostProvider.setUpdate(true, model.id);
+                                          },
+                                          child: const Center(
+                                            child: AppTextWidget(text: "Update"),
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.all(10),
+                                        child: InkWell(
+                                          onTap: () {
+                                            blogPostProvider.deleteCategory(context, model.id);
+                                          },
+                                          child: const Center(
+                                            child: AppTextWidget(text: "Delete"),
+                                          ),
+                                        ),
+                                      ),
+                                    ]),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -177,31 +260,31 @@ class AddCategory extends StatelessWidget {
     );
   }
 
-  Future<dynamic> buildShowModalBottomSheet(BuildContext context, BlogPostProvider blogPostProvider,) {
-    return showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Padding(
-          padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 8.w),
-          child: Column(
-            children: [
-              AppTextField(hintText: 'Category', controller: _categoryController),
-              SizedBox(height: 4.h,),
-              ButtonWidget(
-                text: 'Update',
-                onClicked: () {
-                  blogPostProvider.updateCategory(context,);
-                },
-                width: 100,
-                height: 50,
-                fontWeight: FontWeight.normal,
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
+  // Future<dynamic> buildShowModalBottomSheet(BuildContext context, BlogPostProvider blogPostProvider,) {
+  //   return showModalBottomSheet(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return Padding(
+  //         padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 8.w),
+  //         child: Column(
+  //           children: [
+  //             AppTextField(hintText: 'Category', controller: _categoryController),
+  //             SizedBox(height: 4.h,),
+  //             ButtonWidget(
+  //               text: 'Update',
+  //               onClicked: () {
+  //                 blogPostProvider.updateCategory(context,);
+  //               },
+  //               width: 100,
+  //               height: 50,
+  //               fontWeight: FontWeight.normal,
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
 
   Future<void> _uploadCategory(BuildContext context) async {
@@ -227,8 +310,8 @@ class AddCategory extends StatelessWidget {
             .doc(id)
             .set({
           'category': _categoryController.text,
-          'createdAt': Timestamp.now(),
-          'Id': id.toString(),
+          'createdAt': DateTime.now().millisecondsSinceEpoch.toString(),
+          'id': id.toString(),
         });
         ActionProvider.stopLoading();
         AppUtils().showToast(text: 'category uploaded successfully');

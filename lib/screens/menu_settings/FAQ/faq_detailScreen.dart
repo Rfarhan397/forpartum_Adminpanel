@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:forpartum_adminpanel/model/res/components/add_button.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
@@ -21,28 +22,15 @@ class FaqDetailscreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    Provider.of<MenuAppController>(context, listen: false)
-                        .changeScreen(21);
-                  },
-                  child: Container(
-                    width: 30,
-                    height: 30,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: primaryColor,
-                    ),
-                    child: Center(
-                      child: Icon(Icons.add,color: Colors.white,),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 5,),
-                AppTextWidget(text: 'Add New FAQ',fontSize: 14,color: Colors.black,)
-              ],
+            InkWell(
+              hoverColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                splashColor: Colors.transparent,
+              onTap: () {
+                Provider.of<MenuAppController>(context, listen: false)
+                    .changeScreen(21);
+              },
+              child:AddButton(text: 'Add New FAQ')
             ),
             SizedBox(height: 4.h,),
             AppTextWidget(text: 'FAQ',fontSize: 12,color: Colors.black,fontWeight: FontWeight.w700,),

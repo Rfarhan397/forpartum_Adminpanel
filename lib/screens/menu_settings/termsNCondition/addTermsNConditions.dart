@@ -94,7 +94,7 @@ TextEditingController _termsConditionsController = TextEditingController();
       await FirebaseFirestore.instance.collection('term&Conditions').doc(id).set({
         'term&Condition': _termsConditionsController.text,  // Ensure the controller text is used
         'id': id,
-        'created_at': DateTime.now(),
+        'created_at': DateTime.now().millisecondsSinceEpoch.toString(),
       });
       ActionProvider.stopLoading();  // Stop loading
       AppUtils().showToast(text: 'Terms & Conditions updated successfully');

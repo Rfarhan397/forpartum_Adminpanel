@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:forpartum_adminpanel/model/res/components/add_button.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import '../../../constant.dart';
@@ -16,7 +17,7 @@ class TermsNCondition extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
-      appBar: CustomAppbar(text: 'Terms and Conditions'),
+      appBar: const CustomAppbar(text: 'Terms and Conditions'),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -28,57 +29,25 @@ class TermsNCondition extends StatelessWidget {
             padding: const EdgeInsets.all(18.0),
             child: Row(
               children: [
-                Container(
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Provider.of<MenuAppController>(context, listen: false)
-                              .changeScreen(18);                        },
-                        child: Container(
-                          width: 25,
-                          height: 25,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: primaryColor,
-                          ),
-                          child: const Center(
-                            child: Icon(Icons.add,size: 20,color: Colors.white,),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 5,),
-                      const AppTextWidget(text: 'Add New Policy',fontSize: 12,color: Colors.black,)
-                    ],
-                  ),
+                InkWell(
+                  hoverColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  splashColor: Colors.transparent,
+                  onTap: () {
+                    Provider.of<MenuAppController>(context, listen: false)
+                        .changeScreen(18);
+                  },
+                  child: AddButton(text: 'Add New Policy')
                 ),
                 SizedBox(
                   width: 2.w,
                 ),
-                Container(
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                         // _showEditDialog(context, docId, privacyPolicy);
-                          //Get.toNamed(RoutesName.faqAddScreen);
-                        },
-                        child: Container(
-                          width: 25,
-                          height: 25,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: primaryColor,
-                          ),
-                          child: const Center(
-                            child: Icon(Icons.add,size: 20,color: Colors.white,),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 5,),
-                      const AppTextWidget(text: 'Edit',fontWeight: FontWeight.w300,fontSize: 12,color: Colors.black,)
-                    ],
-                  ),
+                InkWell(
+                  hoverColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  splashColor: Colors.transparent,
+                  onTap: () {},
+                  child: AddButton(text: 'Edit'),
                 ),
               ],
             ),

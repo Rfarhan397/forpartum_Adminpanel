@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:forpartum_adminpanel/provider/blog/blog_provider.dart';
 import 'package:provider/provider.dart';
 import '../../../constant.dart';
 import '../../../provider/dropDOwn/dropdown.dart';
@@ -89,10 +92,24 @@ class _CustomDropdownWidgetState extends State<CustomDropdownWidget> {
 
   void _updateSelectedValue(BuildContext context, String item) {
     final dropdownProvider = Provider.of<DropdownProviderN>(context, listen: false);
+    final idProvider = Provider.of<BlogPostProvider>(context, listen: false);
+
+
+
+    // Find the index of the selected item
+    int selectedIndex = widget.items.indexOf(item);
+    String selectId = "";
+    if(selectedIndex > 0){
+      selectId = idProvider.categoriesIds[selectedIndex].toString();
+    }else{
+      selectId = "";
+    }
+    log("Selected Index:: $selectedIndex");
+    log("Selected Id:: $selectId");
 
     switch (widget.dropdownType) {
       case 'Category':
-        dropdownProvider.setSelectedCategory(item);
+        dropdownProvider.setSelectedCategory(item,selectId);
         break;
       case 'Language':
         dropdownProvider.setSelectedLanguage(item);

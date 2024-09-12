@@ -70,9 +70,9 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
                 children: [
                   CircleAvatar(
                     radius: 15,
-                    backgroundImage:
+                    //backgroundImage:
                     //AssetImage(AppAssets.alex)
-                    NetworkImage('https://s3-alpha-sig.figma.com/img/44ce/677a/3a8bdf19c7b4f7e27422dcf2c356ae9e?Expires=1725235200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=iARFpGK6cNiNDUu-EZdZReyIq5Flp3f-mPQgz1RZ7NIDx~5K-JrVqw3BYDNBnRw6If7L~wT6sJzN4eOjMUnlrdf5fmMK59mlbbrA5ZkcXHIxtEynNj495pTegN7NDHt99Kw5jaT-o2PSuduVB3WO6qG5Ba~OWrjKXPD6cx-2zkwTk1Pkt4dMnZkl8WJzIiUsN6RgB-3gU7~p3x~kXGvF6tlegc2QlXC5KtJ2VY3oZwORkEKlowpasv5Hy3GLiNnTtgj6djpToK0KuWmCc3bZ2p9zWqJ0PknPpDBO0510xXMO-ey4usJUXrlaltb0Rf2oTBRJWQRFfo1zvqDg5ZPblQ__'),
+                   // NetworkImage('https://s3-alpha-sig.figma.com/img/44ce/677a/3a8bdf19c7b4f7e27422dcf2c356ae9e?Expires=1725235200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=iARFpGK6cNiNDUu-EZdZReyIq5Flp3f-mPQgz1RZ7NIDx~5K-JrVqw3BYDNBnRw6If7L~wT6sJzN4eOjMUnlrdf5fmMK59mlbbrA5ZkcXHIxtEynNj495pTegN7NDHt99Kw5jaT-o2PSuduVB3WO6qG5Ba~OWrjKXPD6cx-2zkwTk1Pkt4dMnZkl8WJzIiUsN6RgB-3gU7~p3x~kXGvF6tlegc2QlXC5KtJ2VY3oZwORkEKlowpasv5Hy3GLiNnTtgj6djpToK0KuWmCc3bZ2p9zWqJ0PknPpDBO0510xXMO-ey4usJUXrlaltb0Rf2oTBRJWQRFfo1zvqDg5ZPblQ__'),
                   ),
                   SizedBox(width: 1.w,),
                   Column(

@@ -11,10 +11,23 @@ class BlogPostProvider extends ChangeNotifier {
   List<Map<String, String>> _posts = [];
 
   List<String> _categories = [];
+  List<String> _categoriesIds = [];
   List<String> _mealCategories = [];
   List<Map<String, String>> _filteredPosts = [];
   int _currentPage = 1;
   final int _postsPerPage = 12;
+
+  bool _isUpdate = false;
+  String _id = "";
+
+  bool get isUpdate => _isUpdate;
+  String get id => _id;
+
+  void setUpdate(bool value,String id) {
+    _isUpdate = value;
+    _id = id;
+    notifyListeners();
+  }
 
   BlogPostProvider() {
     fetchBlog();
@@ -22,6 +35,7 @@ class BlogPostProvider extends ChangeNotifier {
 
   List<Map<String, String>> get posts => _posts;
   List<String> get categories => _categories;
+  List get categoriesIds => _categoriesIds;
   List<String> get mealCategories => _mealCategories;
 
 
@@ -97,44 +111,43 @@ class BlogPostProvider extends ChangeNotifier {
   }
   Future<void> fetchCategories() async {
     try {
-      final snapshot = await FirebaseFirestore.instance.collection('blogsCategory').get();
+      final snapshot = await FirebaseFirestore.instance.collection('blogsCategory').orderBy(
+        'createdAt' , descending: false
+      ).get();
       _categories = snapshot.docs.map((doc) => doc['category'] as String).toList();
-      var _categoriesID = snapshot.docs.map((doc) => doc.id).toList();
+       _categoriesIds = snapshot.docs.map((doc) => doc.id).toList();
+      log('Fetched categories: ${categories.toString()}');
       log('categories are: ${_categories}');
-      log('categoriesId are: ${_categoriesID}');
-      // Ensure "All" is only added once
-      if (!_categories.contains("All")) {
-        _categories.insert(0, "All");
-      }
+      log('categoriesId are: ${_categoriesIds}');
+
       notifyListeners();
     } catch (e) {
       log("Error fetching categories: $e");
     }
   }
 
-  void updateCategory(BuildContext context, ) async {
+  void updateCategory(BuildContext context, String id,String name) async {
     try {
       log('Updating category...');
-      final blogPostProvider = Provider.of<BlogPostProvider>(context, listen: false);
-
       await FirebaseFirestore.instance
           .collection('blogsCategory')
-          .doc()
+          .doc(id)
           .update({
-        'category': blogPostProvider.categories,
+        'category': name,
       });
 
       log('Category updated successfully');
       ActionProvider.stopLoading();
       AppUtils().showToast(text: 'Category Updated');
+      setUpdate(false, "");
     } catch (e) {
       log('Failed to update category: $e');
       AppUtils().showToast(text: 'Failed to update category');
     }
   }
 
-  void deleteCategory(context,) async{
-    var id =  FirebaseFirestore.instance.collection('blogsCategory').doc().id;
+  void deleteCategory(context,String id) async{
     await FirebaseFirestore.instance.collection('blogsCategory').doc(id).delete();
+    AppUtils().showToast(text: 'category deleted successfully');
   }
 }

@@ -36,6 +36,7 @@ class DropdownProvider with ChangeNotifier {
 class DropdownProviderN with ChangeNotifier {
   String _selectedOption = "Monthly"; // Default option
   String _selectedCategory = "Category"; // Default option
+  String _selectedCategoryId = ""; // Default option
   String _selectedLanguage = "English"; // Default option
   String _selectedTimeZone = "Mountain Time"; // Default option
   String _selectedType = "Type"; // Default option
@@ -46,6 +47,7 @@ class DropdownProviderN with ChangeNotifier {
 
   String get selectedOption => _selectedOption;
   String get selectedCategory => _selectedCategory;
+  String get selectedCategoryId => _selectedCategoryId;
   String get selectedLanguage => _selectedLanguage;
   String get selectedTimeZone => _selectedTimeZone;
   String get selectedType => _selectedType;
@@ -75,8 +77,9 @@ class DropdownProviderN with ChangeNotifier {
     notifyListeners();
   }
 
-  void setSelectedCategory(String category) {
+  void setSelectedCategory(String category, String id) {
     _selectedCategory = category;
+    _selectedCategoryId = id;
     notifyListeners();
   }
 

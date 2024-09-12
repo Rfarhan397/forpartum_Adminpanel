@@ -124,35 +124,35 @@ class AddMealPlanScreen extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              Consumer<DropdownProviderN>(
-                                builder: (context, dropdownProvider, child) {
-                                  return CustomDropdownWidget(
-                                    index: 1,
-                                    items: ['Dietary', 'Dietary'],
-                                    dropdownType: 'Dietary Category',
-                                  );
-                                },
-                              ),                              SizedBox(width: 1.w),
+                              // Consumer<DropdownProviderN>(
+                              //   builder: (context, dropdownProvider, child) {
+                              //     return CustomDropdownWidget(
+                              //       index: 1,
+                              //       items: ['Dietary', 'Dietary'],
+                              //       dropdownType: 'Dietary Category',
+                              //     );
+                              //   },
+                              // ),                              SizedBox(width: 1.w),
 
-                              Consumer<DropdownProviderN>(
-                                builder: (context, dropdownProvider, child) {
-                                  return CustomDropdownWidget(
-                                    index: 2,
-                                    items: ['Status', 'Status'],
-                                    dropdownType: 'Status',
-                                  );
-                                },
-                              ),
+                              // Consumer<DropdownProviderN>(
+                              //   builder: (context, dropdownProvider, child) {
+                              //     return CustomDropdownWidget(
+                              //       index: 2,
+                              //       items: ['Status', 'Status'],
+                              //       dropdownType: 'Status',
+                              //     );
+                              //   },
+                              // ),
                               SizedBox(width: 1.w),
-                              Consumer<DropdownProviderN>(
-                                builder: (context, dropdownProvider, child) {
-                                  return CustomDropdownWidget(
-                                    index: 3,
-                                    items: ['Meal Plan Duration', 'Meal Plan Duration'],
-                                    dropdownType: 'Meal Plan Duration',
-                                  );
-                                },
-                              ),
+                              // Consumer<DropdownProviderN>(
+                              //   builder: (context, dropdownProvider, child) {
+                              //     return CustomDropdownWidget(
+                              //       index: 3,
+                              //       items: ['Meal Plan Duration', 'Meal Plan Duration'],
+                              //       dropdownType: 'Meal Plan Duration',
+                              //     );
+                              //   },
+                              // ),
                               // Consumer<DropdownProvider>(
                               //   builder: (context, provider, child) {
                               //     return Column(
