@@ -81,7 +81,8 @@ class AddNewFaq extends StatelessWidget {
                       fontWeight: FontWeight.normal),
                 )
             ],),
-          )
+          ),
+
         ],
       ),
     );

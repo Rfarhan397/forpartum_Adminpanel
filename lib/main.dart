@@ -10,6 +10,7 @@ import 'package:forpartum_adminpanel/provider/cloudinary/cloudinary_provider.dar
 import 'package:forpartum_adminpanel/provider/constant/password_visibility_provider.dart';
 import 'package:forpartum_adminpanel/provider/dropDOwn/dropdown.dart';
 import 'package:forpartum_adminpanel/provider/libraryCard/card_provider.dart';
+import 'package:forpartum_adminpanel/provider/milestone/mileStoneProvider.dart';
 import 'package:forpartum_adminpanel/provider/navigation/navigationProvider.dart';
 import 'package:forpartum_adminpanel/provider/notification_provider/notification_provider.dart';
 import 'package:forpartum_adminpanel/provider/stream/streamProvider.dart';
@@ -40,18 +41,7 @@ void main() async {
   // FirebaseApi firebaseApi = FirebaseApi();
   // await firebaseApi.initNotifications();
   if (kIsWeb) {
-    await Firebase.initializeApp(
-        // options: const FirebaseOptions(
-        //     // apiKey: "AIzaSyAokug78rxWez2LewCaDbPI20e4qlBbPro",
-        //     // authDomain: "forpartum-620c4.firebaseapp.com",
-        //     // databaseURL: "https://forpartum-620c4-default-rtdb.firebaseio.com",
-        //     // projectId: "forpartum-620c4",
-        //     // storageBucket: "forpartum-620c4.appspot.com",
-        //     // messagingSenderId: "657681276345",
-        //     // appId: "1:657681276345:web:ee7679cd6f404103736a68",
-        //     // measurementId: "G-YKK2EGL075"
-        //   )
-      );
+    await Firebase.initializeApp();
   }
   await ThemeLanguageProvider().loadThemeMode();
   final prefs = await SharedPreferences.getInstance();
@@ -89,6 +79,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => NotificationProviderForNotifications()),
         ChangeNotifierProvider(create: (_) => CloudinaryProvider()),
         ChangeNotifierProvider(create: (_) => StreamDataProvider()),
+        ChangeNotifierProvider(create: (_) => MilestoneProvider()),
       ],
       child: Consumer<ThemeLanguageProvider>(
         builder: (context,provider,child){
@@ -127,7 +118,7 @@ class MyApp extends StatelessWidget {
                       surface: Colors.black
                   ),
                 ),
-                initialRoute: RoutesName.splashScreen,
+                initialRoute: RoutesName.mainScreen,
                 getPages: Routes.routes,
               );
             }

@@ -30,6 +30,14 @@ class AddMealScreen extends StatelessWidget {
   TextEditingController fatController = TextEditingController();
   TextEditingController recipeController = TextEditingController();
   TextEditingController ingredientsController = TextEditingController();
+  TextEditingController recommendedBreakfastController = TextEditingController();
+  TextEditingController descriptionBreakfastController = TextEditingController();
+  TextEditingController recommendedLunchController = TextEditingController();
+  TextEditingController descriptionLunchController = TextEditingController();
+  TextEditingController recommendedSnackController = TextEditingController();
+  TextEditingController descriptionSnackController = TextEditingController();
+  TextEditingController recommendedDinnerController = TextEditingController();
+  TextEditingController descriptionDinnerController = TextEditingController();
   TextEditingController lunchProteinController = TextEditingController();
   TextEditingController lunchCarbsController = TextEditingController();
   TextEditingController lunchFatController = TextEditingController();
@@ -78,6 +86,7 @@ class AddMealScreen extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12.0),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       buildMealFields(
                         context,
@@ -92,6 +101,8 @@ class AddMealScreen extends StatelessWidget {
                         fatController,
                         recipeController,
                         ingredientsController,
+                          recommendedBreakfastController,
+                        descriptionBreakfastController
                       ),
                       buildMealFields(
                         context,
@@ -106,6 +117,9 @@ class AddMealScreen extends StatelessWidget {
                         lunchFatController,
                         lunchRecipeController,
                         lunchIngredientsController,
+                          recommendedLunchController,
+                        descriptionLunchController
+
                       ),
                       buildMealFields(
                         context,
@@ -120,6 +134,8 @@ class AddMealScreen extends StatelessWidget {
                         snackFatController,
                         snackRecipeController,
                         snackIngredientsController,
+                          recommendedSnackController,
+                          descriptionSnackController
                       ),
                       buildMealFields(
                         context,
@@ -134,6 +150,8 @@ class AddMealScreen extends StatelessWidget {
                         dinnerFatController,
                         dinnerRecipeController,
                         dinnerIngredientsController,
+                          recommendedDinnerController,
+                        descriptionDinnerController
                       ),
                     ],
                   ),
@@ -156,16 +174,19 @@ class AddMealScreen extends StatelessWidget {
       TextEditingController fatController,
       TextEditingController recipeController,
       TextEditingController ingredientsController,
+      TextEditingController recommendedController,
+      TextEditingController descriptionController,
+
       ) {
+    bool isRecommended = false; // Track recommendation state
+
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         AppButtonWidget(
           width: 120,
           alignment: Alignment.centerRight,
           onPressed: onPressed,
-          // onPressed: () {
-          //   _uploadMeal(context);
-          // },
           text: 'Upload',
           radius: 20,
         ),
@@ -229,6 +250,15 @@ class AddMealScreen extends StatelessWidget {
 
           ],
         ),
+        // Add the Recommend button here
+        Row(
+          children: [
+            buildNutrientField(recommendedController, 'Recommended', 'eg: Yes/No'),
+            SizedBox(width: 5.w,),
+            buildNutrientField(descriptionController, 'Description', 'Description'),
+          ],
+        ),
+
       ],
     );
   }
@@ -408,6 +438,8 @@ class AddMealScreen extends StatelessWidget {
       TextEditingController fatController,
       TextEditingController recipeController,
       TextEditingController ingredientsController,
+      TextEditingController recommendedController,
+      TextEditingController descriptionController,
       Uint8List? mealImageData
       ) async {
     ActionProvider.startLoading();
@@ -418,6 +450,8 @@ class AddMealScreen extends StatelessWidget {
         fatController.text.isEmpty ||
         recipeController.text.isEmpty ||
         ingredientsController.text.isEmpty ||
+        recommendedController.text.isEmpty ||
+        descriptionController.text.isEmpty ||
         mealImageData == null) {
       ActionProvider.stopLoading();
       AppUtils().showToast(text: 'Please fill all fields and upload an image',);
@@ -441,6 +475,9 @@ class AddMealScreen extends StatelessWidget {
           'Id': mealId.toString(),
           'ingredients': ingredientsController.text,
           'recipe': recipeController.text,
+          'recommended': recommendedController.text.toLowerCase() == 'yes'? "true" : "false",
+          'description': descriptionController.text.toString(),
+          'likes' : [],
         });
 
         ActionProvider.stopLoading();
@@ -468,8 +505,9 @@ class AddMealScreen extends StatelessWidget {
         fatController,
         recipeController,
         ingredientsController,
-        Provider.of<CloudinaryProvider>(context, listen: false).imageData
-    );
+        recommendedBreakfastController,
+        descriptionBreakfastController,
+        Provider.of<CloudinaryProvider>(context, listen: false).imageData,);
   }
 
   Future<void> _uploadLunch(BuildContext context) async {
@@ -482,6 +520,8 @@ class AddMealScreen extends StatelessWidget {
         lunchFatController,
         lunchRecipeController,
         lunchIngredientsController,
+        recommendedLunchController,
+        descriptionLunchController,
         Provider.of<CloudinaryProvider>(context, listen: false).luchImageData
     );
   }
@@ -497,6 +537,8 @@ class AddMealScreen extends StatelessWidget {
         snackFatController,
         snackRecipeController,
         snackIngredientsController,
+        recommendedSnackController,
+        descriptionSnackController,
         Provider.of<CloudinaryProvider>(context, listen: false).snackImageData
     );
   }Future<void> _uploadDinner(BuildContext context) async {
@@ -509,6 +551,8 @@ class AddMealScreen extends StatelessWidget {
         dinnerFatController,
         dinnerRecipeController,
         dinnerIngredientsController,
+        recommendedDinnerController,
+        descriptionDinnerController,
         Provider.of<CloudinaryProvider>(context, listen: false).dinnerImageData
     );
   }

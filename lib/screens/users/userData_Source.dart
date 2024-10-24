@@ -31,18 +31,18 @@ class UserDataSource extends DataTableSource {
                 backgroundColor: Colors.grey,
               ),
                SizedBox(width: 2.w),
-              Text(user.name,style: GoogleFonts.poppins(
+              Text(user.name.toString(),style: GoogleFonts.poppins(
                 fontWeight: FontWeight.w700,
                 fontSize: 12
               ),)
                         ],
                       ),
             )),
-        DataCell(Text(user.email,style: GoogleFonts.poppins(
+        DataCell(Text(user.email.toString(),style: GoogleFonts.poppins(
           fontWeight: FontWeight.w400,
           fontSize: 12,
     ),)),
-        DataCell(Text(user.isActive ? 'Active' : 'Inactive', style: TextStyle(color: user.isActive ? Colors.red : Colors.red))),
+        DataCell(Text(user.status.toString().isNotEmpty? 'Active' : 'Inactive', style: TextStyle(color: user.status.toString().isNotEmpty ? Colors.red : Colors.red))),
         DataCell(
             Row(
           children: [
@@ -90,7 +90,7 @@ class UserDataSource extends DataTableSource {
             const SizedBox(width: 8),
             GestureDetector(
               onTap: () {
-                Provider.of<UserProvider>(context, listen: false).deleteUser(user);
+              //  Provider.of<UserProvider>(context, listen: false).deleteUser(user);
               },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 2.w,vertical: 0.5.h),

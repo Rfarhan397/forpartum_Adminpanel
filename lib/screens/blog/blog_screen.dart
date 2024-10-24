@@ -54,7 +54,7 @@ class _BlogScreenState extends State<BlogScreen> {
                         children: [
                           Row(
                             children: [
-                              GestureDetector(
+                              InkWell(
                                 onTap: () {
                                   Provider.of<MenuAppController>(context, listen: false)
                                       .changeScreen(13);                            },
@@ -77,7 +77,7 @@ class _BlogScreenState extends State<BlogScreen> {
                           SizedBox(width: 3.w,),
                           Row(
                             children: [
-                              GestureDetector(
+                              InkWell(
                                 onTap: () {
                                   Provider.of<MenuAppController>(context, listen: false)
                                       .changeScreen(23);

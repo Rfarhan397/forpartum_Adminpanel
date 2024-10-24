@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -157,8 +158,73 @@ class ActionProvider extends ChangeNotifier{
   }
 
 
+  void deleteItem(String collection,String id) {
+    FirebaseFirestore.instance.collection(collection).doc(id).delete().then((value) {
+      // Success
+    }).catchError((error) {
+      // Handle error
+    });
+  }
 
+  ///to update the value of button on updating speciality
+  String _buttonText = 'upload';
+  String _publishText = 'publish';
 
+  String? _editingId;
+  bool _isUpdate = false;
+  String get buttonText => _buttonText;
+  String get publishText => _publishText;
 
+  String? get editingId => _editingId;
+  bool get isUpdate => _isUpdate;
 
+  void setEditingMode(String id) {
+    _buttonText = 'Update';
+    _publishText = 'Update';
+    _editingId = id;
+    notifyListeners();
+  }
+
+  void resetMode() {
+    _buttonText = 'upload';
+    _publishText = 'publish';
+    _editingId = null;
+    _isUpdate = false;
+    notifyListeners();
+  }
+///to scroll to top///
+  void scrollToTextField(controller) {
+    // Scroll to the TextField position
+    controller.animateTo(
+      10.0, // Adjust this value based on your layout
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+  /////////to show the dialog box for deleting////
+  Future<bool> showDeleteConfirmationDialog(BuildContext context,String title,content) async {
+    return await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title:  Text(title),
+          content:  Text(content),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
+            TextButton(
+              child: const Text('Delete'),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
+        );
+      },
+    ) ?? false;
+  }
 }

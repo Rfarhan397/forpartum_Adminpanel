@@ -15,6 +15,7 @@ class StatsCard extends StatelessWidget {
   final String count;
   final String? percentageIncrease;
   final Color? increaseColor;
+  final VoidCallback? onTap;
 
    StatsCard({
     Key? key,
@@ -26,6 +27,7 @@ class StatsCard extends StatelessWidget {
      this.increaseColor,
      this.progressIcon,
      this.width ,
+     this.onTap ,
   }) : super(key: key);
 
   @override
@@ -34,54 +36,57 @@ class StatsCard extends StatelessWidget {
     final isTablet = Responsive.isTablet(context);
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child:  Container(
-        width: width ?? 18.5.w ,
-        padding: EdgeInsets.symmetric(vertical: 5,horizontal: 15),
-        decoration: BoxDecoration(
-          color: Color(0xffFBF0F3),
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 1.h),
-            CircleAvatar(
-              backgroundColor: iconBackgroundColor,
-              child: Image.asset(iconPath, color: Colors.white, fit: BoxFit.cover,height: 20,),
-            ),
-            SizedBox(height: 2.h),
-            AppTextWidget(
-              text:
-              title,
-                fontSize:  isMobile ? 8:isTablet ? 10:12,
-                color: Colors.grey,
-                fontWeight: FontWeight.w500,
-            ),
-            SizedBox(height: 1.h),
-            AppTextWidget(text:
-              count,
-                fontSize: isMobile ? 14:isTablet ? 18:22,
-                color: Colors.black,
-                fontWeight: FontWeight.w500,
-            ),
-            SizedBox(height: 1.h),
-            Row(
-              children: [
-                SvgPicture.asset(progressIcon ?? 'IconError', color: increaseColor, height: 16),
-                SizedBox(width: 0.2.w),
-                AppTextWidget(text:
-                percentageIncrease??'',
-                    fontSize: isMobile ? 5:isTablet ? 6:10,
-                    softWrap: true,
+      child:  InkWell(
+        onTap: onTap,
+        child: Container(
+          width: width ?? 18.5.w ,
+          padding: EdgeInsets.symmetric(vertical: 5,horizontal: 15),
+          decoration: BoxDecoration(
+            color: Color(0xffFBF0F3),
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 1.h),
+              CircleAvatar(
+                backgroundColor: iconBackgroundColor,
+                child: Image.asset(iconPath, color: Colors.white, fit: BoxFit.cover,height: 20,),
+              ),
+              SizedBox(height: 2.h),
+              AppTextWidget(
+                text:
+                title,
+                  fontSize:  isMobile ? 8:isTablet ? 10:12,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w500,
+              ),
+              SizedBox(height: 1.h),
+              AppTextWidget(text:
+                count,
+                  fontSize: isMobile ? 14:isTablet ? 18:22,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
+              ),
+              SizedBox(height: 1.h),
+              Row(
+                children: [
+                  SvgPicture.asset(progressIcon ?? 'IconError', color: increaseColor, height: 16),
+                  SizedBox(width: 0.2.w),
+                  AppTextWidget(text:
+                  percentageIncrease??'',
+                      fontSize: isMobile ? 5:isTablet ? 6:10,
+                      softWrap: true,
 
-                    color: Colors.black,
-                    fontWeight: FontWeight.w500,
-                ),
-              ],
-            ),
-            SizedBox(height: 1.h),
+                      color: Colors.black,
+                      fontWeight: FontWeight.w500,
+                  ),
+                ],
+              ),
+              SizedBox(height: 1.h),
 
-          ],
+            ],
+          ),
         ),
       ),
     );

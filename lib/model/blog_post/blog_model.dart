@@ -108,6 +108,80 @@ class AddMealCategory{
     );
   }
 }
+class AddLearningCategory{
+  final String category;
+  final String id;
+  final String createdAt;
+
+
+  AddLearningCategory({
+    required this.category,
+    required this.id,
+    required this.createdAt,
+
+  });
+
+
+  factory AddLearningCategory.fromMap(Map<String, dynamic> data) {
+    return AddLearningCategory(
+      category: data['category'] ?? '',
+
+      id: data['id'] ?? '',
+      createdAt: data['createdAt'] ?? '',
+
+    );
+  }
+}
+class AddMilestone{
+  final String title;
+  final String id;
+  final String createdAt;
+
+
+  AddMilestone({
+    required this.title,
+    required this.id,
+    required this.createdAt,
+
+  });
+
+
+  factory AddMilestone.fromMap(Map<String, dynamic> data) {
+    return AddMilestone(
+      title: data['title'] ?? '',
+
+      id: data['id'] ?? '',
+      createdAt: data['createdAt'] ?? '',
+
+    );
+  }
+}
+class AddGuideline{
+  final String question;
+  final String answer;
+  final String id;
+  final String createdAt;
+
+
+  AddGuideline({
+    required this.question,
+    required this.answer,
+    required this.id,
+    required this.createdAt,
+
+  });
+
+
+  factory AddGuideline.fromMap(Map<String, dynamic> data) {
+    return AddGuideline(
+      question: data['question'] ?? '',
+      answer: data['answer'] ?? '',
+      id: data['id'] ?? '',
+      createdAt: data['createdAt'] ?? '',
+
+    );
+  }
+}
 
 
 

@@ -1,8 +1,15 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:forpartum_adminpanel/model/user_model/user_model.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../constant.dart';
+import '../../controller/menu_App_Controller.dart';
 import '../../model/res/components/custom_appBar.dart';
 import '../../model/res/components/pagination.dart';
 import '../../model/res/constant/app_assets.dart';
@@ -15,14 +22,20 @@ class UserDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<ActivityLogProvider>(context);
+    final dataP = Provider.of<MenuAppController>(context);
+    log("image::${dataP.parameters!.imageUrl}");
+    log("status::${dataP.parameters!.status}");
+    log("id::${dataP.parameters!.uid}");
+    log("name::${dataP.parameters!.name}");
+    log("email::${dataP.parameters!.email}");
 
     return Scaffold(
-      appBar: CustomAppbar(text: 'Dashboard'),
+      appBar: const CustomAppbar(text: 'Dashboard'),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Divider(
+            const Divider(
               color: Colors.grey,
               thickness: 1,
             ),
@@ -31,34 +44,74 @@ class UserDetail extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  AppTextWidget(
+                  const AppTextWidget(
                     text: 'Active',
                     fontWeight: FontWeight.w700,
                     fontSize: 12,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 5,
                   ),
-                  AnimatedContainer(
-                    duration: Duration(milliseconds: 300),
-                    width: 50,
-                    height: 25,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: secondaryColor,
-                    ),
-                    child: AnimatedAlign(
-                      duration: Duration(milliseconds: 300),
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        width: 22,
-                        height: 22,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white,
+                  Consumer<MenuAppController>(
+                    builder: (context, dataP, child) {
+                      return GestureDetector(
+                        onTap: () {
+                          log("uid is::${dataP.parameters!.uid.toString()}",);
+                          dataP.toggleActive(dataP.parameters!.uid.toString(),); // Toggle the state on tap
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          width: 50,
+                          height: 25,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            color: dataP.isActive ? secondaryColor : Colors.black12,
+                          ),
+                          child: AnimatedAlign(
+                            duration: const Duration(milliseconds: 300),
+                            alignment: dataP.isActive
+                                ? Alignment.centerRight
+                                : Alignment.centerLeft, // Toggle alignment
+                            child: Container(
+                              width: 22,
+                              height: 22,
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  SizedBox(width: 30,),
+                  Row(
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          // Provider.of<MenuAppController>(context, listen: false)
+                          //     .changeScreen(3);
+                          Provider.of<MenuAppController>(context, listen: false)
+                              .changeScreenWithParams(3,
+                          parameters: dataP.parameters!,
+                          );
+                          },
+                        child: Container(
+                          width: 30,
+                          height: 30,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            color: primaryColor,
+                          ),
+                          child: Center(
+                            child: Icon(Icons.add,color: Colors.white,),
+                          ),
                         ),
                       ),
-                    ),
+                      SizedBox(width: 5,),
+                      AppTextWidgetFira(text: 'Add Insights',fontSize: 14,color: Colors.black,)
+                    ],
                   ),
                 ],
               ),
@@ -72,8 +125,11 @@ class UserDetail extends StatelessWidget {
                   Column(
                     children: [
                       CircleAvatar(
+                        backgroundColor: Colors.transparent,
                         radius: 50,
-                        child: Image.asset(AppAssets.logoImage),
+                        child: dataP.parameters!.imageUrl.toString().isNotEmpty ?
+                        Image.network(dataP.parameters!.imageUrl.toString(),fit: BoxFit.cover,):
+                        Image.asset(AppAssets.logoImage),
                       )
                     ],
                   ),
@@ -82,18 +138,27 @@ class UserDetail extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        buildColumnTile('User Name','Email Address','Status','Last log in',
-                            'Emily Kelly','emilykelly09@gmail.com','ACTIVE','06-25-2024'),
+                        buildColumnTile(
+                            'User Name','Email Address','Status','Last log in',
+                            dataP.parameters!.name.toString().isNotEmpty? dataP.parameters!.name : 'N/A',
+                            dataP.parameters!.email.toString().isNotEmpty? dataP.parameters!.email : 'N/A',
+                            dataP.parameters!.status.toString().isNotEmpty? dataP.parameters!.status : 'N/A',
+                      dataP.parameters!.createdAt.toString().isNotEmpty ? formatTimestamp(dataP.parameters!.createdAt.toString()) : 'N/A',),
                         SizedBox(height: 3.h,),
                         buildColumnTile("Baby's Birth Date:",'Postpartum Phase:','Type of Birth:','Feeding type:',
-                        '05-17-24','Newly Postpartum','Vaginal','Breastfeeding'
+                           dataP.parameters!.birthDate.toString().isNotEmpty? dataP.parameters!.birthDate.toString() : 'N/A',
+                            'Newly Postpartum',
+                            dataP.parameters!.vaginalBirth.toString().isNotEmpty? dataP.parameters!.vaginalBirth : 'N/A',
+                            dataP.parameters!.feedingFormula.toString().isNotEmpty? dataP.parameters!.feedingFormula : 'N/A',
                         ),
                         SizedBox(height: 3.h,),
                         buildColumnTile("Number of Children",'Birth Details:','Dietary Preferences:','',
-                            '1','SingleTon','Traditional',''
+                            dataP.parameters!.child.toString().isNotEmpty? dataP.parameters!.child.toString() : 'N/A',
+                            dataP.parameters!.singletonSection.toString().isNotEmpty? dataP.parameters!.singletonSection.toString() : 'N/A',
+                            'Traditional',''
                         ),
                         SizedBox(height: 3.h,),
-                        AppTextWidget(text: 'Activity logs:',fontWeight: FontWeight.w700,fontSize: 14,),
+                        const AppTextWidget(text: 'Activity logs:',fontWeight: FontWeight.w700,fontSize: 14,),
                        SingleChildScrollView(
                          child: Column(
                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -101,12 +166,12 @@ class UserDetail extends StatelessWidget {
                            children: [
                              Container(
                                width:73.w,
-                               padding: EdgeInsets.all(15),
+                               padding: const EdgeInsets.all(15),
                                decoration: BoxDecoration(
                                    borderRadius: BorderRadius.circular(10),
-                                   color: Color(0xffF1F1F1)
+                                   color: const Color(0xffF1F1F1)
                                ),
-                               child: Row(
+                               child: const Row(
                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                  children: [
                                    TrackerTab(title: 'Sleep Tracker'),
@@ -225,7 +290,7 @@ class UserDetail extends StatelessWidget {
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.all(12.0),
+                      padding: const EdgeInsets.all(12.0),
                       decoration: BoxDecoration(
                         color: primaryColor, // Background color
                         borderRadius:
@@ -280,6 +345,16 @@ class UserDetail extends StatelessWidget {
                   ],
                 );
   }
+  // Function to convert timestamp string to readable date format
+  String formatTimestamp(String timestamp) {
+    if (timestamp.isNotEmpty) {
+      int milliseconds = int.parse(timestamp);
+      DateTime date = DateTime.fromMillisecondsSinceEpoch(milliseconds);
+      // Format the date (you can customize the format as per your needs)
+      return DateFormat('yyyy-MM-dd HH:mm:ss').format(date);
+    }
+    return 'N/A';
+  }
   Widget _buildLogList(ActivityLogProvider provider) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -296,7 +371,7 @@ class UserDetail extends StatelessWidget {
             const SizedBox(height: 5),
             Container(
               alignment: Alignment.centerLeft,
-              padding: EdgeInsets.all(5),
+              padding: const EdgeInsets.all(5),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
               ),
@@ -325,7 +400,7 @@ class TrackerTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 5),
       // width: 14.w,
         child:  Center(
           child: AppTextWidget(text:

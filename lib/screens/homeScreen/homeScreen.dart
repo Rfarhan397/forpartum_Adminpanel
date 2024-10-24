@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import '../../constant.dart';
+import '../../controller/menu_App_Controller.dart';
 import '../../model/res/components/custom_appBar.dart';
 import '../../model/res/components/responsive.dart';
 import '../../model/res/components/stats_card.dart';
@@ -14,6 +15,7 @@ import '../../provider/constant/age_distribution/age_distribution.dart';
 import '../../provider/constant/graphic_pie/pie_chart.dart';
 import '../../provider/dropDOwn/dropdown.dart';
 import '../../provider/notification_provider/notification_provider.dart';
+import '../../provider/user_provider/user_provider.dart';
 import 'component/mobile_stat.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -25,6 +27,29 @@ class HomeScreen extends StatelessWidget {
 
     final dropdownProvider = Provider.of<DropdownProvider>(context);
     final notifications = Provider.of<NotificationProvider>(context).notifications;
+    final userProvider = Provider.of<UserProvider>(context);
+
+    final users = userProvider.users;
+    final activeUsersCount = users.where((user) => user.status == 'isActive').length;
+    final totalUsersCount = users.length;
+
+    // Get the current month and year
+    final currentMonth = DateTime.now().month;
+    final currentYear = DateTime.now().year;
+
+    // Filter users who created their accounts in the current month
+    final newSignupsCount = users.where((user) {
+      final createdAtTimestampString = user.createdAt; // Assuming createdAt is a String?
+      if (createdAtTimestampString != null) {
+        final createdAtTimestamp = int.tryParse(createdAtTimestampString);
+        if (createdAtTimestamp != null) {
+          final createdAt = DateTime.fromMillisecondsSinceEpoch(createdAtTimestamp);
+          return createdAt.month == currentMonth && createdAt.year == currentYear;
+        }
+      }
+      return false;
+    }).length;
+
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldColor,
@@ -63,11 +88,15 @@ class HomeScreen extends StatelessWidget {
                 Row(
                 children: [
                   StatsCard(
+                    onTap: () {
+                      Provider.of<MenuAppController>(context, listen: false)
+                          .changeScreen(1);
+                    },
                     iconPath: AppIcons.totalUsers,
                     progressIcon: 'assets/icons/arrowUp.svg',
                     iconBackgroundColor: secondaryColor,
                     title: 'Total Users',
-                    count: '10,000',
+                    count: totalUsersCount.toString(),
                     percentageIncrease: '12% increase from last month',
                     increaseColor: Colors.green,
                   ),
@@ -76,7 +105,7 @@ class HomeScreen extends StatelessWidget {
                     iconPath: AppIcons.activeUser,
                     iconBackgroundColor: primaryColor,
                     title: 'Active Users',
-                    count: '95,000',
+                    count: activeUsersCount.toString(),
                     percentageIncrease: '10% decrease from last month',
                     increaseColor: Colors.red,
                   ),
@@ -85,7 +114,7 @@ class HomeScreen extends StatelessWidget {
                     iconPath: AppIcons.time,
                     iconBackgroundColor: secondaryColor,
                     title: 'New Signups',
-                    count: '2,000',
+                    count: newSignupsCount.toString(),
                     percentageIncrease: '8% increase from last month',
                     increaseColor: Colors.green,
                   ),
@@ -238,28 +267,35 @@ class HomeScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(15)
       ),
       child: Center(
-        child: DropdownButtonHideUnderline(
-          child: DropdownButton<String>(
-            dropdownColor: color,
-            value: text,
-            icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white),
-            iconSize: 15,
-            style: const TextStyle(color: Colors.white, fontSize: 12),
-            onChanged: (String? newValue) {
-              // Handle dropdown value change
-              if (newValue != null) {
-                // Do something when a new value is selected
-              }
-            },
-            items: <String>[text, 'Option 1', 'Option 2', 'Option 3'] // Dropdown menu items
-                .map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Center(child: AppTextWidgetNunito(text: value,color: Colors.white,)),
-              );
-            }).toList(),
-          ),
-        ),
+        child: Row(
+          children: [
+            AppTextWidget(text: text, color: Colors.white),
+            SizedBox(width: 0.5.w),
+            Icon(Icons.keyboard_arrow_down,size: 15, color: Colors.white),
+          ],
+        )
+        // DropdownButtonHideUnderline(
+        //   child: DropdownButton<String>(
+        //     dropdownColor: color,
+        //     value: text,
+        //     icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white),
+        //     iconSize: 15,
+        //     style: const TextStyle(color: Colors.white, fontSize: 12),
+        //     onChanged: (String? newValue) {
+        //       // Handle dropdown value change
+        //       if (newValue != null) {
+        //         // Do something when a new value is selected
+        //       }
+        //     },
+        //     items: <String>[text, 'Option 1', 'Option 2', 'Option 3'] // Dropdown menu items
+        //         .map<DropdownMenuItem<String>>((String value) {
+        //       return DropdownMenuItem<String>(
+        //         value: value,
+        //         child: Center(child: AppTextWidgetNunito(text: value,color: Colors.white,)),
+        //       );
+        //     }).toList(),
+        //   ),
+        // ),
       ),
     );
   }

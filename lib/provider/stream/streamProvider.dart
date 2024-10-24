@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:forpartum_adminpanel/model/user_model/user_model.dart';
 
 import '../../model/blog_post/blog_model.dart';
 
@@ -48,6 +49,15 @@ class StreamDataProvider extends ChangeNotifier{
       }).toList();
     });
   }
+  //this is for getting learning categories from firebase
+  Stream<List<AddLearningCategory>> getLearningCategories() {
+    // String? userUID = auth.currentUser?.uid.toString();
+    return FirebaseFirestore.instance.collection('learningCategories').snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return AddLearningCategory.fromMap(doc.data());
+      }).toList();
+    });
+  }
 
 
   Stream<List<AddMeal>> getMealPlan() {
@@ -55,6 +65,30 @@ class StreamDataProvider extends ChangeNotifier{
     return FirebaseFirestore.instance.collection('addMeal').snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
         return AddMeal.fromMap(doc.data());
+      }).toList();
+    });
+  }
+  Stream<List<AddMilestone>> getMilestones() {
+    // String? userUID = auth.currentUser?.uid.toString();
+    return FirebaseFirestore.instance.collection('milestones').snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return AddMilestone.fromMap(doc.data());
+      }).toList();
+    });
+  }
+  Stream<List<AddGuideline>> getGuideline() {
+    // String? userUID = auth.currentUser?.uid.toString();
+    return FirebaseFirestore.instance.collection('guideline').snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return AddGuideline.fromMap(doc.data());
+      }).toList();
+    });
+  }
+  Stream<List<User>> getUsers() {
+    // String? userUID = auth.currentUser?.uid.toString();
+    return FirebaseFirestore.instance.collection('users').snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return User.fromMap(doc.data());
       }).toList();
     });
   }

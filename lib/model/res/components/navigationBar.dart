@@ -139,6 +139,18 @@ class CustomNavigationBar extends StatelessWidget {
                   title: "Menu settings",
                   svgSrc: "assets/icons/setting.svg",
                 ),
+                const DrawerListTile(
+                  index: 25,
+                  screenIndex: 25,
+                  title: "Guidelines",
+                  svgSrc: "assets/icons/setting.svg",
+                ),
+                const DrawerListTile(
+                  index: 26,
+                  screenIndex: 26,
+                  title: "Learning Center",
+                  svgSrc: "assets/icons/setting.svg",
+                ),
                 SizedBox(
                   height: defaultDrawerHeadHeight,
                 ),

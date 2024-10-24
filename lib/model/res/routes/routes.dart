@@ -16,7 +16,7 @@ import '../../../screens/meal_plans/add_meal_plan.dart';
 import '../../../screens/meal_plans/meal_plans.dart';
 import '../../../screens/meal_plans/view_meal.dart';
 import '../../../screens/menu_settings/FAQ/addNewFaq.dart';
-import '../../../screens/menu_settings/FAQ/faq_detailScreen.dart';
+import '../../../screens/menu_settings/FAQ/faqScreen.dart';
 import '../../../screens/menu_settings/menu_setting.dart';
 import '../../../screens/menu_settings/policy/addNewPolicy.dart';
 import '../../../screens/menu_settings/policy/privacy.dart';
@@ -45,7 +45,7 @@ class Routes {
     GetPage(name: RoutesName.cardDetailsScreen, page: () => LibraryCardDetails()),
     GetPage(name: RoutesName.cardDetailsScreen, page: () => MenuSetting()),
     GetPage(name: RoutesName.menuSettingsDetailScreen, page: () => MenuSettingsDetailScreen()),
-    GetPage(name: RoutesName.faqDetailScreen, page: () => FaqDetailscreen()),
+    GetPage(name: RoutesName.faqDetailScreen, page: () => FaqScreen()),
     GetPage(name: RoutesName.faqAddScreen, page: () => AddNewFaq()),
     GetPage(name: RoutesName.privacyPolicy, page: () => PrivacyScreen()),
     GetPage(name: RoutesName.addNewPolicy, page: () => AddNewPolicy()),

@@ -7,9 +7,12 @@ import '../../model/res/components/navigationBar.dart';
 import '../../model/res/components/responsive.dart';
 import '../../model/res/routes/routes_name.dart';
 import '../../provider/navigation/navigationProvider.dart';
+import '../LearningCenter/learningCategory.dart';
+import '../LearningCenter/learningCenterScreen.dart';
 import '../blog/add_blog_screen.dart';
 import '../blog/blog_screen.dart';
 import '../chat_support/chat_support.dart';
+import '../guidline/guidelineScreen.dart';
 import '../insight/insight.dart';
 import '../library/libraryCard_details.dart';
 import '../library/library_screen.dart';
@@ -19,7 +22,7 @@ import '../meal_plans/add_meal_plan.dart';
 import '../meal_plans/meal_plans.dart';
 import '../meal_plans/view_meal.dart';
 import '../menu_settings/FAQ/addNewFaq.dart';
-import '../menu_settings/FAQ/faq_detailScreen.dart';
+import '../menu_settings/FAQ/faqScreen.dart';
 import '../menu_settings/menu_setting.dart';
 import '../menu_settings/policy/addNewPolicy.dart';
 import '../menu_settings/policy/privacy.dart';
@@ -92,7 +95,7 @@ class MainScreen extends StatelessWidget {
           screen = LibraryCardDetails();
           break;
           case 15:
-          screen = FaqDetailscreen();
+          screen = FaqScreen();
           break;
           case 16:
           screen = PrivacyScreen();
@@ -108,14 +111,27 @@ class MainScreen extends StatelessWidget {
           break;
           case 20:
           screen =  AddNotification();
-          break; case 21:
+          break;
+          case 21:
           screen =  AddNewFaq();
-          break; case 22:
+          break;
+          case 22:
           screen =  AddNewPolicy();
-          break;case 23:
+          break;
+          case 23:
           screen =  AddCategory();
-          break;case 24:
+          break;
+          case 24:
           screen =  AddMealCategory();
+          break;
+          case 25:
+          screen =  GuidelineScreen();
+          break;
+          case 26:
+          screen =  LearningCenterScreen();
+          break;
+          case 27:
+          screen =  LearningCategory();
           break;
 
       default:

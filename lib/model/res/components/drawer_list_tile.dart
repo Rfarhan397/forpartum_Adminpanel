@@ -38,7 +38,7 @@ class DrawerListTile extends StatelessWidget {
             },
             child: GestureDetector(
               onTap: () {
-                provider.parameters?.clear();
+                // provider.parameters?.clear();
                 textColorProvider.setActiveIndex(index);
                 Provider.of<MenuAppController>(context, listen: false)
                     .changeScreen(screenIndex);

@@ -15,6 +15,17 @@ class BlogPostProvider extends ChangeNotifier {
   List<String> _mealCategories = [];
   List<Map<String, String>> _filteredPosts = [];
   int _currentPage = 1;
+  //for user screen//pagination
+  int _currentUserPage = 1;
+  int get currentUserPage => _currentUserPage;
+  void goToUserPage(int page) {
+    _currentUserPage = page;
+    notifyListeners(); // This is important to update the UI when the page changes
+  }
+
+
+
+
   final int _postsPerPage = 12;
 
   bool _isUpdate = false;
@@ -125,6 +136,22 @@ class BlogPostProvider extends ChangeNotifier {
       log("Error fetching categories: $e");
     }
   }
+  Future<void> fetchLearningCategories() async {
+    try {
+      final snapshot = await FirebaseFirestore.instance.collection('learningCategories').orderBy(
+        'createdAt' , descending: false
+      ).get();
+      _categories = snapshot.docs.map((doc) => doc['category'] as String).toList();
+       _categoriesIds = snapshot.docs.map((doc) => doc.id).toList();
+      log('Fetched categories: ${categories.toString()}');
+      log('categories are: ${_categories}');
+      log('categoriesId are: ${_categoriesIds}');
+
+      notifyListeners();
+    } catch (e) {
+      log("Error fetching categories: $e");
+    }
+  }
 
   void updateCategory(BuildContext context, String id,String name) async {
     try {
@@ -145,9 +172,32 @@ class BlogPostProvider extends ChangeNotifier {
       AppUtils().showToast(text: 'Failed to update category');
     }
   }
+  void updateLearningCategory(BuildContext context, String id,String name) async {
+    try {
+      log('Updating category...');
+      await FirebaseFirestore.instance
+          .collection('learningCategories')
+          .doc(id)
+          .update({
+        'category': name,
+      });
+
+      log('Category updated successfully');
+      ActionProvider.stopLoading();
+      AppUtils().showToast(text: 'Category Updated');
+      setUpdate(false, "");
+    } catch (e) {
+      log('Failed to update category: $e');
+      AppUtils().showToast(text: 'Failed to update category');
+    }
+  }
 
   void deleteCategory(context,String id) async{
     await FirebaseFirestore.instance.collection('blogsCategory').doc(id).delete();
+    AppUtils().showToast(text: 'category deleted successfully');
+  }
+  void deleteLearningCategory(context,String id) async{
+    await FirebaseFirestore.instance.collection('learningCategories').doc(id).delete();
     AppUtils().showToast(text: 'category deleted successfully');
   }
 }

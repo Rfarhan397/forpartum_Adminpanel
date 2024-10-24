@@ -84,7 +84,7 @@ class PrivacyScreen extends StatelessWidget {
                   itemBuilder: (context, index) {
                     var document = snapshot.data!.docs[index];
                     var privacyPolicy = document['privacy'];  // Assuming 'privacy' is the field storing the policy
-                    var createdAt = (document['created_at'] as Timestamp).toDate();  // Convert Timestamp to DateTime
+                    var createdAt = (document['created_at'].toString());  // Convert Timestamp to DateTime
 
                     return Card(
                       margin: const EdgeInsets.all(8.0),
