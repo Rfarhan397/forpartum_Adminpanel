@@ -10,12 +10,19 @@ import '../../../controller/menu_App_Controller.dart';
 import '../../../model/res/components/custom_appBar.dart';
 import '../../../model/res/constant/app_utils.dart';
 import '../../../model/res/widgets/app_text.dart.dart';
+import '../../../model/res/widgets/button_widget.dart';
+import '../../../provider/action/action_provider.dart';
 
 class TermsNCondition extends StatelessWidget {
-  const TermsNCondition({super.key});
+   TermsNCondition({super.key});
+  TextEditingController _termsConditionsController = TextEditingController();
+   TextEditingController _scrollController = TextEditingController();
 
-  @override
+
+   @override
   Widget build(BuildContext context) {
+    final action = Provider.of<ActionProvider>(context);
+
     return  Scaffold(
       appBar: const CustomAppbar(text: 'Terms and Conditions'),
       body: Column(
@@ -25,30 +32,93 @@ class TermsNCondition extends StatelessWidget {
             height: 1,
             color: Colors.grey,
           ),
+          // Padding(
+          //   padding: EdgeInsets.only(left: 2.w, top: 7.h),
+          // //   child: Row(
+          // //     children: [
+          //     child:   GestureDetector(
+          //         // hoverColor: Colors.transparent,
+          //         // highlightColor: Colors.transparent,
+          //         // splashColor: Colors.transparent,
+          //         // onTap: () {
+          //         //   Provider.of<MenuAppController>(context, listen: false)
+          //         //       .changeScreen(18);
+          //         // },
+          //         child: AddButton(text: 'Add New Policy')
+          //       ),
+          // //       SizedBox(
+          // //         width: 2.w,
+          // //       ),
+          // //       InkWell(
+          // //         hoverColor: Colors.transparent,
+          // //         highlightColor: Colors.transparent,
+          // //         splashColor: Colors.transparent,
+          // //         onTap: () {},
+          // //         child: AddButton(text: 'Edit'),
+          // //       ),
+          // //     ],
+          // //   ),
+          // ),
           Padding(
-            padding: const EdgeInsets.all(18.0),
-            child: Row(
+            padding: EdgeInsets.only(left: 2.w, top: 7.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                InkWell(
-                  hoverColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  splashColor: Colors.transparent,
-                  onTap: () {
-                    Provider.of<MenuAppController>(context, listen: false)
-                        .changeScreen(18);
-                  },
-                  child: AddButton(text: 'Add New Policy')
-                ),
-                SizedBox(
-                  width: 2.w,
-                ),
-                InkWell(
-                  hoverColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  splashColor: Colors.transparent,
-                  onTap: () {},
-                  child: AddButton(text: 'Edit'),
-                ),
+                AppTextWidget(
+                    text: 'Add New Term & Condiyion:',
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18),
+                SizedBox(height: 1.h,),
+                Container(
+                  width: 40.w,
+                  child: Column(
+                    children: [
+                      Container(
+                        height: 20.h,
+                        width: 70.w,// 50% of screen height
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black.withOpacity(0.8)),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child:  TextField(
+                          controller: _termsConditionsController,
+                          maxLines: null, // Allows the text to wrap within the height
+                          expands: true,  // Expands the TextField to fill the parent container
+                          decoration: InputDecoration(
+                              contentPadding: EdgeInsets.all(12.0),
+                              border: InputBorder.none,
+                              hintText: '',
+                              hintStyle: TextStyle(
+                                fontWeight: FontWeight.w900,fontSize: 15,
+                              )
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 4.h,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                            SizedBox(width: 2.w,),
+                          Consumer<ActionProvider>(
+                            builder: (context, value, child) {
+                              return ButtonWidget(
+                                  text: value.publishText,
+                                  onClicked: () {
+                                    if (value.editingId == null) {
+                                      _publishPolicy();
+                                    } else {
+                                      _updatePolicy(context, value.editingId!);
+                                    }
+                              },
+                                  borderColor: secondaryColor,
+                                  width: 100,height: 35, fontWeight: FontWeight.normal);
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                )
               ],
             ),
           ),
@@ -73,77 +143,109 @@ class TermsNCondition extends StatelessWidget {
                 }
 
                 // Data exists, build the list
-                return ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (context, index) {
-                    var document = snapshot.data!.docs[index];
-                    var termCondition = document['term&Condition'];  // Assuming 'privacy' is the field storing the policy
-                    var createdAt = (document['created_at']).toString();  // Convert Timestamp to DateTime
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AppTextWidget(
+                      text: 'Recent Term & Conditions',
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      textAlign: TextAlign.left,
+                    ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: snapshot.data!.docs.length,
+                      itemBuilder: (context, index) {
+                        var document = snapshot.data!.docs[index];
+                        var termCondition = document['term&Condition'];  // Assuming 'privacy' is the field storing the policy
+                        var createdAt = (document['created_at']).toString();  // Convert Timestamp to DateTime
 
-                    return Card(
-                      margin: const EdgeInsets.all(8.0),
-                      child: ListTile(
-                        title: AppTextWidget(text: termCondition,maxLines: 80,textAlign: TextAlign.start,fontWeight: FontWeight.w900,fontSize: 15,),
-                        subtitle: AppTextWidget(text: 'Published on: ${createdAt.toString()}',maxLines: 80,textAlign: TextAlign.start,fontWeight: FontWeight.w900,fontSize: 15,),
-                      ),
-                    );
-                  },
+                        return Card(
+                          margin: const EdgeInsets.all(8.0),
+                          child: ListTile(
+                            title: AppTextWidget(text: termCondition,maxLines: 80,textAlign: TextAlign.start,fontWeight: FontWeight.w900,fontSize: 15,),
+                            subtitle: AppTextWidget(text: 'Published on: ${createdAt.toString()}',maxLines: 80,textAlign: TextAlign.start,fontWeight: FontWeight.w900,fontSize: 15,),
+                            trailing: SizedBox(
+                              height: 50,
+                              width: 20.w,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.edit, color: secondaryColor),
+                                    onPressed: () {
+                                      _termsConditionsController.text = document['term&Condition'];
+                                      action.setEditingMode(document['id']);
+                                      action.scrollToTextField(_scrollController);
+
+                                    },
+                                  ),
+
+                                  // Delete Icon
+                                  IconButton(
+                                    icon: const Icon(Icons.delete, color: primaryColor),
+                                    onPressed: () async {
+                                      bool confirmDelete = await action.showDeleteConfirmationDialog(context,'Delete!','Are you sure you want to delete?');
+                                      if (confirmDelete) {
+                                        action.deleteItem('term&Conditions', document['id']);
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                          ),
+                        );
+                      },
+                    ),
+                  ],
                 );
               },
             ),
           ),
-          // Padding(
-          //   padding: const EdgeInsets.all(16.0),
-          //   child: Container(
-          //     height: 80.h,
-          //     width: 90.w,
-          //     child: ScrollConfiguration(
-          //       behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
-          //       child: ListView(
-          //           shrinkWrap: true,
-          //
-          //           scrollDirection: Axis.vertical,
-          //           children: [
-          //             AppTextWidget(text: '1.ABOUT',underlinecolor: Colors.black,textAlign: TextAlign.start,textDecoration: TextDecoration.underline,fontWeight: FontWeight.w900,fontSize: 15,),
-          //             AppTextWidget(
-          //               text: 'Figma, Inc. and its affiliates’ (“Figma,” “we,” “us,” and “our”) goal is to make design accessible to all. '
-          //                   'This Privacy Policy will help you understand how we collect, use and share your personal information and assist'
-          //                   ' you in exercising the privacy rights available to you.Capitalized terms not defined in this Privacy Policy have the meanings set forth in our Terms of Service.'
-          //               ,maxLines: 80,textAlign: TextAlign.start,fontWeight: FontWeight.w900,fontSize: 15,),
-          //             SizedBox(height: 3.h,),
-          //             AppTextWidget(text: '2.SCOPE',underlinecolor: Colors.black,textAlign: TextAlign.start,textDecoration: TextDecoration.underline,fontWeight: FontWeight.w900,fontSize: 15,),
-          //             AppTextWidget(
-          //               text: 'This Privacy Policy applies to personal information processed by us, '
-          //                   'including on our websites (e.g., figma.com, designsystems.com and any other websites that we own or operate),'
-          //                   ' our mobile applications, our application program interfaces, our design tool services, and our related online and '
-          //                   'offline offerings (collectively, the “Services”).This Privacy Policy does not apply to any third-party websites, '
-          //                   'services or applications, even if they are accessible through our Services. In addition, a separate privacy notice, '
-          //                   'available upon request if it applies toyou, governs processing relating to our current employees and contractors.'
-          //               ,maxLines: 80,textAlign: TextAlign.start,fontWeight: FontWeight.w900,fontSize: 15,),                  SizedBox(height: 3.h,),
-          //             AppTextWidget(text: '3.Personal Information We Collect',underlinecolor: Colors.black,textAlign: TextAlign.start,textDecoration: TextDecoration.underline,fontWeight: FontWeight.w900,fontSize: 15,),
-          //             AppTextWidget(
-          //               text: 'The personal information we collect depends on how you interact with our Services.',maxLines: 80,textAlign: TextAlign.start,fontWeight: FontWeight.w900,fontSize: 15,),                  SizedBox(height: 3.h,),
-          //
-          //             AppTextWidget(text: 'Information You Provide To Us',underlinecolor: Colors.black,textAlign: TextAlign.start,textDecoration: TextDecoration.underline,fontWeight: FontWeight.w900,fontSize: 15,),
-          //             AppTextWidget(
-          //               text: "Account Information.When you create a Figma account, we collect the personal information you provide to us, such as your name, email address, personal website, and picture. If you enable phone based two-factor authentication, we collect a phone number.Payment Information. Where we sell products and services through the Services, we use third-party applications, such as the Apple App Store, Google Play App Store, Amazon App Store, and/or services such as Stripe to process your payments. These third-party applications will collect information from you to process a payment on behalf of Figma, including your name, email address, mailing address, payment card information, and other billing information. Figma does not receive or store your payment information, but it may receive and store information associated with your payment information (e.g., the fact that you have paid, the last four digits or your credit card information, and your country of origin).Communication Information. We collect personal information from you such as email address, phone number,"
-          //                   " mailing address, and marketing preferences when you request information about the Services, register for our newsletter, or otherwise communicate with us."
-          //                   "Account Information.When you create a Figma account, we collect the personal information you provide to us, such as your name, email address, personal website, and picture. If you enable phone based two-factor authentication, we collect a phone number.Payment Information. Where we sell products and services through the Services, we use third-party applications, such as the Apple App Store, Google Play App Store, Amazon App Store, and/or services such as Stripe to process your payments. These third-party applications will collect information from you to process a payment on behalf of Figma, including your name, email address, mailing address, payment card information, and other billing information. Figma does not receive or store your payment information, but it may receive and store information associated with your payment information (e.g., the fact that you have paid, the last four digits or your credit card information, and your country of origin).Communication Information. We collect personal information from you such as email address, phone number,"
-          //                   " mailing address, and marketing preferences when you request information about the Services, register for our newsletter, or otherwise communicate with us."
-          //                   "Account Information.When you create a Figma account, we collect the personal information you provide to us, such as your name, email address, personal website, and picture. If you enable phone based two-factor authentication, we collect a phone number.Payment Information. Where we sell products and services through the Services, we use third-party applications, such as the Apple App Store, Google Play App Store, Amazon App Store, and/or services such as Stripe to process your payments. These third-party applications will collect information from you to process a payment on behalf of Figma, including your name, email address, mailing address, payment card information, and other billing information. Figma does not receive or store your payment information, but it may receive and store information associated with your payment information (e.g., the fact that you have paid, the last four digits or your credit card information, and your country of origin).Communication Information. We collect personal information from you such as email address, phone number,"
-          //                   " mailing address, and marketing preferences when you request information about the Services, register for our newsletter, or otherwise communicate with us."
-          //               ,maxLines: 80,textAlign: TextAlign.start,fontWeight: FontWeight.w900,fontSize: 15,),                  SizedBox(height: 3.h,),
-          //           ]
-          //       ),
-          //     ),
-          //   ),
-          // ),
         ],
       ),
     );
   }
-  /// Function to show the edit dialog
+   void _publishPolicy() async {
+     ActionProvider.stopLoading();
+     if (_termsConditionsController.text.isEmpty) {
+       AppUtils().showToast(text: 'Please enter the Terms & Condition');
+       ActionProvider.stopLoading();  // Stop loading if the text is empty
+       return;  // Stop execution if the text is empty
+     }
+
+     try {
+       var id = FirebaseFirestore.instance.collection('term&Conditions').doc().id;  // Generate the document ID
+       await FirebaseFirestore.instance.collection('term&Conditions').doc(id).set({
+         'term&Condition': _termsConditionsController.text,  // Ensure the controller text is used
+         'id': id,
+         'created_at': DateTime.now().millisecondsSinceEpoch.toString(),
+       });
+       ActionProvider.stopLoading();  // Stop loading
+       AppUtils().showToast(text: 'Terms & Conditions updated successfully');
+       _termsConditionsController.clear();
+     } catch (e) {
+       ActionProvider.stopLoading();  // Stop loading if error occurred during update
+       log("Error updating Terms & Conditions: $e");  // Log the error
+       AppUtils().showToast(text: 'Failed to update  Terms & Conditions');
+     }
+   }
+   void _updatePolicy(BuildContext context, String id) {
+     FirebaseFirestore.instance.collection('term&Conditions').doc(id).update({
+       'term&Condition': _termsConditionsController.text,
+     }).then((value) {
+       _termsConditionsController.clear();
+       Provider.of<ActionProvider>(context, listen: false).resetMode();
+       AppUtils().showToast(text: 'Updated successfully!');
+
+     }).catchError((error) {
+       AppUtils().showToast(text: 'Failed to Update: $error');
+
+     });
+   }
+   /// Function to show the edit dialog
   void _showEditDialog(BuildContext context, String docId, String currentPolicy) {
     final TextEditingController _editController = TextEditingController(text: currentPolicy);
 

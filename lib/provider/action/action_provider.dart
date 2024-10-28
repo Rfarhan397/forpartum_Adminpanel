@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../model/res/constant/app_utils.dart';
 import '../../model/services/enum/toastType.dart';
 
 class ActionProvider extends ChangeNotifier{
@@ -220,6 +221,8 @@ class ActionProvider extends ChangeNotifier{
               child: const Text('Delete'),
               onPressed: () {
                 Navigator.of(context).pop(true);
+                AppUtils().showToast(text: 'Deleted successfully');
+
               },
             ),
           ],
