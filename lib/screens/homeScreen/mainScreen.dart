@@ -31,6 +31,7 @@ import '../menu_settings/termsNCondition/addTermsNConditions.dart';
 import '../menu_settings/termsNCondition/termsNCondition.dart';
 import '../notifications/AddNotification.dart';
 import '../notifications/notifications.dart';
+import '../trackers/trackerScreen.dart';
 import '../users/user_detail.dart';
 import '../users/user_screen.dart';
 import 'homeScreen.dart';
@@ -132,6 +133,9 @@ class MainScreen extends StatelessWidget {
           break;
           case 27:
           screen =  LearningCategory();
+          break;
+          case 28:
+          screen =  TrackerScreen();
           break;
 
       default:

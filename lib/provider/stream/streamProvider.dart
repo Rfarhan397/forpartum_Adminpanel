@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:forpartum_adminpanel/model/user_model/user_model.dart';
 
 import '../../model/blog_post/blog_model.dart';
+import '../../model/tracker/trackerModel.dart';
 
 class StreamDataProvider extends ChangeNotifier{
 
@@ -92,5 +93,45 @@ class StreamDataProvider extends ChangeNotifier{
       }).toList();
     });
   }
+  Stream<List<TrackerQuestionModel>> getTrackerLog({int? limit, required String type}) {
+    Query query =  FirebaseFirestore.instance.collection("trackerLog");
+    if (limit != null) {
+      query = query.limit(limit);
+    }
 
+    if(type.isNotEmpty){
+      query = query.where("type",isEqualTo: type);
+    }
+
+
+    return query.snapshots().asyncMap((snapshot) async {
+      final questionWithOptions = await Future.wait(snapshot.docs.map((doc) async {
+        final questionData = doc.data() as Map<String, dynamic>;
+        final question = TrackerQuestionModel.fromMap(questionData);
+
+        // Fetch options for the current question
+        final optionsSnapshot = await  FirebaseFirestore.instance.collection("trackerLog")
+            .doc(doc.id) // Use the document ID of the current question
+            .collection('options') // Assuming options are in a sub-collection named 'options'
+            .get();
+
+        if (optionsSnapshot.docs.isNotEmpty) {
+          question.optionModel = optionsSnapshot.docs
+              .map((optionDoc) => TrackerOptionModel.fromMap(optionDoc.data()))
+              .toList();
+        }
+        return question;
+      }).toList());
+      return questionWithOptions;
+    });
+  }
+  Stream<QuerySnapshot> getStressOptionsStream({String? type}) {
+    Query query = FirebaseFirestore.instance
+        .collection("trackerLog");
+
+    if (type != null && type.isNotEmpty) {
+      query = query.where('type', isEqualTo: type);
+    }
+    return query.snapshots();
+  }
 }

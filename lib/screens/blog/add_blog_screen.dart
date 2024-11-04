@@ -18,7 +18,7 @@ import '../../provider/cloudinary/cloudinary_provider.dart';
 import '../../provider/dropDOwn/dropdown.dart';
 
 class AddBlogScreen extends StatefulWidget {
-  AddBlogScreen({super.key});
+  const AddBlogScreen({super.key});
 
   @override
   State<AddBlogScreen> createState() => _AddBlogScreenState();

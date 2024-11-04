@@ -45,55 +45,6 @@ class LibraryCardDetails extends StatelessWidget {
                 color: Colors.grey[300],
               ),
               SizedBox(height: 1.h),
-              // Padding(
-              //   padding:  EdgeInsets.symmetric(horizontal: 2.w,vertical: 2.h),
-              //   child: Row(
-              //     mainAxisAlignment: MainAxisAlignment.start,
-              //     children: categories.map((category) {
-              //       final isSelected =
-              //           chipProvider.selectedCategory == category;
-              //       final isHovered = chipProvider.hoveredCategory == category;
-              //       return Padding(
-              //         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              //         child: MouseRegion(
-              //           onEnter: (_) {
-              //             chipProvider.setHoveredCategory(category);
-              //           },
-              //           onExit: (_) {
-              //             chipProvider.clearHoveredCategory();
-              //           },
-              //           child: GestureDetector(
-              //             onTap: () {
-              //               chipProvider.selectCategory(category);
-              //             },
-              //             child: Container(
-              //               padding: const EdgeInsets.symmetric(
-              //                   vertical: 5.0, horizontal: 14.0),
-              //               decoration: BoxDecoration(
-              //                 color: isSelected
-              //                     ? primaryColor
-              //                     : isHovered
-              //                         ? primaryColor
-              //                         : secondaryColor,
-              //                 borderRadius: BorderRadius.circular(8.0),
-              //               ),
-              //               child: AppTextWidget(
-              //                 text: category,
-              //                 color: isSelected
-              //                     ? Colors.white
-              //                     : isHovered
-              //                         ? Colors.white
-              //                         : Colors.white,
-              //                 fontWeight: FontWeight.w400,
-              //               ),
-              //             ),
-              //           ),
-              //         ),
-              //       );
-              //     }).toList(),
-              //   ),
-              // ),
-
               Padding(
                 padding:  EdgeInsets.symmetric(horizontal: 2.w,vertical: 1.h),
                 child: Row(

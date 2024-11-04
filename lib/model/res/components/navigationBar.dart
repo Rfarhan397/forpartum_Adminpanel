@@ -39,7 +39,7 @@ class CustomNavigationBar extends StatelessWidget {
                           height: 60,
                         ),
                         SizedBox(width: 0.4.w),
-                         AppTextWidget(
+                         const AppTextWidget(
                           text: 'Forpartum',
                           color: Colors.white,
                           fontSize: 14,
@@ -74,7 +74,7 @@ class CustomNavigationBar extends StatelessWidget {
                               ),
                             ),
                             SizedBox(width: 1.w),
-                             AppTextWidget(
+                             const AppTextWidget(
                               text: 'Create new\nproject',
                               fontSize: 12,
                               fontWeight: FontWeight.w400,
@@ -140,6 +140,12 @@ class CustomNavigationBar extends StatelessWidget {
                   svgSrc: "assets/icons/setting.svg",
                 ),
                 const DrawerListTile(
+                  index: 28,
+                  screenIndex: 28,
+                  title: "Trackers",
+                  svgSrc: "assets/icons/setting.svg",
+                ),
+                const DrawerListTile(
                   index: 25,
                   screenIndex: 25,
                   title: "Guidelines",
@@ -151,7 +157,7 @@ class CustomNavigationBar extends StatelessWidget {
                   title: "Learning Center",
                   svgSrc: "assets/icons/setting.svg",
                 ),
-                SizedBox(
+                const SizedBox(
                   height: defaultDrawerHeadHeight,
                 ),
               ],
@@ -160,11 +166,11 @@ class CustomNavigationBar extends StatelessWidget {
           Align(
             alignment: Alignment.bottomLeft,
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 25,vertical: 28),
+              padding: const EdgeInsets.symmetric(horizontal: 25,vertical: 28),
               child:   Container(
                 height: 40,
                 width: 40,
-                padding: EdgeInsets.all( 8),
+                padding: const EdgeInsets.all( 8),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   color: primaryColor,

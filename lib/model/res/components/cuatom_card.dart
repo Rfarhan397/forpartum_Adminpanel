@@ -15,10 +15,27 @@ class CustomCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: () {
-        Provider.of<MenuAppController>(context, listen: false)
-            .changeScreen(14);      },
+
+        switch (title) {
+          case 'CBT Sessions':
+            // Provider.of<MenuAppController>(context, listen: false)
+            //     .changeScreen(14);
+            break;
+          case 'Milestone':
+            Provider.of<MenuAppController>(context, listen: false)
+                .changeScreen(14);
+            break;
+          case 'Tackers':
+            Provider.of<MenuAppController>(context, listen: false)
+                .changeScreen(28);
+            break;
+          default:
+          // Optionally handle an unknown title case
+            break;
+        }
+        },
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),

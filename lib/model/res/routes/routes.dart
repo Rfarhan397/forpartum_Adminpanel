@@ -30,7 +30,7 @@ import '../../../screens/splash/splash_screen.dart';
 class Routes {
   static final routes = [
     GetPage(name: RoutesName.splashScreen, page: () => SplashScreen()),
-    GetPage(name: RoutesName.homeScreen, page: () => HomeScreen()),
+    GetPage(name: RoutesName.homeScreen, page: () => HomeScreen(),),
     GetPage(name: RoutesName.mainScreen, page: () => MainScreen()),
     GetPage(name: RoutesName.userDetails, page: () => UserDetail()),
     GetPage(name: RoutesName.chatSupport, page: () => ChatSupportScreen()),
@@ -42,7 +42,7 @@ class Routes {
     GetPage(name: RoutesName.addMeal, page: () => BlogScreen()),
     GetPage(name: RoutesName.addBlogPost, page: () => AddBlogScreen()),
     GetPage(name: RoutesName.libraryScreen, page: () => LibraryScreen()),
-    GetPage(name: RoutesName.cardDetailsScreen, page: () => LibraryCardDetails()),
+    GetPage(name: RoutesName.cardDetailsScreen, page: () => LibraryCardDetails(),),
     GetPage(name: RoutesName.cardDetailsScreen, page: () => MenuSetting()),
     GetPage(name: RoutesName.menuSettingsDetailScreen, page: () => MenuSettingsDetailScreen()),
     GetPage(name: RoutesName.faqDetailScreen, page: () => FaqScreen()),

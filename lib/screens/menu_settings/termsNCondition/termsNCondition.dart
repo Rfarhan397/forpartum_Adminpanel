@@ -157,7 +157,7 @@ class TermsNCondition extends StatelessWidget {
                       itemCount: snapshot.data!.docs.length,
                       itemBuilder: (context, index) {
                         var document = snapshot.data!.docs[index];
-                        var termCondition = document['term&Condition'];  // Assuming 'privacy' is the field storing the policy
+                        var termCondition = document['text'];  // Assuming 'privacy' is the field storing the policy
                         var createdAt = (document['created_at']).toString();  // Convert Timestamp to DateTime
 
                         return Card(
@@ -174,7 +174,7 @@ class TermsNCondition extends StatelessWidget {
                                   IconButton(
                                     icon: const Icon(Icons.edit, color: secondaryColor),
                                     onPressed: () {
-                                      _termsConditionsController.text = document['term&Condition'];
+                                      _termsConditionsController.text = document['text'];
                                       action.setEditingMode(document['id']);
                                       action.scrollToTextField(_scrollController);
 
@@ -219,7 +219,7 @@ class TermsNCondition extends StatelessWidget {
      try {
        var id = FirebaseFirestore.instance.collection('term&Conditions').doc().id;  // Generate the document ID
        await FirebaseFirestore.instance.collection('term&Conditions').doc(id).set({
-         'term&Condition': _termsConditionsController.text,  // Ensure the controller text is used
+         'text': _termsConditionsController.text,  // Ensure the controller text is used
          'id': id,
          'created_at': DateTime.now().millisecondsSinceEpoch.toString(),
        });
@@ -234,7 +234,7 @@ class TermsNCondition extends StatelessWidget {
    }
    void _updatePolicy(BuildContext context, String id) {
      FirebaseFirestore.instance.collection('term&Conditions').doc(id).update({
-       'term&Condition': _termsConditionsController.text,
+       'text': _termsConditionsController.text,
      }).then((value) {
        _termsConditionsController.clear();
        Provider.of<ActionProvider>(context, listen: false).resetMode();

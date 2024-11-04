@@ -16,6 +16,7 @@ import 'package:forpartum_adminpanel/provider/notification_provider/notification
 import 'package:forpartum_adminpanel/provider/stream/streamProvider.dart';
 import 'package:forpartum_adminpanel/provider/textColor/text_color_provider.dart';
 import 'package:forpartum_adminpanel/provider/theme/theme_provider.dart';
+import 'package:forpartum_adminpanel/provider/tracker/trackerProvider.dart';
 import 'package:forpartum_adminpanel/provider/user_provider/user_provider.dart';
 
 import 'package:get/get.dart';
@@ -80,6 +81,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CloudinaryProvider()),
         ChangeNotifierProvider(create: (_) => StreamDataProvider()),
         ChangeNotifierProvider(create: (_) => MilestoneProvider()),
+        ChangeNotifierProvider(create: (_) => TrackerProvider()),
       ],
       child: Consumer<ThemeLanguageProvider>(
         builder: (context,provider,child){

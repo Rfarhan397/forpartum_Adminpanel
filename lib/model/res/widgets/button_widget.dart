@@ -38,7 +38,7 @@ class ButtonWidget extends StatelessWidget {
     final isDarkMode = Provider.of<ThemeLanguageProvider>(context).isDarkMode;
     final actionProvider = Provider.of<ActionProvider>(context);
 
-    return GestureDetector(
+    return InkWell(
       onTap: onClicked,
       child: Container(
         padding: EdgeInsets.symmetric(

@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:forpartum_adminpanel/provider/blog/blog_provider.dart';
 import 'package:provider/provider.dart';
@@ -26,15 +25,22 @@ class CustomDropdownWidget extends StatefulWidget {
 
 class _CustomDropdownWidgetState extends State<CustomDropdownWidget> {
   OverlayEntry? _overlayEntry;
+  OverlayEntry? _backgroundOverlayEntry; // Additional overlay for outside tap detection
 
   void _showDropdown(BuildContext context) {
     _overlayEntry = _createOverlayEntry(context);
+    _backgroundOverlayEntry = _createBackgroundOverlayEntry();
+
+    // Insert the overlay entries to display dropdown and detect outside taps
+    Overlay.of(context)?.insert(_backgroundOverlayEntry!);
     Overlay.of(context)?.insert(_overlayEntry!);
   }
 
   void _hideDropdown() {
     _overlayEntry?.remove();
-    _overlayEntry = null;  // Ensure the overlay is nullified after being removed
+    _backgroundOverlayEntry?.remove();
+    _overlayEntry = null;
+    _backgroundOverlayEntry = null;
   }
 
   OverlayEntry _createOverlayEntry(BuildContext context) {
@@ -46,7 +52,7 @@ class _CustomDropdownWidgetState extends State<CustomDropdownWidget> {
       builder: (context) {
         return Positioned(
           left: offset.dx,
-          top: offset.dy + size.height + 5, // Add extra space from the top
+          top: offset.dy + size.height + 5,
           width: size.width,
           child: Material(
             color: Colors.transparent,
@@ -63,10 +69,10 @@ class _CustomDropdownWidgetState extends State<CustomDropdownWidget> {
                 padding: EdgeInsets.zero,
                 shrinkWrap: true,
                 children: widget.items.map((item) {
-                  return GestureDetector(
+                  return InkWell(
                     onTap: () {
                       _updateSelectedValue(context, item);
-                      _hideDropdown();  // Close the dropdown after selection
+                      _hideDropdown();
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 5.0),
@@ -77,7 +83,6 @@ class _CustomDropdownWidgetState extends State<CustomDropdownWidget> {
                         textAlign: TextAlign.start,
                         overflow: TextOverflow.ellipsis,
                         color: Colors.black,
-
                       ),
                     ),
                   );
@@ -90,26 +95,32 @@ class _CustomDropdownWidgetState extends State<CustomDropdownWidget> {
     );
   }
 
+  OverlayEntry _createBackgroundOverlayEntry() {
+    return OverlayEntry(
+      builder: (context) {
+        return GestureDetector(
+          onTap: _hideDropdown,
+          child: Container(
+            color: Colors.transparent, // Transparent background for detecting outside taps
+          ),
+        );
+      },
+    );
+  }
+
   void _updateSelectedValue(BuildContext context, String item) {
     final dropdownProvider = Provider.of<DropdownProviderN>(context, listen: false);
     final idProvider = Provider.of<BlogPostProvider>(context, listen: false);
 
-
-
-    // Find the index of the selected item
     int selectedIndex = widget.items.indexOf(item);
-    String selectId = "";
-    if(selectedIndex > 0){
-      selectId = idProvider.categoriesIds[selectedIndex].toString();
-    }else{
-      selectId = "";
-    }
+    String selectId = selectedIndex >= 0 ? idProvider.categoriesIds[selectedIndex].toString() : "";
+
     log("Selected Index:: $selectedIndex");
     log("Selected Id:: $selectId");
 
     switch (widget.dropdownType) {
       case 'Category':
-        dropdownProvider.setSelectedCategory(item,selectId);
+        dropdownProvider.setSelectedCategory(item, selectId);
         break;
       case 'Language':
         dropdownProvider.setSelectedLanguage(item);
@@ -133,7 +144,7 @@ class _CustomDropdownWidgetState extends State<CustomDropdownWidget> {
         break;
     }
 
-    dropdownProvider.toggleDropdownVisibility(widget.index); // Close the dropdown after selection
+    dropdownProvider.toggleDropdownVisibility(widget.index);
   }
 
   @override
@@ -145,7 +156,7 @@ class _CustomDropdownWidgetState extends State<CustomDropdownWidget> {
           String selectedItem = _getSelectedItem(dropdownProvider);
           bool isDropdownVisible = dropdownProvider.isDropdownVisible(widget.index);
 
-          return GestureDetector(
+          return InkWell(
             onTap: () {
               dropdownProvider.closeOtherDropdowns(widget.index);
               if (isDropdownVisible) {
@@ -153,7 +164,7 @@ class _CustomDropdownWidgetState extends State<CustomDropdownWidget> {
               } else {
                 _showDropdown(context);
               }
-              dropdownProvider.toggleDropdownVisibility(widget.index);  // Ensure visibility toggles correctly
+              dropdownProvider.toggleDropdownVisibility(widget.index);
             },
             child: Container(
               height: widget.dropdownHeight,
@@ -208,7 +219,8 @@ class _CustomDropdownWidgetState extends State<CustomDropdownWidget> {
       case 'MealPlanDuration':
         return dropdownProvider.selectedMealPlanDuration;
       default:
-        return 'Select Option'; // Default placeholder text
+        return 'Select Option';
     }
   }
+
 }

@@ -3,15 +3,12 @@ import 'package:flutter/material.dart';
 class CardProvider with ChangeNotifier {
   final List<String> _titles = [
     'CBT Sessions',
-    'DBT Sessions',
-    'Quizzes',
     'Milestone',
-    'Meditation',
-    'Postpartum Body'
+    'Tackers'
   ];
 
   int _currentPage = 0;
-  final int _itemsPerPage = 6;
+  final int _itemsPerPage = 7;
 
   List<String> get currentCards {
     int start = _currentPage * _itemsPerPage;
