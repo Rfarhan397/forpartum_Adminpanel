@@ -77,66 +77,66 @@ class UserScreen extends StatelessWidget {
                       endIndent: 20,
                     ),
                   ),
-                  DropdownButton<String>(
-                    value: dropdownProvider.selectedValue,
-                    items: <String>['Last 30 Days', 'Last 10 Days', 'Yesterday']
-                        .map((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: AppTextWidget(text: value),
-                      );
-                    }).toList(),
-                    onChanged: (String? newValue) {
-                      if (newValue != null) {
-                        dropdownProvider.setSelectedValue(newValue);
-                      }
-                    },
-                    underline: const SizedBox(),
-                    icon:
-                        const Icon(Icons.arrow_drop_down, color: Colors.black),
-                  ),
+                  // DropdownButton<String>(
+                  //   value: dropdownProvider.selectedValue,
+                  //   items: <String>['Last 30 Days', 'Last 10 Days', 'Yesterday']
+                  //       .map((String value) {
+                  //     return DropdownMenuItem<String>(
+                  //       value: value,
+                  //       child: AppTextWidget(text: value),
+                  //     );
+                  //   }).toList(),
+                  //   onChanged: (String? newValue) {
+                  //     if (newValue != null) {
+                  //       dropdownProvider.setSelectedValue(newValue);
+                  //     }
+                  //   },
+                  //   underline: const SizedBox(),
+                  //   icon:
+                  //       const Icon(Icons.arrow_drop_down, color: Colors.black),
+                  // ),
                 ],
               ),
-              Row(
-                children: [
-                  StatsCard(
-                    iconPath: AppIcons.totalUsers,
-                    progressIcon: 'assets/icons/arrowUp.svg',
-                    iconBackgroundColor: secondaryColor,
-                    title: 'Total Users',
-                    count: totalUsersCount.toString(),
-                    percentageIncrease: '12% increase from last month',
-                    increaseColor: Colors.green,
-                  ),
-                  StatsCard(
-                    progressIcon: 'assets/icons/arrowdown.svg',
-                    iconPath: AppIcons.activeUser,
-                    iconBackgroundColor: primaryColor,
-                    title: 'Active Users',
-                    count: activeUsersCount.toString(),
-                    percentageIncrease: '10% decrease from last month',
-                    increaseColor: Colors.red,
-                  ),
-                  StatsCard(
-                    progressIcon: 'assets/icons/arrowUp.svg',
-                    iconPath: AppIcons.time,
-                    iconBackgroundColor: secondaryColor,
-                    title: 'New Signups',
-                    count: newSignupsCount.toString(),
-                    percentageIncrease: '8% increase from last month',
-                    increaseColor: Colors.green,
-                  ),
-                  StatsCard(
-                    progressIcon: 'assets/icons/arrowUp.svg',
-                    iconPath: AppIcons.feedback,
-                    iconBackgroundColor: primaryColor,
-                    title: 'Feedback',
-                    count: '600',
-                    percentageIncrease: '2% increase from last month',
-                    increaseColor: Colors.green,
-                  ),
-                ],
-              ),
+              // Row(
+              //   children: [
+              //     StatsCard(
+              //       iconPath: AppIcons.totalUsers,
+              //       progressIcon: 'assets/icons/arrowUp.svg',
+              //       iconBackgroundColor: secondaryColor,
+              //       title: 'Total Users',
+              //       count: totalUsersCount.toString(),
+              //       percentageIncrease: '12% increase from last month',
+              //       increaseColor: Colors.green,
+              //     ),
+              //     StatsCard(
+              //       progressIcon: 'assets/icons/arrowdown.svg',
+              //       iconPath: AppIcons.activeUser,
+              //       iconBackgroundColor: primaryColor,
+              //       title: 'Active Users',
+              //       count: activeUsersCount.toString(),
+              //       percentageIncrease: '10% decrease from last month',
+              //       increaseColor: Colors.red,
+              //     ),
+              //     StatsCard(
+              //       progressIcon: 'assets/icons/arrowUp.svg',
+              //       iconPath: AppIcons.time,
+              //       iconBackgroundColor: secondaryColor,
+              //       title: 'New Signups',
+              //       count: newSignupsCount.toString(),
+              //       percentageIncrease: '8% increase from last month',
+              //       increaseColor: Colors.green,
+              //     ),
+              //     StatsCard(
+              //       progressIcon: 'assets/icons/arrowUp.svg',
+              //       iconPath: AppIcons.feedback,
+              //       iconBackgroundColor: primaryColor,
+              //       title: 'Feedback',
+              //       count: '600',
+              //       percentageIncrease: '2% increase from last month',
+              //       increaseColor: Colors.green,
+              //     ),
+              //   ],
+              // ),
               SizedBox(height: 2.h),
               Container(
                 width: double.infinity,

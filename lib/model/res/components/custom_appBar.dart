@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:forpartum_adminpanel/model/res/components/app_back_button.dart';
 import 'package:forpartum_adminpanel/model/res/components/responsive.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -30,36 +31,36 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
             Spacer(
               flex: 3,
             ),
-            if(!isMobile)
-              Container(
-              width: 250,
-              height: 40,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: Row(
-                  children: [
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: 'Search for anything...',
-                          fillColor: Colors.white,
-                          hintStyle: GoogleFonts.poppins(
-                            fontSize: 10,
-                            color: Colors.grey.shade400
-                          ),
-                          border: InputBorder.none,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            // if(!isMobile)
+            //   Container(
+            //   width: 250,
+            //   height: 40,
+            //   decoration: BoxDecoration(
+            //     color: Colors.white,
+            //     borderRadius: BorderRadius.circular(20),
+            //   ),
+            //   child: Padding(
+            //     padding: const EdgeInsets.symmetric(horizontal: 15),
+            //     child: Row(
+            //       children: [
+            //         SizedBox(width: 10),
+            //         Expanded(
+            //           child: TextField(
+            //             decoration: InputDecoration(
+            //               hintText: 'Search for anything...',
+            //               fillColor: Colors.white,
+            //               hintStyle: GoogleFonts.poppins(
+            //                 fontSize: 10,
+            //                 color: Colors.grey.shade400
+            //               ),
+            //               border: InputBorder.none,
+            //             ),
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
             Spacer(),
             Container(
               decoration: BoxDecoration(

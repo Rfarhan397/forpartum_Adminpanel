@@ -37,4 +37,5 @@ class ActivityLogProvider with ChangeNotifier {
     _currentPage = page;
     notifyListeners();
   }
+
 }

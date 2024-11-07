@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
-
 import '../../../constant.dart';
 import '../../../model/res/components/responsive.dart';
 import '../../../model/res/widgets/app_text.dart.dart';
 
 class AgeDistribution extends StatelessWidget {
+  final Map<String, double> ageDistribution;
+
+  AgeDistribution({required this.ageDistribution});
+
   @override
   Widget build(BuildContext context) {
     final isMobile = Responsive.isMobile(context);
@@ -28,14 +31,15 @@ class AgeDistribution extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AppTextWidgetNunito(text:
-            'Age Distribution',
-            fontSize: isMobile ? 12:18, fontWeight: FontWeight.w700),
+          AppTextWidgetNunito(
+              text: 'Age Distribution',
+              fontSize: isMobile ? 12 : 18,
+              fontWeight: FontWeight.w700),
           SizedBox(height: 2.h),
-          _buildAgeRow('16-18', 0.05, primaryColor),
-          _buildAgeRow('20-30', 0.35, secondaryColor),
-          _buildAgeRow('30-40', 0.35, primaryColor),
-          _buildAgeRow('40+', 0.25, Colors.grey),
+          _buildAgeRow('16-18', ageDistribution['16-18'] ?? 0, primaryColor),
+          _buildAgeRow('20-30', ageDistribution['20-30'] ?? 0, secondaryColor),
+          _buildAgeRow('30-40', ageDistribution['30-40'] ?? 0, primaryColor),
+          _buildAgeRow('40+', ageDistribution['40+'] ?? 0, Colors.grey),
         ],
       ),
     );
@@ -51,7 +55,8 @@ class AgeDistribution extends StatelessWidget {
             children: [
               AppTextWidget(text: ageGroup, fontSize: 12),
               SizedBox(width: 1.w),
-              AppTextWidgetNunito(text: '${(percentage * 100).toInt()}%', fontSize: 12  ),
+              AppTextWidgetNunito(
+                  text: '${(percentage * 100).toInt()}%', fontSize: 12),
             ],
           ),
           SizedBox(height: 1.h),
@@ -61,17 +66,14 @@ class AgeDistribution extends StatelessWidget {
                 height: 4,
                 decoration: BoxDecoration(
                     color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(2)
-                ),
+                    borderRadius: BorderRadius.circular(2)),
               ),
               FractionallySizedBox(
                 widthFactor: percentage,
                 child: Container(
                   height: 4,
                   decoration: BoxDecoration(
-                      color: color,
-                      borderRadius: BorderRadius.circular(2)
-                  ),
+                      color: color, borderRadius: BorderRadius.circular(2)),
                 ),
               ),
             ],

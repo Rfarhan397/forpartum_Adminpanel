@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class BlogPost {
   final String imageUrl;
   final String title;
   final String category;
   final String readTime;
   final String content;
+  final String createdAt;
 
   BlogPost({
     required this.imageUrl,
@@ -11,6 +14,7 @@ class BlogPost {
     required this.category,
     required this.readTime,
     required this.content,
+    required this.createdAt,
   });
 
 
@@ -21,6 +25,7 @@ class BlogPost {
       category: data['category'] ?? '',
       readTime: data['readTime'] ?? '',
       content: data['content'] ?? '',
+      createdAt: (data['createdAt']).toString(), // Convert Timestamp to DateTime
     );
   }
 }

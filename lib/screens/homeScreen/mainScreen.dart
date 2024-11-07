@@ -62,7 +62,7 @@ class MainScreen extends StatelessWidget {
         break;
 
       case 5:
-        screen = const MealPlanScreen();
+        screen =  MealPlanScreen();
         break;
 
       case 6:
@@ -161,7 +161,7 @@ class MainScreen extends StatelessWidget {
               ),
             ],
           ),
-          if (Responsive.isDesktop(context))
+          // if (Responsive.isDesktop(context))
             Positioned(
               left: 15.8.w, // Adjust this value as needed
               top: 2.2.h, // Adjust this value as needed
@@ -179,7 +179,7 @@ class MainScreen extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(left: 4.0),
                     child: Icon(
-                      Icons.arrow_back_ios, // Replace with your desired icon
+                      Icons.arrow_back_ios,
                       color: Colors.black,
                       size: 12,
                     ),

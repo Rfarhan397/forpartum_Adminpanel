@@ -54,6 +54,42 @@ class HomeScreen extends StatelessWidget {
     final feeedback = Provider.of<UserProvider>(context)..fetchFeedbacks();
     final feedbackCount = feeedback.feedbacks.length;
 
+    ///age///
+    final ageGroups = {
+      '16-18': users.where((user) {
+        final ageInt = int.tryParse(user.age ?? '0'); // Convert age to int, handle null safely
+        return ageInt != null && ageInt >= 16 && ageInt <= 18;
+      }).length,
+      '20-30': users.where((user) {
+        final ageInt = int.tryParse(user.age ?? '');
+        return ageInt != null && ageInt >= 20 && ageInt <= 30;
+      }).length,
+      '30-40': users.where((user) {
+        final ageInt = int.tryParse(user.age ?? '');
+        return ageInt != null && ageInt >= 30 && ageInt <= 40;
+      }).length,
+      '40+': users.where((user) {
+        final ageInt = int.tryParse(user.age ?? '');
+        return ageInt != null && ageInt > 40;
+      }).length,
+    };
+
+
+    final ageDistributionPercentages = ageGroups.map((ageRange, count) {
+      final percentage = totalUsersCount > 0 ? (count / totalUsersCount) : 0;
+      return MapEntry(ageRange, percentage.toDouble());
+    });
+    final previousTotalUsersCount = 100;
+    final previousActiveUsersCount = 80;
+    final previousNewSignupsCount = 10;
+    final previousFeedbackCount = 5;
+
+    // Calculate percentage changes
+    final totalUsersPercentageChange = _calculatePercentageChange(totalUsersCount, previousTotalUsersCount);
+    final activeUsersPercentageChange = _calculatePercentageChange(activeUsersCount, previousActiveUsersCount);
+    final newSignupsPercentageChange = _calculatePercentageChange(newSignupsCount, previousNewSignupsCount);
+    final feedbackPercentageChange = _calculatePercentageChange(feedbackCount, previousFeedbackCount);
+
     return Scaffold(
       backgroundColor: AppColors.scaffoldColor,
       appBar: const CustomAppbar(text: 'Overview',),
@@ -65,29 +101,32 @@ class HomeScreen extends StatelessWidget {
             children: [
               SizedBox(height: 1.h,),
                Divider(color: Colors.grey.shade400,height: 1,),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                   AppTextWidget(text: 'Users',fontWeight: FontWeight.w500,fontSize: isMobile? 10:18,),
-                  DropdownButton<String>(
-                    value: dropdownProvider.selectedValue,
-                    items: <String>['Last 30 Days', 'Last 10 Days', 'Yesterday'].map((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: AppTextWidget(text: value),
-                      );
-                    }).toList(),
-                    onChanged: (String? newValue) {
-                      if (newValue != null) {
-                        dropdownProvider.setSelectedValue(newValue);
-                      }
-                    },
-                    underline: const SizedBox(),
-                    icon: const Icon(Icons.keyboard_arrow_down_outlined,size: 15, color: Colors.black),
-                  ),
-                ],
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                     AppTextWidget(text: 'Users',fontWeight: FontWeight.w500,fontSize: isMobile? 10:18,),
+                    // DropdownButton<String>(
+                    //   value: dropdownProvider.selectedValue,
+                    //   items: <String>['Last 30 Days', 'Last 10 Days', 'Yesterday'].map((String value) {
+                    //     return DropdownMenuItem<String>(
+                    //       value: value,
+                    //       child: AppTextWidget(text: value),
+                    //     );
+                    //   }).toList(),
+                    //   onChanged: (String? newValue) {
+                    //     if (newValue != null) {
+                    //       dropdownProvider.setSelectedValue(newValue);
+                    //     }
+                    //   },
+                    //   underline: const SizedBox(),
+                    //   icon: const Icon(Icons.keyboard_arrow_down_outlined,size: 15, color: Colors.black),
+                    // ),
+                  ],
+                ),
               ),
-              !Responsive.isMobile(context) ?
+              //!Responsive.isMobile(context) ?
                 Row(
                 children: [
                   StatsCard(
@@ -96,43 +135,48 @@ class HomeScreen extends StatelessWidget {
                           .changeScreen(1);
                     },
                     iconPath: AppIcons.totalUsers,
-                    progressIcon: 'assets/icons/arrowUp.svg',
+                    progressIcon: totalUsersPercentageChange >= 0 ? 'assets/icons/arrowUp.svg' : 'assets/icons/arrowDown.svg',
                     iconBackgroundColor: secondaryColor,
                     title: 'Total Users',
                     count: totalUsersCount.toString(),
-                    percentageIncrease: '12% increase from last month',
-                    increaseColor: Colors.green,
+                    percentageIncrease: '${totalUsersPercentageChange.abs().toStringAsFixed(2)}% ${totalUsersPercentageChange >= 0 ? 'increase' : 'decrease'} from last month',
+                    increaseColor: totalUsersPercentageChange >= 0 ? Colors.green : Colors.red,
+
                   ),
                   StatsCard(
-                    progressIcon: 'assets/icons/arrowdown.svg',
+                    progressIcon: activeUsersPercentageChange >= 0 ? 'assets/icons/arrowUp.svg' : 'assets/icons/arrowDown.svg',
                     iconPath: AppIcons.activeUser,
                     iconBackgroundColor: primaryColor,
                     title: 'Active Users',
                     count: activeUsersCount.toString(),
-                    percentageIncrease: '10% decrease from last month',
-                    increaseColor: Colors.red,
+                    percentageIncrease: '${activeUsersPercentageChange.abs().toStringAsFixed(2)}% ${activeUsersPercentageChange >= 0 ? 'increase' : 'decrease'} from last month',
+                    increaseColor: activeUsersPercentageChange >= 0 ? Colors.green : Colors.red,
+
                   ),
                   StatsCard(
-                    progressIcon: 'assets/icons/arrowUp.svg',
+                    progressIcon: newSignupsPercentageChange >= 0 ? 'assets/icons/arrowUp.svg' : 'assets/icons/arrowDown.svg',
                     iconPath: AppIcons.time,
                     iconBackgroundColor: secondaryColor,
                     title: 'New Signups',
                     count: newSignupsCount.toString(),
-                    percentageIncrease: '8% increase from last month',
-                    increaseColor: Colors.green,
+                    percentageIncrease: '${newSignupsPercentageChange.abs().toStringAsFixed(2)}% ${newSignupsPercentageChange >= 0 ? 'increase' : 'decrease'} from last month',
+                    increaseColor: newSignupsPercentageChange >= 0 ? Colors.green : Colors.red,
+
                   ),
                   StatsCard(
-                    progressIcon: 'assets/icons/arrowUp.svg',
+                    progressIcon: feedbackPercentageChange >= 0 ? 'assets/icons/arrowUp.svg' : 'assets/icons/arrowDown.svg',
                     iconPath: AppIcons.feedback,
                     iconBackgroundColor: primaryColor,
                     title: 'Feedback',
                     count: feedbackCount.toString(),
-                    percentageIncrease: '2% increase from last month',
-                    increaseColor: Colors.green,
+                    percentageIncrease: '${feedbackPercentageChange.abs().toStringAsFixed(2)}% ${feedbackPercentageChange >= 0 ? 'increase' : 'decrease'} from last month',
+                    increaseColor: feedbackPercentageChange >= 0 ? Colors.green : Colors.red,
+
                   ),
 
                 ],
-              ) : const MobileStat(),
+              ) ,
+                  //: const MobileStat(),
                SizedBox(height: 3.h,),
               Container(
                 child: Row(
@@ -231,9 +275,9 @@ class HomeScreen extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            AgeDistribution(),
+                            AgeDistribution(ageDistribution: ageDistributionPercentages,),
                              SizedBox(height: 2.h),
-                            GeographicalDistribution(),
+                           // GeographicalDistribution(),
                           ],
                         ),
                       ),
@@ -302,5 +346,17 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
+// Helper function to calculate the percentage change
+  double _calculatePercentageChange(int currentValue, int previousValue) {
+    if (previousValue == 0) {
+      return 100.0; // Assume 100% increase if there was no data last month
+    }
+    return ((currentValue - previousValue) / previousValue) * 100;
+  }
 
+  // Helper function to get age from a timestamp (assuming `age` is in timestamp format)
+  int _getAge(int birthYear) {
+    final currentYear = DateTime.now().year;
+    return currentYear - birthYear;
+  }
 }

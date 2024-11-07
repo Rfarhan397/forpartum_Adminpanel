@@ -172,6 +172,25 @@ class BlogPostProvider extends ChangeNotifier {
       AppUtils().showToast(text: 'Failed to update category');
     }
   }
+  void updateMealCategory(BuildContext context, String id,String name) async {
+    try {
+      log('Updating category...');
+      await FirebaseFirestore.instance
+          .collection('mealCategory')
+          .doc(id)
+          .update({
+        'mealCategory': name,
+      });
+
+      log('Category updated successfully');
+      ActionProvider.stopLoading();
+      AppUtils().showToast(text: 'Category Updated');
+      setUpdate(false, "");
+    } catch (e) {
+      log('Failed to update category: $e');
+      AppUtils().showToast(text: 'Failed to update category');
+    }
+  }
   void updateLearningCategory(BuildContext context, String id,String name) async {
     try {
       log('Updating category...');
@@ -196,6 +215,13 @@ class BlogPostProvider extends ChangeNotifier {
     await FirebaseFirestore.instance.collection('blogsCategory').doc(id).delete();
     AppUtils().showToast(text: 'category deleted successfully');
   }
+
+  void deleteMealCategory(context,String id) async{
+    await FirebaseFirestore.instance.collection('mealCategory').doc(id).delete();
+    AppUtils().showToast(text: 'category deleted successfully');
+  }
+
+
   void deleteLearningCategory(context,String id) async{
     await FirebaseFirestore.instance.collection('learningCategories').doc(id).delete();
     AppUtils().showToast(text: 'category deleted successfully');

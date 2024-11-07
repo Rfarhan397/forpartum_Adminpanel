@@ -134,4 +134,24 @@ class StreamDataProvider extends ChangeNotifier{
     }
     return query.snapshots();
   }
+
+
+  Stream<List<Tracker>> getTrackerLogs({int? limit, String? type,required String uid}) {
+    Query query = FirebaseFirestore.instance
+          .collection("users").doc(uid).collection("tracker");
+    if (limit != null) {
+      query = query.limit(limit);
+    }
+    if (type != null && type.isNotEmpty) {
+          query = query.where('type', isEqualTo: type);
+        }
+
+    return query.snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return Tracker.fromMap(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
+
 }

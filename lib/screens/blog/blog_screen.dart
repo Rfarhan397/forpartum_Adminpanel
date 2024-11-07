@@ -101,73 +101,32 @@ class _BlogScreenState extends State<BlogScreen> {
                           SizedBox(width: 5,),
                         ],
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                        child: Container(
-                          alignment: Alignment.centerRight,
-                          child: DropdownButton<String>(
-                            value: dropdownProvider.selectedValue,
-                            items: <String>['Last 30 Days', 'Last 10 Days', 'Yesterday'].map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: AppTextWidget(text: value),
-                              );
-                            }).toList(),
-                            onChanged: (String? newValue) {
-                              if (newValue != null) {
-                                dropdownProvider.setSelectedValue(newValue);
-                              }
-                            },
-                            underline: SizedBox(),
-                            icon: Icon(Icons.arrow_drop_down, color: Colors.black),
-                          ),
-                        ),
-                      ),
+                      // Padding(
+                      //   padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                      //   child: Container(
+                      //     alignment: Alignment.centerRight,
+                      //     child: DropdownButton<String>(
+                      //       value: dropdownProvider.selectedValue,
+                      //       items: <String>['Last 30 Days', 'Last 10 Days', 'Yesterday'].map((String value) {
+                      //         return DropdownMenuItem<String>(
+                      //           value: value,
+                      //           child: AppTextWidget(text: value),
+                      //         );
+                      //       }).toList(),
+                      //       onChanged: (String? newValue) {
+                      //         if (newValue != null) {
+                      //           dropdownProvider.setSelectedValue(newValue);
+                      //         }
+                      //       },
+                      //       underline: SizedBox(),
+                      //       icon: Icon(Icons.arrow_drop_down, color: Colors.black),
+                      //     ),
+                      //   ),
+                      // ),
 
                     ],
                   ),
-                  // Padding(
-                  //   padding: const EdgeInsets.symmetric(horizontal: 80.0),
-                  //   child: SingleChildScrollView(
-                  //     scrollDirection: Axis.horizontal,
-                  //     child: Row(
-                  //       mainAxisAlignment: MainAxisAlignment.start,
-                  //       children: blogPostProvider.categories.map((category) {
-                  //         final isSelected = chipProvider.selectedCategory == category;
-                  //         final isHovered = chipProvider.hoveredCategory == category;
-                  //         return Padding(
-                  //           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  //           child: MouseRegion(
-                  //             onEnter: (_) {
-                  //               chipProvider.setHoveredCategory(category);
-                  //             },
-                  //             onExit: (_) {
-                  //               chipProvider.clearHoveredCategory();
-                  //             },
-                  //             child: GestureDetector(
-                  //               onTap: () {
-                  //                 chipProvider.selectCategory(category);
-                  //               },
-                  //               child: Container(
-                  //                 padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 14.0),
-                  //                 decoration: BoxDecoration(
-                  //                   color: isSelected ? primaryColor : isHovered ? primaryColor : secondaryColor,
-                  //                   borderRadius: BorderRadius.circular(8.0),
-                  //                 ),
-                  //                 child: AppTextWidget(
-                  //                   text:
-                  //                   category,
-                  //                   color: isSelected ? Colors.white : isHovered ? Colors.white : Colors.black,
-                  //                   fontWeight: FontWeight.w400,
-                  //                 ),
-                  //               ),
-                  //             ),
-                  //           ),
-                  //         );
-                  //       }).toList(),
-                  //     ),
-                  //   ),
-                  // ),
+
                   Consumer<StreamDataProvider>(
                       builder: (context, productProvider, child) {
                         return StreamBuilder<List<BlogCategory>>(

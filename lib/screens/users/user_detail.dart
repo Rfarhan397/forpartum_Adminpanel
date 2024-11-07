@@ -15,6 +15,7 @@ import '../../model/res/components/pagination.dart';
 import '../../model/res/constant/app_assets.dart';
 import '../../model/res/widgets/app_text.dart.dart';
 import '../../provider/navigation/navigationProvider.dart';
+import '../../provider/stream/streamProvider.dart';
 
 class UserDetail extends StatelessWidget {
   const UserDetail({super.key});
@@ -124,12 +125,21 @@ class UserDetail extends StatelessWidget {
                 children: [
                   Column(
                     children: [
-                      CircleAvatar(
-                        backgroundColor: Colors.transparent,
-                        radius: 50,
+                      Container(
+                        height: 60,
+                       width: 60,
+                       decoration:
+                        BoxDecoration(
+                          color: primaryColor,
+                          borderRadius:BorderRadius.circular(100) ,
+                        ),
                         child: dataP.parameters!.imageUrl.toString().isNotEmpty ?
-                        Image.network(dataP.parameters!.imageUrl.toString(),fit: BoxFit.cover,):
-                        Image.asset(AppAssets.logoImage),
+                        ClipRRect(
+                            borderRadius: BorderRadius.circular(100),
+                            child: Image.network(dataP.parameters!.imageUrl.toString(),fit: BoxFit.cover,)):
+                        ClipRRect(
+                            borderRadius: BorderRadius.circular(100),
+                            child: Image.asset(AppAssets.logoImage)),
                       )
                     ],
                   ),
@@ -183,29 +193,36 @@ class UserDetail extends StatelessWidget {
                                ),
 
                              ),
-                             Container(
+                             SizedBox(
                                width: 73.w,
-                               child: Consumer<ActivityLogProvider>(
-                                 builder: (context, provider, child) {
-                                   return SingleChildScrollView(
-                                     scrollDirection: Axis.vertical,
-                                     child: Row(
-                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                       children: [
-                                         //SizedBox(width: 0.5.w,),
-                                         _buildLogList(provider),
-                                         //SizedBox(width: 6.w), // Add space between the logs
-                                         _buildLogList(provider),
-                                        // SizedBox(width: 6.w), // Add space between the logs
-                                         _buildLogList(provider),
-                                         //SizedBox(width: 6.w), // Add space between the logs
-                                         _buildLogList(provider),
-                                         //SizedBox(width: 5.w),
-                                         _buildLogList(provider),
-                                       ],
-                                     ),
-                                   );
-                                 },
+                               child: Row(
+                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                 children: [
+                                   SizedBox(
+                                       width: 200,
+                                       height: 500,
+                                       child: TrackerLodData(type: "sleep",uid: dataP.parameters!.uid.toString(),)),
+                                   //SizedBox(width: 6.w), // Add space between the logs
+                                   SizedBox(
+                                       width: 200,
+                                       height: 500,
+                                       child: TrackerLodData(type: "mood",uid: dataP.parameters!.uid.toString(),)),
+                                  // SizedBox(width: 6.w), // Add space between the logs
+                                   SizedBox(
+                                       width: 200,
+                                       height: 500,
+                                       child: TrackerLodData(type: "pain",uid: dataP.parameters!.uid.toString(),)),
+                                   //SizedBox(width: 6.w), // Add space between the logs
+                                   SizedBox(
+                                       width: 200,
+                                       height: 500,
+                                       child: TrackerLodData(type: "stress",uid: dataP.parameters!.uid.toString(),)),
+                                   //SizedBox(width: 5.w),
+                                   SizedBox(
+                                       width: 200,
+                                       height: 500,
+                                       child: TrackerLodData(type: "energy",uid: dataP.parameters!.uid.toString(),)),
+                                 ],
                                ),
                              ),
                               SizedBox(height: 3.h),
@@ -355,6 +372,9 @@ class UserDetail extends StatelessWidget {
     }
     return 'N/A';
   }
+
+
+
   Widget _buildLogList(ActivityLogProvider provider) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -392,6 +412,68 @@ class UserDetail extends StatelessWidget {
     );
   }
 }
+
+
+
+
+
+class TrackerLodData extends StatelessWidget {
+  final String type,uid;
+  int? limit;
+   TrackerLodData({super.key, required this.type,this.limit, required this.uid});
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<StreamDataProvider>(
+      builder: (context, provider, child) {
+        return StreamBuilder<List<Tracker>>(
+          stream:  provider.getTrackerLogs(limit: limit,type: type,uid: uid),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: Text("loading....."));
+            }
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
+            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(child: Text('No log found'));
+            }
+
+            List<Tracker> trackerList = snapshot.data!;
+            return Column(
+              children: [
+                AppTextWidget(text: 'Date Logged',fontSize: 16,color: Colors.black,fontWeight: FontWeight.w500,),
+                SizedBox(height: 1.h,),
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  padding: const EdgeInsets.all(8.0),
+                  itemCount: trackerList.length,
+                  itemBuilder: (ctx, index) {
+                    Tracker trackerLog = trackerList[index];
+                    return AppTextWidget(text: "${convertTimestampToDate(int.parse(trackerLog.id))}",fontSize: 14,);
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  String convertTimestampToDate(int timestamp) {
+    // Convert timestamp from milliseconds to DateTime object
+    DateTime date = DateTime.fromMillisecondsSinceEpoch(timestamp);
+
+    // Format the date to 'MM-dd-yyyy'
+    final DateFormat formatter = DateFormat('MM-dd-yyyy');
+    return formatter.format(date);
+  }
+}
+
+
+
 class TrackerTab extends StatelessWidget {
   final String title;
 

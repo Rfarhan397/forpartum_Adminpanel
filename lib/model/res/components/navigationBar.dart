@@ -49,42 +49,42 @@ class CustomNavigationBar extends StatelessWidget {
                       ],
                     ),
                     SizedBox(height: 4.h,),
-                    Padding(
-                      padding:  EdgeInsets.only(left: 3.w),
-                      child: Container(
-                        width: 12.w,
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 1.w, vertical: 4.0),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          color: Colors.white,
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              height: 25,
-                              width: 25,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: primaryColor,
-                              ),
-                              child: const Icon(
-                                Icons.add,
-                                size: 18,
-                                color: Colors.white,
-                              ),
-                            ),
-                            SizedBox(width: 1.w),
-                             const AppTextWidget(
-                              text: 'Create new\nproject',
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                              textAlign: TextAlign.start,
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
+                    // Padding(
+                    //   padding:  EdgeInsets.only(left: 3.w),
+                    //   child: Container(
+                    //     width: 12.w,
+                    //     padding: EdgeInsets.symmetric(
+                    //         horizontal: 1.w, vertical: 4.0),
+                    //     decoration: BoxDecoration(
+                    //       borderRadius: BorderRadius.circular(30),
+                    //       color: Colors.white,
+                    //     ),
+                    //     child: Row(
+                    //       children: [
+                    //         Container(
+                    //           height: 25,
+                    //           width: 25,
+                    //           decoration: BoxDecoration(
+                    //             borderRadius: BorderRadius.circular(20),
+                    //             color: primaryColor,
+                    //           ),
+                    //           child: const Icon(
+                    //             Icons.add,
+                    //             size: 18,
+                    //             color: Colors.white,
+                    //           ),
+                    //         ),
+                    //         SizedBox(width: 1.w),
+                    //          const AppTextWidget(
+                    //           text: 'Create new\nproject',
+                    //           fontSize: 12,
+                    //           fontWeight: FontWeight.w400,
+                    //           textAlign: TextAlign.start,
+                    //         )
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
                 const DrawerListTile(
