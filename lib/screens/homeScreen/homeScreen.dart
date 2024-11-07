@@ -29,6 +29,7 @@ class HomeScreen extends StatelessWidget {
     final notifications = Provider.of<NotificationProvider>(context).notifications;
     final userProvider = Provider.of<UserProvider>(context);
 
+
     final users = userProvider.users;
     final activeUsersCount = users.where((user) => user.status == 'isActive').length;
     final totalUsersCount = users.length;
@@ -49,7 +50,9 @@ class HomeScreen extends StatelessWidget {
       }
       return false;
     }).length;
-
+    ////feedbacks///////
+    final feeedback = Provider.of<UserProvider>(context)..fetchFeedbacks();
+    final feedbackCount = feeedback.feedbacks.length;
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldColor,
@@ -123,7 +126,7 @@ class HomeScreen extends StatelessWidget {
                     iconPath: AppIcons.feedback,
                     iconBackgroundColor: primaryColor,
                     title: 'Feedback',
-                    count: '600',
+                    count: feedbackCount.toString(),
                     percentageIncrease: '2% increase from last month',
                     increaseColor: Colors.green,
                   ),

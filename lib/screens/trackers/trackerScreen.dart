@@ -34,302 +34,422 @@ class _TrackerScreenState extends State<TrackerScreen> {
   @override
   Widget build(BuildContext context) {
     final trackerProvider = Provider.of<TrackerProvider>(context);
+    final cloudinaryProvider = Provider.of<CloudinaryProvider>(context);
 
     return Scaffold(
       appBar: const CustomAppbar(text: 'Trackers'),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Divider(
-            thickness: 1.0,
-            color: Colors.grey[300],
-          ),
-          Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(25.0),
-                child: SizedBox(
-                  width: 41.w,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: Consumer<TrackerProvider>(
-                          builder: (context, value, child) {
-                            return TrackerDropdown();
-                          },
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Divider(
+              thickness: 1.0,
+              color: Colors.grey[300],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(25.0),
+                  child: SizedBox(
+                    width: 41.w,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: Consumer<TrackerProvider>(
+                            builder: (context, value, child) {
+                              return TrackerDropdown();
+                            },
+                          ),
                         ),
-                      ),
-                      if (trackerProvider.selectedTrackerCategory == 'pain')
-                         Column(
-                          children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        if (trackerProvider.selectedTrackerCategory == 'pain')
+                          Column(
                             children: [
-                              InkWell(
-                                  onTap: () {
-                                    _showAddCategoryBottomSheet(context);
-                                  },
-                                  child: const AppTextWidget(text: 'Add Pain Category',color: primaryColor,fontWeight: FontWeight.w500,fontSize: 18,)),
-                              StreamBuilder<List<PainCategory>>(
-                                stream: trackerProvider.painCategoriesStream(),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState == ConnectionState.waiting) {
-                                    return DropdownButton<String>(
-                                      underline: Container(),
-                                      value: "",
-                                      items: [''].map((_) {
-                                        return const DropdownMenuItem<String>(
-                                          value: "",
-                                          child: Text("Loading..."),
-                                        );
-                                      }).toList(),
-                                      onChanged: (value) {
-                                        trackerProvider.selectedPainCategorys = value!;
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  InkWell(
+                                      onTap: () {
+                                        _showAddCategoryBottomSheet(context);
                                       },
-                                    );
-                                  }
-                                  if (snapshot.hasError || !snapshot.hasData) {
-                                    return const Text('Error loading categories');
-                                  }
+                                      child: const AppTextWidget(
+                                        text: 'Add Pain Category',
+                                        color: primaryColor,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 18,
+                                      )),
+                                  StreamBuilder<List<PainCategory>>(
+                                    stream:
+                                        trackerProvider.painCategoriesStream(),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return Container(
+                                          padding: EdgeInsets.all(8),
+                                          decoration: BoxDecoration(
+                                            color: primaryColor,
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            border: Border.all(
+                                              color: whiteColor,
+                                            ),
+                                          ),
+                                          child: DropdownButton<String>(
+                                            underline: Container(),
+                                            value: "",
+                                            items: [''].map((_) {
+                                              return const DropdownMenuItem<
+                                                  String>(
+                                                value: "",
+                                                child: Text(
+                                                  "Loading...",
+                                                  style: TextStyle(
+                                                      color: whiteColor),
+                                                ),
+                                              );
+                                            }).toList(),
+                                            onChanged: (value) {
+                                              trackerProvider
+                                                      .selectedPainCategorys =
+                                                  value!;
+                                            },
+                                            icon: Icon(Icons.keyboard_arrow_down_outlined,color: whiteColor,),
+                                          ),
+                                        );
+                                      }
+                                      if (snapshot.hasError ||
+                                          !snapshot.hasData) {
+                                        return const Text(
+                                            'Error loading categories');
+                                      }
 
-                                  final painCategories = snapshot.data!;
-                                  return DropdownButton<String>(
-                                    underline: Container(),
-                                    value: trackerProvider.selectedPainCategory,
-                                    items: painCategories.map((categoryItem) {
-                                      return DropdownMenuItem<String>(
-                                        value: categoryItem.id,
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(categoryItem.category),
-                                            const SizedBox(width: 8), // Adjust the width as needed
-                                            if (trackerProvider.selectedPainCategory != categoryItem.id)
-                                              Row(
+                                      final painCategories = snapshot.data!;
+                                      return Container(
+                                        padding: EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          color: primaryColor,
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          border: Border.all(
+                                            color: whiteColor,
+                                          ),
+                                        ),
+                                        child: DropdownButton<String>(
+                                          dropdownColor: primaryColor,
+                                          underline: Container(),
+                                          value: trackerProvider
+                                              .selectedPainCategory,
+                                          items: painCategories
+                                              .map((categoryItem) {
+                                            return DropdownMenuItem<String>(
+                                              value: categoryItem.id,
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
                                                 children: [
-                                                  InkWell(
-                                                    onTap: () {
-                                                      trackerProvider.controller.text = categoryItem.category;
-                                                      _showUpdateCategoryBottomSheet(context, categoryItem.id);
-                                                    },
-                                                    child: const Icon(Icons.edit),
+                                                  Text(
+                                                    categoryItem.category,
+                                                    style: TextStyle(
+                                                        color: whiteColor),
                                                   ),
-                                                  GestureDetector(
-                                                      onTap: () {
-                                                        _deleteCategory(context, categoryItem.id);
-                                                      },
-                                                      child: const Icon(Icons.delete))
+                                                  const SizedBox(
+                                                      width:
+                                                          8), // Adjust the width as needed
+                                                  if (trackerProvider
+                                                          .selectedPainCategory !=
+                                                      categoryItem.id)
+                                                    Row(
+                                                      children: [
+                                                        InkWell(
+                                                          onTap: () {
+                                                            trackerProvider
+                                                                    .controller
+                                                                    .text =
+                                                                categoryItem
+                                                                    .category;
+                                                            _showUpdateCategoryBottomSheet(
+                                                                context,
+                                                                categoryItem
+                                                                    .id);
+                                                          },
+                                                          child: const Icon(
+                                                            Icons.edit,
+                                                            color: whiteColor,
+                                                          ),
+                                                        ),
+                                                        GestureDetector(
+                                                            onTap: () {
+                                                              _deleteCategory(
+                                                                  context,
+                                                                  categoryItem
+                                                                      .id);
+                                                            },
+                                                            child: const Icon(
+                                                              Icons.delete,
+                                                              color: whiteColor,
+                                                            ))
+                                                      ],
+                                                    ),
                                                 ],
                                               ),
-                                          ],
+                                            );
+                                          }).toList(),
+                                          onChanged: (value) {
+                                            trackerProvider
+                                                .selectedPainCategorys = value!;
+                                          },
+                                          icon: Icon(Icons.keyboard_arrow_down_outlined,color: whiteColor,),
                                         ),
                                       );
-                                    }).toList(),
-                                    onChanged: (value) {
-                                      trackerProvider.selectedPainCategorys = value!;
                                     },
-                                  );
-                                },
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        ],),
                         const AppTextWidget(
-                        text: 'Your Question',
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      SizedBox(height: 1.h),
-                      Container(
-                        height: 8.h,
-                        width: 30.w,
-                        child: AppTextFieldBlue(
-                          hintText: 'Write your question here',
-                          radius: 5,
-                          controller: trackerProvider.isUpdate ? trackerProvider.controller : _titleController,
-                        ),
-                      ),
-                      SizedBox(height: 1.h),
-                      if (trackerProvider.selectedTrackerCategory == 'mood')
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              height: 8.h,
-                              width: 30.w,
-                              child: AppTextFieldBlue(
-                                hintText: 'Write intensity of your mood',
-                                radius: 5,
-                                controller: _moodController,
-                              ),
-                            ),
-                            SizedBox(height: 1.h),
-                            Consumer<CloudinaryProvider>(
-                              builder: (context, provider, child) {
-                                return provider.imageData != null
-                                    ? Container(
-                                        height: 20.h,
-                                        width: 20.w,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          border:
-                                              Border.all(color: Colors.black),
-                                        ),
-                                        child: Image.memory(
-                                          provider.imageData!,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      )
-                                    : Container(
-                                        height: 20.h,
-                                        width: 20.w,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          //border: Border.all(color: Colors.black),
-                                        ),
-                                        child: const Center(
-                                          child: AppTextWidget(
-                                              text: 'No image selected',
-                                              color: Colors.grey),
-                                        ),
-                                      );
-                              },
-                            ),
-                            SizedBox(height: 1.h),
-                            const AppTextWidget(
-                              text:
-                                  'Image must be in PNG format with transparent background',
-                              color: Colors.grey,
-                            ),
-                            SizedBox(height: 1.h),
-                            ButtonWidget(
-                              text:
-                                  'Upload Post ${trackerProvider.selectedTrackerCategory}',
-                              onClicked: () {
-                                _pickAndUploadImage(
-                                  context,
-                                );
-                              },
-                              width: 10.w,
-                              height: 5.h,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ],
-                        ),
-                      SizedBox(height: 1.h),
-                      // Show options only if selected type is not "Mood" or "Stress"
-                      if (trackerProvider.selectedTrackerCategory != 'mood' &&
-                          trackerProvider.selectedTrackerCategory !=
-                              'stress') ...[
-                        const AppTextWidget(
-                          text: 'Options',
+                          text: 'Your Question',
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
                         ),
                         SizedBox(height: 1.h),
-                        ..._buildOptionFields(),
-                        SizedBox(height: 1.h),
-                        TextButton(
-                          onPressed: (){
-                            _addOption(trackerProvider);
-                          },
-                          child: const Text("Add Option"),
-                        ),
-                      ],
-                      SizedBox(height: 5.h),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10.w),
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: ButtonWidget(
-                            onClicked: () {
-                              ActionProvider.startLoading();
-                              if(trackerProvider.isUpdate){
-                                trackerProvider.updateTracker();
-                              }else{
-                                _uploadTracker(context);
-                              }
-
-                            },
-                            text: trackerProvider.isUpdate ? "Update" : "Publish",
-                            height: 5.h,
-                            width: 10.w,
-                            textColor: Colors.white,
-                            radius: 25,
-                            fontWeight: FontWeight.w500,
+                        Container(
+                          height: 8.h,
+                          width: 30.w,
+                          child: AppTextFieldBlue(
+                            hintText: 'Write your question here',
+                            radius: 5,
+                            controller: trackerProvider.isUpdate
+                                ? trackerProvider.controller
+                                : _titleController,
                           ),
                         ),
-                      ),
-                    ],
+                        SizedBox(height: 1.h),
+                        if (trackerProvider.selectedTrackerCategory == 'mood')
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                height: 8.h,
+                                width: 30.w,
+                                child: AppTextFieldBlue(
+                                  hintText: 'Write intensity of your mood',
+                                  radius: 5,
+                                  controller: trackerProvider.isUpdate
+                                      ? trackerProvider.moodController
+                                      : _moodController,
+                                ),
+                              ),
+                              SizedBox(height: 1.h),
+                              Consumer<CloudinaryProvider>(
+                                builder: (context, provider, child) {
+                                  return provider.imageData != null
+                                      ? Container(
+                                          height: 20.h,
+                                          width: 20.w,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            border:
+                                                Border.all(color: Colors.black),
+                                          ),
+                                          child: Image.memory(
+                                            provider.imageData!,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        )
+                                      : Container(
+                                          height: 20.h,
+                                          width: 20.w,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            //border: Border.all(color: Colors.black),
+                                          ),
+                                          child: trackerProvider.isUpdate
+                                              ? Image.network(
+                                                  trackerProvider.imageUrl)
+                                              : const Center(
+                                                  child: AppTextWidget(
+                                                      text: 'No image selected',
+                                                      color: Colors.grey),
+                                                ),
+                                        );
+                                },
+                              ),
+                              SizedBox(height: 1.h),
+                              const AppTextWidget(
+                                text:
+                                    'Image must be in PNG format with transparent background',
+                                color: Colors.grey,
+                              ),
+                              SizedBox(height: 1.h),
+                              ButtonWidget(
+                                text:
+                                    'Upload Post ${trackerProvider.selectedTrackerCategory}',
+                                onClicked: () {
+                                  _pickAndUploadImage(
+                                    context,
+                                  );
+                                },
+                                width: 10.w,
+                                height: 5.h,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ],
+                          ),
+                        SizedBox(height: 1.h),
+                        // Show options only if selected type is not "Mood" or "Stress"
+                        if (trackerProvider.selectedTrackerCategory != 'mood' &&
+                            trackerProvider.selectedTrackerCategory !=
+                                'stress') ...[
+                          const AppTextWidget(
+                            text: 'Options',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          SizedBox(height: 1.h),
+                          ..._buildOptionFields(),
+                          SizedBox(height: 1.h),
+                          TextButton(
+                            onPressed: () {
+                              _addOption(trackerProvider);
+                            },
+                            child: const Text("Add Option"),
+                          ),
+                        ],
+                        SizedBox(height: 5.h),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10.w),
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: ButtonWidget(
+                              onClicked: () {
+                                ActionProvider.startLoading();
+                                if (trackerProvider.selectedTrackerCategory ==
+                                    "mood") {
+                                  log("mood Controller ::${_moodController.text}");
+                                  log("title Controller ::${_titleController.text}");
+                                  log("mood image ::${cloudinaryProvider.imageUrl}");
+                                  if (trackerProvider.isUpdate) {
+                                    trackerProvider.updateMood();
+
+                                  } else {
+
+                                    trackerProvider.uploadMood(
+                                      _titleController.text,
+                                      _moodController.text,
+                                      cloudinaryProvider.imageUrl.toString(),
+                                      trackerProvider.selectedTrackerCategory,
+                                        trackerProvider.selectedPainCategory,
+                                    );
+                                  }
+                                } else if (trackerProvider.isUpdate) {
+                                  trackerProvider.updateTracker();
+                                } else {
+                                  _uploadTracker(context);
+                                }
+                              },
+                              text: trackerProvider.isUpdate
+                                  ? "Update"
+                                  : "Publish",
+                              height: 5.h,
+                              width: 10.w,
+                              textColor: Colors.white,
+                              radius: 25,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(25.0),
-                child: Container(
-                  width: 35.w,
-                  child: trackerProvider.selectedTrackerCategory == "mood"
-                      ? const TrackerCausesList(type: 'mood')
-                      : QuestionListSection(
-                    onTap: () {
-
-                    },
-                          type: trackerProvider.selectedTrackerCategory,
-                        ),
+                Container(
+                  height: 100.h,
+                  child: VerticalDivider(
+                    color: primaryColor,
+                    width: 2.0,
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+                Padding(
+                  padding: const EdgeInsets.all(25.0),
+                  child: Container(
+                    width: 35.w,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AppTextWidget(
+                          text:
+                              'Recent ${trackerProvider.selectedTrackerCategory} Category',
+                          fontSize: 18,
+                          color: primaryColor,
+                        ),
+                        SizedBox(height: 1.h),
+                        trackerProvider.selectedTrackerCategory == "mood"
+                            ? const TrackerCausesList(type: 'mood')
+                            : QuestionListSection(
+                                onTap: () {},
+                                type: trackerProvider.selectedTrackerCategory,
+                              ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
-  Future<void> updateTrackerLog(String trackerLogId, String questionText, ) async {
-    try {
-      await FirebaseFirestore.instance
-          .collection('trackerLog')
-          .doc(trackerLogId)
-          .update({
-        'text': questionText,
-      });
-      print("TrackerLog updated successfully");
-    } catch (e) {
-      print("Error updating TrackerLog: $e");
-    }
-  }
-  Future<void> updateOption(String trackerLogId, String optionId, String optionText) async {
-    try {
-      await FirebaseFirestore.instance
-          .collection('trackerLog')
-          .doc(trackerLogId)
-          .collection('options')
-          .doc(optionId)
-          .update({
-        'text': optionText,
-        // Add other fields if necessary
-      });
-      print("Option updated successfully");
-    } catch (e) {
-      print("Error updating Option: $e");
-    }
-  }
-  void updateData() async{
-    String trackerLogId = "8t3SMDq9Hn0Ku0GM4UsZ";
-    String optionId = 'optionid';
-    String newQuestionText = "What did you think of your child's sleep last night?";
-    String newIntensity = "Moderate";
-    String newOptionText = "Slept like a log";
-
-    // Update TrackerLog
-    updateTrackerLog(trackerLogId, newQuestionText, );
-
-    // Update Option
-    updateOption(trackerLogId, optionId, newOptionText);
-  }
+  // Future<void> updateTrackerLog(String trackerLogId, String questionText, ) async {
+  //   try {
+  //     await FirebaseFirestore.instance
+  //         .collection('trackerLog')
+  //         .doc(trackerLogId)
+  //         .update({
+  //       'text': questionText,
+  //     });
+  //     print("TrackerLog updated successfully");
+  //   } catch (e) {
+  //     print("Error updating TrackerLog: $e");
+  //   }
+  // }
+  // Future<void> updateOption(String trackerLogId, String optionId, String optionText) async {
+  //   try {
+  //     await FirebaseFirestore.instance
+  //         .collection('trackerLog')
+  //         .doc(trackerLogId)
+  //         .collection('options')
+  //         .doc(optionId)
+  //         .update({
+  //       'text': optionText,
+  //       // Add other fields if necessary
+  //     });
+  //     print("Option updated successfully");
+  //   } catch (e) {
+  //     print("Error updating Option: $e");
+  //   }
+  // }
+  // void updateData() async{
+  //   String trackerLogId = "8t3SMDq9Hn0Ku0GM4UsZ";
+  //   String optionId = 'optionid';
+  //   String newQuestionText = "What did you think of your child's sleep last night?";
+  //   String newIntensity = "Moderate";
+  //   String newOptionText = "Slept like a log";
+  //
+  //   // Update TrackerLog
+  //   updateTrackerLog(trackerLogId, newQuestionText, );
+  //
+  //   // Update Option
+  //   updateOption(trackerLogId, optionId, newOptionText);
+  // }
 
   void _showAddCategoryBottomSheet(BuildContext context) {
     final TextEditingController categoryController = TextEditingController();
@@ -355,12 +475,12 @@ class _TrackerScreenState extends State<TrackerScreen> {
               ),
               const SizedBox(height: 16),
               Padding(
-                padding:  EdgeInsets.symmetric(horizontal: 8.w),
+                padding: EdgeInsets.symmetric(horizontal: 8.w),
                 child: ButtonWidget(
                   text: 'Add Category',
                   onClicked: () async {
                     final category = categoryController.text.trim();
-                   _uploadCategory(context,category);
+                    _uploadCategory(context, category);
                   },
                   width: 50.w,
                   height: 5.h,
@@ -373,9 +493,10 @@ class _TrackerScreenState extends State<TrackerScreen> {
       },
     );
   }
-  void _showUpdateCategoryBottomSheet(BuildContext context,String id) {
 
-    final trackerProvider = Provider.of<TrackerProvider>(context,listen: false);
+  void _showUpdateCategoryBottomSheet(BuildContext context, String id) {
+    final trackerProvider =
+        Provider.of<TrackerProvider>(context, listen: false);
 
     showModalBottomSheet(
       context: context,
@@ -398,12 +519,12 @@ class _TrackerScreenState extends State<TrackerScreen> {
               ),
               const SizedBox(height: 16),
               Padding(
-                padding:  EdgeInsets.symmetric(horizontal: 8.w),
+                padding: EdgeInsets.symmetric(horizontal: 8.w),
                 child: ButtonWidget(
                   text: 'update Category',
                   onClicked: () async {
                     final category = trackerProvider.controller.text.trim();
-                    _updateCategory(context,category,id);
+                    _updateCategory(context, category, id);
                   },
                   width: 50.w,
                   height: 5.h,
@@ -416,7 +537,6 @@ class _TrackerScreenState extends State<TrackerScreen> {
       },
     );
   }
-
 
   Future<void> _pickAndUploadImage(BuildContext context) async {
     final html.FileUploadInputElement uploadInput =
@@ -451,7 +571,8 @@ class _TrackerScreenState extends State<TrackerScreen> {
   }
 
   List<Widget> _buildOptionFields() {
-    final trackerProvider = Provider.of<TrackerProvider>(context, listen: false);
+    final trackerProvider =
+        Provider.of<TrackerProvider>(context, listen: false);
     return List.generate(trackerProvider.optionControllers.length, (index) {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -467,7 +588,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
             IconButton(
               icon: const Icon(Icons.remove_circle, color: Colors.red),
               onPressed: () {
-                _removeOption(index,trackerProvider);
+                _removeOption(index, trackerProvider);
               },
             ),
           ],
@@ -482,7 +603,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
     });
   }
 
-  void _removeOption(int index,TrackerProvider trackerProvider) {
+  void _removeOption(int index, TrackerProvider trackerProvider) {
     setState(() {
       trackerProvider.optionControllers.removeAt(index);
     });
@@ -497,7 +618,8 @@ class _TrackerScreenState extends State<TrackerScreen> {
     if (_titleController.text.isEmpty ||
         (trackerProvider.selectedTrackerCategory != 'mood' &&
             trackerProvider.selectedTrackerCategory != 'stress' &&
-            trackerProvider.optionControllers.any((controller) => controller.text.isEmpty))) {
+            trackerProvider.optionControllers
+                .any((controller) => controller.text.isEmpty))) {
       ScaffoldMessenger.of(context).showSnackBar(
         AppUtils().showToast(text: 'Please fill in all fields'),
       );
@@ -512,6 +634,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
         AppUtils().showToast(text: 'Please select a tracker type'),
       );
       ActionProvider.stopLoading();
+      _titleController.clear();
       return;
     }
 
@@ -527,6 +650,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
       'type': trackerProvider.selectedTrackerCategory,
       'intensity': _moodController.text,
       'image': cloudinaryProvider.imageUrl.toString(),
+      'categoryId': trackerProvider.selectedPainCategory,
     });
 
     log(
@@ -550,8 +674,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
             .set({
           'text': optionController.text,
           'id': optionID,
-          'trackerID' : trackerId
-
+          'trackerID': trackerId
         });
       }
     }
@@ -560,8 +683,7 @@ class _TrackerScreenState extends State<TrackerScreen> {
     ActionProvider.stopLoading();
   }
 
-  void _uploadCategory(BuildContext context,String category) async {
-
+  void _uploadCategory(BuildContext context, String category) async {
     var id = FirebaseFirestore.instance
         .collection('painCategories')
         .doc()
@@ -570,7 +692,8 @@ class _TrackerScreenState extends State<TrackerScreen> {
     if (category.isNotEmpty) {
       // Save the category to Firestore
       await FirebaseFirestore.instance
-          .collection('painCategories').doc(id)
+          .collection('painCategories')
+          .doc(id)
           .set({
         'category': category,
         'Id': id,
@@ -582,12 +705,14 @@ class _TrackerScreenState extends State<TrackerScreen> {
       );
     }
   }
-  void _updateCategory(BuildContext context,String category,String id) async{
+
+  void _updateCategory(BuildContext context, String category, String id) async {
     var trackerProvider = Provider.of<TrackerProvider>(context, listen: false);
     if (category.isNotEmpty) {
       // Save the category to Firestore
       await FirebaseFirestore.instance
-          .collection('painCategories').doc(id)
+          .collection('painCategories')
+          .doc(id)
           .update({
         'category': category.toString(),
       });
@@ -626,14 +751,39 @@ class _TrackerScreenState extends State<TrackerScreen> {
 
   void _deleteCategoryFromFirestore(BuildContext context, String id) {
     FirebaseFirestore.instance
-       .collection('painCategories')
-       .doc(id)
-       .delete()
-       .then((value) {
+        .collection('painCategories')
+        .doc(id)
+        .delete()
+        .then((value) {
       AppUtils().showToast(text: 'Category deleted successfully');
-    })
-       .catchError((error) {
+    }).catchError((error) {
       AppUtils().showToast(text: 'Error deleting category');
     });
   }
 }
+// Padding(
+//   padding:  EdgeInsets.symmetric(
+//       horizontal: 5.w
+//   ),
+//   child: CustomDropdown<String>(
+//     hintText: 'Choose Symptoms',
+//     items: logP.painCategory,
+//     onChanged: (category) {
+//       int index =  logP.painCategory.indexOf(category!);
+//       logP.updateCategoryId(index);
+//       log("Index:: $index");
+//     },
+//     validateOnChange: true,
+//     validator: (value){
+//       if(value ==null){
+//         return "Select symptom";
+//       }
+//       return null;
+//     },
+//     decoration: decoration(
+//       bolderColor: Colors.transparent,
+//       headerFontSize: 14.0,
+//       fillColor: whiteColor,
+//     ),
+//   ),
+// ),

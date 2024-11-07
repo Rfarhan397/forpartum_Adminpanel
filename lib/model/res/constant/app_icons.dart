@@ -15,5 +15,8 @@ class AppIcons{
   static const setting = "assets/icons/setting.webp";
   static const menu = "assets/icons/menu.webp";
   static const closeButton = "assets/icons/close_Button.svg";
+  static const gudlines = "assets/icons/guil.svg";
+  static const learning_center = "assets/icons/learning_centre.svg";
+  static const tracker = "assets/icons/Tracker.svg";
 
 }

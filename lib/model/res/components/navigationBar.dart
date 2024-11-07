@@ -3,6 +3,7 @@ import 'package:sizer/sizer.dart';
 import '../../../constant.dart';
 import '../constant/app_assets.dart';
 import '../constant/app_colors.dart';
+import '../constant/app_icons.dart';
 import '../widgets/app_text.dart.dart';
 import 'drawer_list_tile.dart';
 
@@ -143,19 +144,19 @@ class CustomNavigationBar extends StatelessWidget {
                   index: 28,
                   screenIndex: 28,
                   title: "Trackers",
-                  svgSrc: "assets/icons/setting.svg",
+                  svgSrc: AppIcons.tracker,
                 ),
                 const DrawerListTile(
                   index: 25,
                   screenIndex: 25,
                   title: "Guidelines",
-                  svgSrc: "assets/icons/setting.svg",
+                  svgSrc: AppIcons.gudlines,
                 ),
                 const DrawerListTile(
                   index: 26,
                   screenIndex: 26,
                   title: "Learning Center",
-                  svgSrc: "assets/icons/setting.svg",
+                  svgSrc: AppIcons.learning_center,
                 ),
                 const SizedBox(
                   height: defaultDrawerHeadHeight,

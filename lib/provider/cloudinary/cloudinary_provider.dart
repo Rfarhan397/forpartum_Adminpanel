@@ -67,6 +67,7 @@ class CloudinaryProvider with ChangeNotifier {
         final jsonResponse = json.decode(responseBody);
         _imageUrl = jsonResponse['secure_url'];
         log("Image Url:: ${jsonResponse['secure_url']}");
+
         notifyListeners(); // Notify listeners about the change
       } else {
         final responseBody = await response.stream.bytesToString();

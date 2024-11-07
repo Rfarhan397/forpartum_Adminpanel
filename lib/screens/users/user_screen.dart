@@ -37,7 +37,7 @@ class UserScreen extends StatelessWidget {
 
     // Filter users who created their accounts in the current month
     final newSignupsCount = users.where((user) {
-      final createdAtTimestampString = user.createdAt; // Assuming createdAt is a String?
+      final createdAtTimestampString = user.createdAt;
       if (createdAtTimestampString != null) {
         final createdAtTimestamp = int.tryParse(createdAtTimestampString);
         if (createdAtTimestamp != null) {
@@ -434,30 +434,22 @@ class UserScreen extends StatelessWidget {
               ),
             ),
             children: [
-              InkWell(
-                onTap: () {
-                //   Provider.of<MenuAppController>(context,listen: false).changeScreen(12);
-                // },
-                  Provider.of<MenuAppController>(context, listen: false)
-                      .changeScreenWithParams(12, parameters: user);
-                },
-                child: Row(
-                  children: [
-                    SizedBox(width: 0.5.w),
-                    CircleAvatar(
-                      radius: 17.5,
-                      backgroundColor: Colors.grey,
-                      backgroundImage: user.imageUrl.toString().isNotEmpty
-                          ? NetworkImage(user.imageUrl.toString())
-                          : const AssetImage(AppAssets.logoImage),
-                    ),
-                    SizedBox(width: 1.w),
-                    Container(
-                      padding: EdgeInsets.symmetric(vertical: 1.5.h),
-                      child: AppTextWidget(text: user.name.toString(), color: Colors.black),
-                    ),
-                  ],
-                ),
+              Row(
+                children: [
+                  SizedBox(width: 0.5.w),
+                  CircleAvatar(
+                    radius: 17.5,
+                    backgroundColor: Colors.grey,
+                    backgroundImage: user.imageUrl.toString().isNotEmpty
+                        ? NetworkImage(user.imageUrl.toString())
+                        : const AssetImage(AppAssets.logoImage),
+                  ),
+                  SizedBox(width: 1.w),
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 1.5.h),
+                    child: AppTextWidget(text: user.name.toString(), color: Colors.black),
+                  ),
+                ],
               ),
               Container(
                 alignment: Alignment.centerLeft,
@@ -474,9 +466,12 @@ class UserScreen extends StatelessWidget {
                 padding: EdgeInsets.symmetric(vertical: 1.5.h),
                 child: Row(
                   children: [
-                    _buildActionButton('VIEW', onTap: () {}),
-                    SizedBox(width: 0.5.w),
-                    _buildActionButton('EDIT', onTap: () {}),
+                    _buildActionButton('VIEW', onTap: () {
+                      Provider.of<MenuAppController>(context, listen: false)
+                          .changeScreenWithParams(12, parameters: user);
+                    }),
+                    // SizedBox(width: 0.5.w),
+                    // _buildActionButton('EDIT', onTap: () {}),
                     SizedBox(width: 0.5.w),
                     _buildActionButton('DELETE', onTap: () {}),
                   ],

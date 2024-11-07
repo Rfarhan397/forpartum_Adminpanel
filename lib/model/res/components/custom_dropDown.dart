@@ -224,3 +224,62 @@ class _CustomDropdownWidgetState extends State<CustomDropdownWidget> {
   }
 
 }
+////////////////////////////////////////new////////
+
+class PopupExample extends StatelessWidget {
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
+  final Color? iconColor;
+
+   PopupExample({
+    Key? key,
+    required this.onEdit,
+    required this.onDelete,
+     this.iconColor,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        PopupMenuButton<int>(
+          color: primaryColor,
+          icon: Icon(Icons.more_vert,color: iconColor ?? primaryColor,),
+          onSelected: (value) {
+            if (value == 1) {
+              onEdit();
+            } else if (value == 2) {
+              onDelete();
+            }
+          },
+          itemBuilder: (context) => [
+            PopupMenuItem(
+              value: 1,
+              child: Row(
+                children: [
+                  Icon(Icons.edit,color:whiteColor),
+                  SizedBox(width: 8),
+                  Text("Edit",style: TextStyle(
+                  color: whiteColor
+                  ),),
+                ],
+              ),
+            ),
+            PopupMenuItem(
+              value: 2,
+              child: Row(
+                children: [
+                  Icon(Icons.delete,color: whiteColor,),
+                  SizedBox(width: 8),
+                  Text("Delete",style: TextStyle(
+                      color: whiteColor
+                  ),),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}

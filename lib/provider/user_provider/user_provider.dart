@@ -95,4 +95,42 @@ class UserProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+  //////////////feeedback //////
+  // List<String> _feedbacks = [];
+  //
+  // List<String> get feedbacks => _feedbacks;
+  //
+  // int get feedbackCount => _feedbacks.length;
+  //
+  // Future<void> fetchFeedbacks(String uid) async {
+  //   try {
+  //     DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance
+  //         .collection('feedbacks')
+  //         .doc(uid)
+  //         .get();
+  //
+  //     if (snapshot.exists) {
+  //       Map<String, dynamic>? data = snapshot.data();
+  //       if (data != null && data['feedbacks'] is List) {
+  //         _feedbacks = List<String>.from(data['feedbacks']);
+  //         notifyListeners();
+  //       }
+  //     }
+  //   } catch (e) {
+  //     log('Error fetching feedbacks: $e');
+  //   }
+  // }
+  List<Map<String, dynamic>> _feedbacks = [];
+
+  List<Map<String, dynamic>> get feedbacks => _feedbacks;
+
+  Future<void> fetchFeedbacks() async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance.collection('feedbacks').get();
+      _feedbacks = snapshot.docs.map((doc) => doc.data()).toList();
+      notifyListeners();
+    } catch (e) {
+      print('Error fetching feedbacks: $e');
+    }
+  }
 }
