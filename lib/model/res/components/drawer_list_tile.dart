@@ -36,7 +36,10 @@ class DrawerListTile extends StatelessWidget {
             onExit: (_) {
               textColorProvider.setHoveredIndex(-1);
             },
-            child: GestureDetector(
+            child: InkWell(
+              hoverColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
               onTap: () {
                 // provider.parameters?.clear();
                 textColorProvider.setActiveIndex(index);

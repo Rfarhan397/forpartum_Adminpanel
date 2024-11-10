@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:forpartum_adminpanel/constant.dart';
 
 import '../../model/res/constant/app_utils.dart';
 import '../../model/services/enum/toastType.dart';
@@ -226,6 +227,19 @@ class ActionProvider extends ChangeNotifier{
               },
             ),
           ],
+        );
+      },
+    ) ?? false;
+  }
+  //////to show the dialog box  for notifications////
+  Future<bool> showConfirmDialog(BuildContext context,String title,content) async {
+    return await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: primaryColor,
+          title:  Text(title,style: TextStyle(color: Colors.white,fontSize: 16),),
+          content:  Text(content,style: TextStyle(color: Colors.white,fontSize: 13)),
         );
       },
     ) ?? false;

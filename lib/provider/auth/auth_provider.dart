@@ -11,7 +11,7 @@ import '../../model/services/enum/toastType.dart';
 import '../action/action_provider.dart';
 
 class AuthProvider extends ChangeNotifier{
-  Future<void> signInUser({
+  Future<void>signInUser({
     required String email,
     required String password,
     required BuildContext context,

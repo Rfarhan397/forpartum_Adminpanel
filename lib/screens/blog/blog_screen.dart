@@ -101,6 +101,7 @@ class _BlogScreenState extends State<BlogScreen> {
                           SizedBox(width: 5,),
                         ],
                       ),
+
                       // Padding(
                       //   padding: const EdgeInsets.symmetric(horizontal: 12.0),
                       //   child: Container(
@@ -126,6 +127,7 @@ class _BlogScreenState extends State<BlogScreen> {
 
                     ],
                   ),
+                  SizedBox(height: 2.h,),
 
                   Consumer<StreamDataProvider>(
                       builder: (context, productProvider, child) {
@@ -208,6 +210,8 @@ class _BlogScreenState extends State<BlogScreen> {
                               );
                             });
                       }),
+                  SizedBox(height: 2.h,),
+
 
                   // Padding(
                   //   padding: const EdgeInsets.symmetric(horizontal: 80.0),

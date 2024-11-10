@@ -187,6 +187,38 @@ class AddGuideline{
     );
   }
 }
+class NotificationModel{
+  final String description;
+  final String message;
+  final String timestamp;
+  final String title;
+  final String status;
+  final String? id;
+
+
+  NotificationModel({
+    required this.description,
+    required this.message,
+    required this.timestamp,
+    required this.title,
+     this.id,
+    required this.status,
+
+  });
+
+
+  factory NotificationModel.fromMap(Map<String, dynamic> data) {
+    return NotificationModel(
+      description: data['description'] ?? '',
+      message: data['message'] ?? '',
+      timestamp: data['timestamp'] ?? '',
+      title: data['title'] ?? '',
+      id: data['id'] ?? '',
+      status: data['status']?? '',
+
+    );
+  }
+}
 
 
 

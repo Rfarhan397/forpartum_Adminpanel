@@ -226,4 +226,30 @@ class BlogPostProvider extends ChangeNotifier {
     await FirebaseFirestore.instance.collection('learningCategories').doc(id).delete();
     AppUtils().showToast(text: 'category deleted successfully');
   }
+  /////length of meals//////////
+
+  int _totalDocuments = 0;
+  int _recommendedDocuments = 0;
+
+  int get totalDocuments => _totalDocuments;
+  int get recommendedDocuments => _recommendedDocuments;
+
+  Future<void> fetchDocumentCounts() async {
+    CollectionReference collectionRef = FirebaseFirestore.instance.collection('addMeal');
+
+    // Get the total number of documents
+    QuerySnapshot allDocumentsSnapshot = await collectionRef.get();
+    _totalDocuments = allDocumentsSnapshot.docs.length;
+    print('Total documents count: $_totalDocuments');
+
+    // Get the number of documents where 'recommended' is true
+    QuerySnapshot recommendedSnapshot = await collectionRef.where('recommended', isEqualTo: 'true').get();
+    _recommendedDocuments = recommendedSnapshot.docs.length;
+    print('Recommended documents count: $_recommendedDocuments');
+
+    // Notify listeners to update the UI
+    notifyListeners();
+  }
+
+
 }

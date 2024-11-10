@@ -185,7 +185,9 @@ class TermsNCondition extends StatelessWidget {
                                   IconButton(
                                     icon: const Icon(Icons.delete, color: primaryColor),
                                     onPressed: () async {
-                                      bool confirmDelete = await action.showDeleteConfirmationDialog(context,'Delete!','Are you sure you want to delete?');
+                                      bool confirmDelete = await action.showDeleteConfirmationDialog(
+
+                                          context,'Delete!','Are you sure you want to delete?',);
                                       if (confirmDelete) {
                                         action.deleteItem('term&Conditions', document['id']);
                                       }

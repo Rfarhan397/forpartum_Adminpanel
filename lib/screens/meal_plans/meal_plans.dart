@@ -25,7 +25,8 @@ class MealPlanScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dropdownProvider = Provider.of<DropdownProvider>(context);
-    final blogPostProvider = Provider.of<BlogPostProvider>(context);
+    final blogPostProvider = context.read<BlogPostProvider>();
+    blogPostProvider.fetchDocumentCounts();
 
     return Scaffold(
       appBar: const CustomAppbar(text: 'Meal Plan Overview'),
@@ -93,42 +94,33 @@ class MealPlanScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  // DropdownButton<String>(
-                  //   value: dropdownProvider.selectedValue,
-                  //   items: <String>['Last 30 Days', 'Last 10 Days', 'Yesterday']
-                  //       .map((String value) {
-                  //     return DropdownMenuItem<String>(
-                  //       value: value,
-                  //       child: AppTextWidget(text: value),
-                  //     );
-                  //   }).toList(),
-                  //   onChanged: (String? newValue) {
-                  //     if (newValue != null) {
-                  //       dropdownProvider.setSelectedValue(newValue);
-                  //     }
-                  //   },
-                  //   underline: const SizedBox(),
-                  //   icon: const Icon(Icons.keyboard_arrow_down_outlined,
-                  //       size: 15, color: Colors.black),
-                  // ),
+
                 ],
               ),
             ),
             Row(
               children: [
-                MealCard(
-                  iconPath: AppIcons.totalUsers,
-                  iconBackgroundColor: secondaryColor,
-                  title: 'Total Meal Plans',
-                  count: '20',
-                  increaseColor: Colors.green,
-                ),
-                MealCard(
-                  iconPath: AppIcons.activeUser,
-                  iconBackgroundColor: primaryColor,
-                  title: 'Recommended Meal Plans',
-                  count: '50',
-                  increaseColor: Colors.red,
+                Consumer<BlogPostProvider>(
+                  builder: (context, blogPostProvider, child) {
+                    return Row(
+                      children: [
+                        MealCard(
+                          iconPath: AppIcons.totalUsers,
+                          iconBackgroundColor: secondaryColor,
+                          title: 'Total Meal Plans',
+                          count: blogPostProvider.totalDocuments.toString(),
+                          increaseColor: Colors.green,
+                        ),
+                        MealCard(
+                          iconPath: AppIcons.activeUser,
+                          iconBackgroundColor: primaryColor,
+                          title: 'Recommended Meal Plans',
+                          count: blogPostProvider.recommendedDocuments.toString(),
+                          increaseColor: Colors.red,
+                        ),
+                      ],
+                    );
+                  },
                 ),
                 // MealCard(
                 //   iconPath: AppIcons.time,

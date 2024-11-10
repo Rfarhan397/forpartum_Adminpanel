@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:forpartum_adminpanel/model/res/components/add_button.dart';
+import 'package:forpartum_adminpanel/provider/action/action_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
@@ -20,7 +21,18 @@ class Notifications extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final notifications = Provider.of<NotificationProviderForNotifications>(context).notifications;
+    final notificationProvider = Provider.of<NotificationProviderForNotifications>(context);
+    // Fetch notifications when the widget is built
+
+    if (notificationProvider.notifications.isEmpty) {
+      notificationProvider.fetchNotifications();
+    }
+
+    // Fetch the CTR when the widget is built
+    if (notificationProvider.totalSentCount == 0) {
+      notificationProvider.fetchCTR();
+    }
+
 
     return Scaffold(
       appBar: const CustomAppbar(text: 'Notifications Overview'),
@@ -52,14 +64,14 @@ class Notifications extends StatelessWidget {
                         iconPath: AppIcons.totalUsers,
                         iconBackgroundColor: secondaryColor,
                         title: 'Total Notifications Sent',
-                        count: '1,200',
+                        count: notificationProvider.notifications.length.toString(),
         
                       ),
                       StatsCard(
                         iconPath: AppIcons.activeUser,
                         iconBackgroundColor: primaryColor,
                         title: 'Pending Notifications',
-                        count: '50',
+                        count: '0',
         
                       ),
                       StatsCard(
@@ -73,7 +85,7 @@ class Notifications extends StatelessWidget {
                         iconPath: AppIcons.feedback,
                         iconBackgroundColor: primaryColor,
                         title: 'Click-Through Rate:',
-                        count: '60%',
+                        count: notificationProvider.clickThroughRate,
                       ),
         
                     ],
@@ -108,22 +120,40 @@ class Notifications extends StatelessWidget {
                                   return ListView.builder(
                                     shrinkWrap: true,
                                     physics: const NeverScrollableScrollPhysics(),
-                                    itemCount: provider.activitiesForNotifications.length,
+                                    itemCount: notificationProvider.notifications.length,
                                     itemBuilder: (context, index) {
                                       final activity = provider.activitiesForNotifications[index];
+                                      final notification = notificationProvider.notifications[index];
+                                      String readableDate = notificationProvider.formatTimestamp(notification.timestamp);
+
                                       return Padding(
                                         padding:  EdgeInsets.symmetric(vertical: 0.8.w),
                                         child: 
                                             Row(
                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               children: [
-                                                Expanded(flex: 1,child: AppTextWidget(text:activity.date, fontSize: 12)),
+                                                Expanded(flex: 1,child: AppTextWidget(text:readableDate, fontSize: 12)),
                                                 SizedBox(width: 3.5.w),
-                                                Expanded(flex: 2,child: AppTextWidget(text:activity.description,textAlign: TextAlign.start, fontSize: 12)),
+                                                Expanded(flex: 2,child: Padding(
+                                                  padding:  EdgeInsets.only(left: 1.w),
+                                                  child: AppTextWidget(text:notification.title,textAlign: TextAlign.start, fontSize: 12),
+                                                )),
                                                 SizedBox(width: 3.5.w),
-                                                Expanded(flex: 1,child: AppTextWidget(text:activity.status,fontWeight: FontWeight.bold,textAlign: TextAlign.start, fontSize: 12)),
+                                                Expanded(flex: 1,child: Padding(
+                                                  padding:  EdgeInsets.only(left: 1.w),
+                                                  child: AppTextWidget(text:notification .status,fontWeight: FontWeight.bold,textAlign: TextAlign.start, fontSize: 12),
+                                                )),
                                               SizedBox(width: 3.5.w),
-                                                Expanded(flex: 1,child: AppTextWidget(text:activity.action,textAlign: TextAlign.start, fontWeight: FontWeight.bold,fontSize: 12)),
+                                                Expanded(flex: 1,child: InkWell(
+                                                    onTap: () {
+                                                     var show = Provider.of<ActionProvider>(context,listen: false);
+                                                     show.showConfirmDialog(
+                                                          context,
+                                                        notification.title,
+                                                        notification.message
+                                                      );
+                                                    },
+                                                    child: AppTextWidget(text:activity.action,textAlign: TextAlign.start, fontWeight: FontWeight.bold,fontSize: 12))),
                                               ],
                                         ),
                                       );
@@ -132,59 +162,59 @@ class Notifications extends StatelessWidget {
                                 },
                               ),
                             ),
-                            const AppTextWidget(text: 'Alerts and Warnings',
-                                fontSize: 20, fontWeight: FontWeight.w500),
-                            SizedBox(height: 2.h,),
-                            Expanded(
-                              child: ListView.builder(
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: notifications.length,
-                                itemBuilder: (context, index) {
-                                  final notification = notifications[index];
-                                  return Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        height: 3.5.h,
-                                        width: 28.w,
-                                        padding: const EdgeInsets.all(4.0),
-                                        decoration: BoxDecoration(
-                                          color: notification.categoryColor,
-                                          borderRadius: BorderRadius.circular(15.0),
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(left: 8.0),
-                                          child: AppTextWidget(
-                                              text:
-                                              notification.category,
-                                              textAlign: TextAlign.start,
-                                              color: Colors.white, fontWeight: FontWeight.w400),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                        child: Row(
-                                          children: [
-                                            AppTextWidget(text:notification.date, fontSize: 12),
-                                            SizedBox(width: 1.w),
-                                            Expanded(child: AppTextWidget(text:notification.description,textAlign: TextAlign.start, fontSize: 12)),
-                                          ],
-                                        ),
-                                      ),Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                        child: Row(
-                                          children: [
-                                            AppTextWidget(text:notification.date, fontSize: 12),
-                                            SizedBox(width: 1.w),
-                                            Expanded(child: AppTextWidget(text:notification.description,textAlign: TextAlign.start, fontSize: 12)),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              ),
-                            ),
+                            // const AppTextWidget(text: 'Alerts and Warnings',
+                            //     fontSize: 20, fontWeight: FontWeight.w500),
+                            // SizedBox(height: 2.h,),
+                            // Expanded(
+                            //   child: ListView.builder(
+                            //     physics: const NeverScrollableScrollPhysics(),
+                            //     itemCount: notifications.length,
+                            //     itemBuilder: (context, index) {
+                            //       final notification = notifications[index];
+                            //       return Column(
+                            //         crossAxisAlignment: CrossAxisAlignment.start,
+                            //         children: [
+                            //           Container(
+                            //             height: 3.5.h,
+                            //             width: 28.w,
+                            //             padding: const EdgeInsets.all(4.0),
+                            //             decoration: BoxDecoration(
+                            //               color: notification.categoryColor,
+                            //               borderRadius: BorderRadius.circular(15.0),
+                            //             ),
+                            //             child: Padding(
+                            //               padding: const EdgeInsets.only(left: 8.0),
+                            //               child: AppTextWidget(
+                            //                   text:
+                            //                   notification.category,
+                            //                   textAlign: TextAlign.start,
+                            //                   color: Colors.white, fontWeight: FontWeight.w400),
+                            //             ),
+                            //           ),
+                            //           Padding(
+                            //             padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            //             child: Row(
+                            //               children: [
+                            //                 AppTextWidget(text:notification.date, fontSize: 12),
+                            //                 SizedBox(width: 1.w),
+                            //                 Expanded(child: AppTextWidget(text:notification.description,textAlign: TextAlign.start, fontSize: 12)),
+                            //               ],
+                            //             ),
+                            //           ),Padding(
+                            //             padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            //             child: Row(
+                            //               children: [
+                            //                 AppTextWidget(text:notification.date, fontSize: 12),
+                            //                 SizedBox(width: 1.w),
+                            //                 Expanded(child: AppTextWidget(text:notification.description,textAlign: TextAlign.start, fontSize: 12)),
+                            //               ],
+                            //             ),
+                            //           ),
+                            //         ],
+                            //       );
+                            //     },
+                            //   ),
+                            // ),
                             SizedBox(height: 2.h,),
                           ],),
                       ),

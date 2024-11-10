@@ -48,14 +48,18 @@ class _LearningCenterScreenState extends State<LearningCenterScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Provider.of<MenuAppController>(context, listen: false)
-                          .changeScreen(27);
-                    },
-                    child: Container(
+              InkWell(
+                highlightColor: Colors.transparent,
+                focusColor: Colors.transparent,
+                hoverColor: Colors.transparent,
+                splashColor: Colors.transparent,
+                onTap: () {
+                  Provider.of<MenuAppController>(context, listen: false)
+                      .changeScreen(27);
+                },
+                child: Row(
+                  children: [
+                    Container(
                       width: 30,
                       height: 30,
                       decoration: BoxDecoration(
@@ -69,16 +73,16 @@ class _LearningCenterScreenState extends State<LearningCenterScreen> {
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    width: 5,
-                  ),
-                  AppTextWidgetFira(
-                    text: 'Add Learning Category',
-                    fontSize: 14,
-                    color: Colors.black,
-                  )
-                ],
+                    SizedBox(
+                      width: 5,
+                    ),
+                    AppTextWidgetFira(
+                      text: 'Add Learning Category',
+                      fontSize: 14,
+                      color: Colors.black,
+                    )
+                  ],
+                ),
               ),
               SizedBox(height: 2.h,),
               Consumer<StreamDataProvider>(
@@ -113,6 +117,9 @@ class _LearningCenterScreenState extends State<LearningCenterScreen> {
                                   return InkWell(
                                     splashColor: Colors.transparent,
                                     highlightColor: Colors.transparent,
+                                    focusColor: Colors.transparent,
+                                    hoverColor: Colors.transparent,
+
                                     onTap: () {
                                       chipProvider.selectCategory(addLearningCategory[index].category);
                                     },
@@ -152,144 +159,163 @@ class _LearningCenterScreenState extends State<LearningCenterScreen> {
                         });
                   }),
               SizedBox(height: 2.h,),
-              Padding(
-                padding: const EdgeInsets.all(25.0),
-                child: SizedBox(
-                  width: 50.w,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-
-                      const AppTextWidget(
-                        text: 'Title',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      SizedBox(height: 3.h),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            height: 8.h,
-                            width: 30.w,
-                            child: AppTextFieldBlue(
-                              hintText: 'Postpartum Nutrition',
-                              radius: 5,
-                              controller: _titleController,
+              Row(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(25.0),
+                      child: SizedBox(
+                        width: 50.w,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                    
+                            const AppTextWidget(
+                              text: 'Title',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
                             ),
-                          ),
-                          SizedBox(width: 5.w),
-
-                          // Consumer<DropdownProvider>(
-                          //   builder: (context, dropdownProvider, child) {
-                          //     log('blogPost categories are::${blogPostProvider.categories}');
-                          //     log('blogPost category ids are::${blogPostProvider.categoriesIds}');
-                          //     return
-                          //       CustomDropdownWidget(
-                          //         index: 1,
-                          //         items: blogPostProvider.categories,
-                          //         dropdownType: 'Category',
-                          //       );
-                          //   },
-                          // ),
-                        ],
-                      ),
-                      SizedBox(height: 3.h),
-                      GestureDetector(
-                        onTap: () async{
-                          _pickAndUploadImage(context);
-                        },
-                        child: Container(
-                          height: 5.h,
-                          width: 30.w,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Color(0xffF7FAFC),
-                            border: Border.all(
-                              color: Color(0xffD1DBE8),
+                            SizedBox(height: 3.h),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  height: 8.h,
+                                  width: 30.w,
+                                  child: AppTextFieldBlue(
+                                    hintText: 'Postpartum Nutrition',
+                                    radius: 5,
+                                    controller: _titleController,
+                                  ),
+                                ),
+                                SizedBox(width: 5.w),
+                    
+                                // Consumer<DropdownProvider>(
+                                //   builder: (context, dropdownProvider, child) {
+                                //     log('blogPost categories are::${blogPostProvider.categories}');
+                                //     log('blogPost category ids are::${blogPostProvider.categoriesIds}');
+                                //     return
+                                //       CustomDropdownWidget(
+                                //         index: 1,
+                                //         items: blogPostProvider.categories,
+                                //         dropdownType: 'Category',
+                                //       );
+                                //   },
+                                // ),
+                              ],
                             ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: AppTextWidget(text: 'Upload Image',textAlign: TextAlign.start,color: Color(0xff4F7396),),
-                          ),
+                            SizedBox(height: 3.h),
+                            GestureDetector(
+                              onTap: () async{
+                                _pickAndUploadImage(context);
+                              },
+                              child: Container(
+                                height: 5.h,
+                                width: 30.w,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  color: Color(0xffF7FAFC),
+                                  border: Border.all(
+                                    color: Color(0xffD1DBE8),
+                                  ),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: AppTextWidget(text: 'Upload Image',textAlign: TextAlign.start,color: Color(0xff4F7396),),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 2.h,),
+                            Consumer<CloudinaryProvider>(
+                              builder: (context, provider, child) {
+                                return provider.imageData != null
+                                    ? Container(
+                                  height: 20.h,
+                                  width: 20.w,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(color: Colors.black),
+                                  ),
+                                  child: Image.memory(
+                                    provider.imageData!,
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
+                                    : Container(
+                                  height: 20.h,
+                                  width: 20.w,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    //border: Border.all(color: Colors.black),
+                                  ),
+                                  child: Center(
+                                    child: AppTextWidget(text:
+                                    'No image selected',
+                                        color: Colors.grey),
+                                  ),
+                                );
+                              },
+                            ),
+                            SizedBox(height: 5.h),
+                    
+                          ],
                         ),
                       ),
-                      SizedBox(height: 2.h,),
-                      Consumer<CloudinaryProvider>(
-                        builder: (context, provider, child) {
-                          return provider.imageData != null
-                              ? Container(
-                            height: 20.h,
-                            width: 20.w,
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(padding: EdgeInsets.all(12)
+                    ,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AppTextWidget(text: 'Add Description here:',fontSize: 18,fontWeight: FontWeight.w500,),
+                          SizedBox(height: 1.h,),
+                          Container(
+                            height: 50.h,
+                            width: 45.w,
                             decoration: BoxDecoration(
+                              //color: Colors.blueGrey[50],
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(color: Colors.black),
                             ),
-                            child: Image.memory(
-                              provider.imageData!,
-                              fit: BoxFit.cover,
-                            ),
-                          )
-                              : Container(
-                            height: 20.h,
-                            width: 20.w,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              //border: Border.all(color: Colors.black),
-                            ),
-                            child: Center(
-                              child: AppTextWidget(text:
-                              'No image selected',
-                                  color: Colors.grey),
-                            ),
-                          );
-                        },
-                      ),
-                      SizedBox(height: 5.h),
-                      Container(
-                        height: 50.h,
-                        width: 45.w,
-                        decoration: BoxDecoration(
-                          //color: Colors.blueGrey[50],
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.black),
-                        ),
-                        child:  Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: TextField(
-                            maxLines: null,
-                            expands: true,
-                            controller: _contentController,
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
+                            child:  Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: TextField(
+                                maxLines: null,
+                                expands: true,
+                                controller: _contentController,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                      SizedBox(height: 5.h),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 70.0),
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: ButtonWidget(
-                            onClicked: () {
-                              ActionProvider().setLoading(true);
-                              _uploadLearningArticle(context);
-                            },
-                            text:('Upload'),
-                            height: 5.h,
-                            width: 10.w,
-                            textColor: Colors.white,
-                            radius: 25,
-                            fontWeight: FontWeight.w500,
+                          SizedBox(height: 5.h),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 70.0),
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: ButtonWidget(
+                                onClicked: () {
+                                  ActionProvider().setLoading(true);
+                                  _uploadLearningArticle(context);
+                                },
+                                text:('Upload'),
+                                height: 5.h,
+                                width: 10.w,
+                                textColor: Colors.white,
+                                radius: 25,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
+                    ),
+                  )
+                ],
               ),
             ],
           ),

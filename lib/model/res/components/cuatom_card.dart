@@ -16,6 +16,10 @@ class CustomCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      highlightColor: Colors.transparent,
+      focusColor: Colors.transparent,
+      hoverColor: Colors.transparent,
+      splashColor: Colors.transparent,
       onTap: () {
 
         switch (title) {
@@ -80,7 +84,11 @@ class CustomCardM extends StatelessWidget {
         19,
       // Add more routes here as needed
     ];
-    return GestureDetector(
+    return InkWell(
+      highlightColor: Colors.transparent,
+      focusColor: Colors.transparent,
+      hoverColor: Colors.transparent,
+      splashColor: Colors.transparent,
       onTap: () {
         Provider.of<MenuAppController>(context, listen: false)
             .changeScreen(routesIndex[index]);
