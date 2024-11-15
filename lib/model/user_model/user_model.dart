@@ -112,67 +112,67 @@ class User {
 // Tracker Model
 
 class Tracker {
-  String sleetAt;
-  String type;
-  String messageNote;
-  String stressLevel;
-  String painLevel;
-  String categoryId;
-  String image;
-  String days;
-  String id;
-  String moodName;
-  String intensity;
-  String wakeDuringNight;
-  String wakeUpAt;
-  String timeStamp;
-  List<String> options;
-  List<dynamic> causesList;
-  List<TrackerQuestionModel> questions;
+  String? sleetAt;
+  String? type;
+  String? messageNote;
+  String? stressLevel;
+  String? painLevel;
+  String? categoryId;
+  String? image;
+  String? days;
+  String? id;
+  String? moodName;
+  String? intensity;
+  String? wakeDuringNight;
+  String? wakeUpAt;
+  String? timeStamp;
+  List<String>? options;
+  List<dynamic>? causesList;
+  List<TrackerQuestionModel>? questions;
 
   Tracker({
-    required this.sleetAt,
-    required this.type,
-    required this.messageNote,
-    required this.image,
-    required this.categoryId,
-    required this.days,
-    required this.painLevel,
-    required this.stressLevel,
-    required this.moodName,
-    required this.id,
-    required this.intensity,
-    required this.wakeDuringNight,
-    required this.wakeUpAt,
-    required this.options,
-    required this.timeStamp,
-    required this.questions,
-    required this.causesList,
+    this.sleetAt,
+    this.type,
+    this.messageNote,
+    this.image,
+    this.categoryId,
+    this.days,
+    this.painLevel,
+    this.stressLevel,
+    this.moodName,
+    this.id,
+    this.intensity,
+    this.wakeDuringNight,
+    this.wakeUpAt,
+    this.options,
+    this.timeStamp,
+    this.questions,
+    this.causesList,
   });
 
   factory Tracker.fromMap(Map<String, dynamic> data) {
     return Tracker(
-      sleetAt: data['sleetAt'] ?? '',
-      type: data['type'] ?? '',
-      stressLevel: data['stressLevel'] ?? '',
-      image: data['image'] ?? '',
-      days: data['days'] ?? '',
-      painLevel: data['painLevel'] ?? '',
-      id: data['id'] ?? '',
-      intensity: data['intensity'] ?? '',
-      categoryId: data['categoryId'] ?? '',
-      messageNote: data['messageNote'] ?? '',
-      moodName: data['moodName'] ?? '',
-      wakeDuringNight: data['wakeDuringNight'] ?? '',
-      wakeUpAt: data['wakeUpAt'] ?? '',
-      timeStamp: data['timeStamp'] ?? '',
+      sleetAt: data['sleetAt'],
+      type: data['type'],
+      stressLevel: data['stressLevel'],
+      image: data['image'],
+      days: data['days'],
+      painLevel: data['painLevel'],
+      id: data['id'],
+      intensity: data['intensity'],
+      categoryId: data['categoryId'],
+      messageNote: data['messageNote'],
+      moodName: data['moodName'],
+      wakeDuringNight: data['wakeDuringNight'],
+      wakeUpAt: data['wakeUpAt'],
+      timeStamp: data['timeStamp'],
       causesList: data['causesList'] ?? [],
-      options: List<String>.from(data['options'] ?? []),
+      options: data['options'] != null ? List<String>.from(data['options']) : [],
       questions: (data['questions'] as List<dynamic>?)
           ?.map((question) => TrackerQuestionModel.fromMap(question))
-          .toList() ??
-          [],
+          .toList() ?? [],
     );
   }
 }
+
 

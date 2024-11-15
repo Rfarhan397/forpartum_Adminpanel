@@ -28,10 +28,15 @@ class CustomCard extends StatelessWidget {
             //     .changeScreen(14);
             break;
           case 'Milestone':
+
+            Provider.of<MenuAppController>(context, listen: false)
+                .addBackPage(7);
             Provider.of<MenuAppController>(context, listen: false)
                 .changeScreen(14);
             break;
           case 'Tackers':
+            Provider.of<MenuAppController>(context, listen: false)
+                .addBackPage(7);
             Provider.of<MenuAppController>(context, listen: false)
                 .changeScreen(28);
             break;
@@ -90,6 +95,8 @@ class CustomCardM extends StatelessWidget {
       hoverColor: Colors.transparent,
       splashColor: Colors.transparent,
       onTap: () {
+        Provider.of<MenuAppController>(context, listen: false)
+            .addBackPage(8);
         Provider.of<MenuAppController>(context, listen: false)
             .changeScreen(routesIndex[index]);
         //Get.toNamed(routes[index]);

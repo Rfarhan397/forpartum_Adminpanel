@@ -13,8 +13,8 @@ class ActivityProvider with ChangeNotifier {
     ActivityForNotifications(date: '2023-06-25', description: 'Weekly Insights Update',status: 'sent',action:'[View]'),
     ActivityForNotifications(date: '2023-06-25', description: 'New Feature Announcement ',status: 'pending',action:'[View]'),
     ActivityForNotifications(date: '2023-06-25', description: 'System Maintenance ',status: 'pending',action:'[View]'),
-    ActivityForNotifications(date: '2023-06-25', description: 'Weekly Insights Update',status: 'sent',action:'[Edit]'),
-    ActivityForNotifications(date: '2023-06-25', description: 'Weekly Insights Update',status: 'sent',action:'[Edit]'),
+    ActivityForNotifications(date: '2023-06-25', description: 'Weekly Insights Update',status: 'sent',action:'[View]'),
+    ActivityForNotifications(date: '2023-06-25', description: 'Weekly Insights Update',status: 'sent',action:'[View]'),
   ];
 
   List<Activity> get activities => _activities;

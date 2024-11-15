@@ -196,7 +196,7 @@ class UserScreen extends StatelessWidget {
                               padding:
                                   EdgeInsets.only(top: 1.5.h, bottom: 1.5.h),
                               margin: EdgeInsets.only(
-                                  left: 1.w, right: 19.w, top: 5, bottom: 5),
+                                  left: 1.w, right: 12.w, top: 5, bottom: 5),
                               decoration: BoxDecoration(
                                   color: primaryColor,
                                   borderRadius: BorderRadius.circular(25)),
@@ -344,7 +344,7 @@ class UserScreen extends StatelessWidget {
                               itemCount: paginatedUsers.length,
                               itemBuilder: (ctx, index) {
                                 final user = paginatedUsers[index];
-                                return _buildUserRow(context, user);
+                                return _buildUserRow(context, user,index);
                               },
                             ),
                           ]);
@@ -389,7 +389,7 @@ class UserScreen extends StatelessWidget {
         0: FlexColumnWidth(1),
         1: FlexColumnWidth(1),
         2: FlexColumnWidth(1),
-        3: FlexColumnWidth(1.5),
+        3: FlexColumnWidth(1),
       },
       children: [
         TableRow(children: [
@@ -412,15 +412,15 @@ class UserScreen extends StatelessWidget {
       child: AppTextWidget(text: text, color: Colors.white),
     );
   }
-  Widget _buildUserRow(BuildContext context, User user) {
+  Widget _buildUserRow(BuildContext context, User user,int index) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 15),
+      padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8),
       child: Table(
         columnWidths: const {
           0: FlexColumnWidth(1),
           1: FlexColumnWidth(1),
           2: FlexColumnWidth(1),
-          3: FlexColumnWidth(1.5),
+          3: FlexColumnWidth(1),
         },
         children: [
           TableRow(
@@ -464,18 +464,11 @@ class UserScreen extends StatelessWidget {
               Container(
                 alignment: Alignment.centerLeft,
                 padding: EdgeInsets.symmetric(vertical: 1.5.h),
-                child: Row(
-                  children: [
-                    _buildActionButton('VIEW', onTap: () {
-                      Provider.of<MenuAppController>(context, listen: false)
-                          .changeScreenWithParams(12, parameters: user);
-                    }),
-                    // SizedBox(width: 0.5.w),
-                    // _buildActionButton('EDIT', onTap: () {}),
-                    SizedBox(width: 0.5.w),
-                    _buildActionButton('DELETE', onTap: () {}),
-                  ],
-                ),
+                child: _buildActionButton('VIEW', onTap: () {
+                  Provider.of<MenuAppController>(context, listen: false).addBackPage(1);
+                  Provider.of<MenuAppController>(context, listen: false)
+                      .changeScreenWithParams(12, parameters: user);
+                }),
               ),
             ],
           ),

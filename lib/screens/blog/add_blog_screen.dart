@@ -1,9 +1,12 @@
 import 'dart:developer';
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'dart:html' as html;
+import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'dart:typed_data';
 import '../../model/res/components/custom_appBar.dart';
 import '../../model/res/components/custom_dropDown.dart';
@@ -18,18 +21,16 @@ import '../../provider/cloudinary/cloudinary_provider.dart';
 import '../../provider/dropDOwn/dropdown.dart';
 
 class AddBlogScreen extends StatefulWidget {
-  const AddBlogScreen({super.key});
+  AddBlogScreen({super.key});
 
   @override
   State<AddBlogScreen> createState() => _AddBlogScreenState();
 }
 
 class _AddBlogScreenState extends State<AddBlogScreen> {
-  Uint8List? _imageData;
- // Store image data
- TextEditingController _titleController = TextEditingController();
-
- TextEditingController _contentController = TextEditingController();
+  Uint8List? _imageData; // Store image data
+  TextEditingController _titleController = TextEditingController();
+  final quill.QuillController _quillController = quill.QuillController.basic();
 
   @override
   void initState() {
@@ -59,34 +60,31 @@ class _AddBlogScreenState extends State<AddBlogScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-
                     const AppTextWidget(
                       text: 'Article title',
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
-                     SizedBox(height: 3.h),
+                    SizedBox(height: 3.h),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                         Container(
-                           height: 8.h,
-                           width: 30.w,
+                        Container(
+                          height: 8.h,
+                          width: 30.w,
                           child: AppTextFieldBlue(
                             hintText: 'Postpartum Nutrition',
                             radius: 5,
                             controller: _titleController,
                           ),
                         ),
-                         SizedBox(width: 5.w),
-
+                        SizedBox(width: 5.w),
                         Consumer<DropdownProvider>(
                           builder: (context, dropdownProvider, child) {
                             log('blogPost categories are::${blogPostProvider.categories}');
                             log('blogPost category ids are::${blogPostProvider.categoriesIds}');
-                            return
-                              CustomDropdownWidget(
+                            return CustomDropdownWidget(
                               index: 1,
                               items: blogPostProvider.categories,
                               dropdownType: 'Category',
@@ -95,28 +93,32 @@ class _AddBlogScreenState extends State<AddBlogScreen> {
                         ),
                       ],
                     ),
-                     SizedBox(height: 3.h),
-                   GestureDetector(
-                     onTap: () async{
-                       _pickAndUploadImage(context);
-                     },
-                     child: Container(
-                       height: 5.h,
-                       width: 30.w,
-                       decoration: BoxDecoration(
-                         borderRadius: BorderRadius.circular(8),
-                         color: Color(0xffF7FAFC),
-                         border: Border.all(
-                           color: Color(0xffD1DBE8),
-                         ),
-                       ),
-                       child: Padding(
-                         padding: const EdgeInsets.all(8.0),
-                         child: AppTextWidget(text: 'Upload Image',textAlign: TextAlign.start,color: Color(0xff4F7396),),
-                       ),
-                     ),
-                   ),
-                    SizedBox(height: 2.h,),
+                    SizedBox(height: 3.h),
+                    GestureDetector(
+                      onTap: () async {
+                        _pickAndUploadImage(context);
+                      },
+                      child: Container(
+                        height: 5.h,
+                        width: 30.w,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Color(0xffF7FAFC),
+                          border: Border.all(
+                            color: Color(0xffD1DBE8),
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: AppTextWidget(
+                            text: 'Upload Image',
+                            textAlign: TextAlign.start,
+                            color: Color(0xff4F7396),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 2.h),
                     Consumer<CloudinaryProvider>(
                       builder: (context, provider, child) {
                         return provider.imageData != null
@@ -137,38 +139,43 @@ class _AddBlogScreenState extends State<AddBlogScreen> {
                           width: 20.w,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            //border: Border.all(color: Colors.black),
                           ),
                           child: Center(
-                            child: AppTextWidget(text:
-                              'No image selected',
-                              color: Colors.grey),
+                            child: AppTextWidget(
+                              text: 'No image selected',
+                              color: Colors.grey,
+                            ),
                           ),
                         );
                       },
                     ),
-                     SizedBox(height: 5.h),
+                    SizedBox(height: 5.h),
+                    QuillSimpleToolbar(
+                      controller: _quillController,
+                      configurations: const QuillSimpleToolbarConfigurations(),
+                    ),
                     Container(
                       height: 50.h,
                       width: 45.w,
                       decoration: BoxDecoration(
-                        //color: Colors.blueGrey[50],
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(color: Colors.black),
                       ),
-                      child:  Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: TextField(
-                          maxLines: null,
-                          expands: true,
-                          controller: _contentController,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                          ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: quill.QuillEditor(
+                          controller: _quillController,
+                          scrollController: ScrollController(),
+                          // scrollable: true,
+                          focusNode: FocusNode(),
+                          // autoFocus: false,
+                          // readOnly: false,
+                          // expands: true,
+                          // padding: Ed/geInsets.zero,
                         ),
                       ),
                     ),
-                     SizedBox(height: 5.h),
+                    SizedBox(height: 5.h),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 70.0),
                       child: Align(
@@ -178,13 +185,13 @@ class _AddBlogScreenState extends State<AddBlogScreen> {
                             ActionProvider().setLoading(true);
                             _uploadBlog(context);
                           },
-                          text:('Upload'),
+                          text: 'Upload',
                           height: 5.h,
                           width: 10.w,
                           textColor: Colors.white,
                           radius: 25,
                           fontWeight: FontWeight.w500,
-                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -227,15 +234,17 @@ class _AddBlogScreenState extends State<AddBlogScreen> {
     final cloudinaryProvider = Provider.of<CloudinaryProvider>(context, listen: false);
     final dropdownProvider = Provider.of<DropdownProviderN>(context, listen: false);
     log('title:${_titleController.text.toString()}');
-    log('content:${_contentController.text.toString()}');
-    log('image:$_imageData');
-    log('dropdown:${dropdownProvider.selectedCategory}');
+
+    // Convert Quill document to JSON
+    String contentJson = jsonEncode(_quillController.document.toDelta().toJson());
+    log('contentJson:$contentJson');
+
     if (_titleController.text.isEmpty ||
-        _contentController.text.isEmpty ||
+        contentJson.isEmpty ||
         dropdownProvider.selectedCategory.isEmpty ||
         cloudinaryProvider.imageData == null) {
       ActionProvider.stopLoading();
-      AppUtils().showToast(text: 'Please fill all fields and upload an image',);
+      AppUtils().showToast(text: 'Please fill all fields and upload an image');
       return;
     }
 
@@ -243,33 +252,30 @@ class _AddBlogScreenState extends State<AddBlogScreen> {
       await cloudinaryProvider.uploadImage(cloudinaryProvider.imageData!);
       var id = FirebaseFirestore.instance.collection('blogs').doc().id.toString();
       if (cloudinaryProvider.imageUrl.isNotEmpty) {
-      //  Save the blog data to Firebase
-       // Example Firebase code:
         await FirebaseFirestore.instance.collection('blogs').doc(id).set({
           'title': _titleController.text,
-          'content': _contentController.text,
+          'content': contentJson, // save as JSON for formatted text
           'categoryId': dropdownProvider.selectedCategoryId,
           'category': dropdownProvider.selectedCategory,
           'imageUrl': cloudinaryProvider.imageUrl.toString(),
-          'readTime': '5 mints'.toString(),
+          'readTime': '5 mints',
           'createdAt': DateTime.now().millisecondsSinceEpoch.toString(),
-          'id': id.toString(),
-
+          'id': id,
         });
         ActionProvider.stopLoading();
         _titleController.clear();
-        _contentController.clear();
+        _quillController.clear();
         cloudinaryProvider.clearImage();
 
         AppUtils().showToast(text: 'Blog uploaded successfully');
       } else {
         ActionProvider.stopLoading();
-        AppUtils().showToast(text: 'Image upload failed',);
+        AppUtils().showToast(text: 'Image upload failed');
       }
     } catch (e) {
       log('Error uploading blog: $e');
       ActionProvider.stopLoading();
-      AppUtils().showToast(text: 'Failed to upload blog', );
+      AppUtils().showToast(text: 'Failed to upload blog');
     }
   }
 }

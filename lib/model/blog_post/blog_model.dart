@@ -7,9 +7,11 @@ class BlogPost {
   final String readTime;
   final String content;
   final String createdAt;
+  final String id;
 
   BlogPost({
     required this.imageUrl,
+    required this.id,
     required this.title,
     required this.category,
     required this.readTime,
@@ -25,6 +27,7 @@ class BlogPost {
       category: data['category'] ?? '',
       readTime: data['readTime'] ?? '',
       content: data['content'] ?? '',
+      id: data['id'] ?? '',
       createdAt: (data['createdAt']).toString(), // Convert Timestamp to DateTime
     );
   }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:forpartum_adminpanel/provider/action/action_provider.dart';
 import 'package:forpartum_adminpanel/screens/blog/add_category.dart';
+import 'package:forpartum_adminpanel/screens/users/userTrackerHistory/userTrackerHistoryScreen.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import '../../controller/menu_App_Controller.dart';
@@ -137,6 +139,9 @@ class MainScreen extends StatelessWidget {
           case 28:
           screen =  TrackerScreen();
           break;
+          case 29:
+          screen =  UserTrackerHistoryScreen();
+          break;
 
       default:
         screen = HomeScreen();
@@ -173,7 +178,8 @@ class MainScreen extends StatelessWidget {
                 ),
                 child: FloatingActionButton(
                   onPressed: () {
-                    menuAppController.closeDrawer();
+                    // menuAppController.closeDrawer();
+                    Provider.of<MenuAppController>(context,listen: false).removeBackPage();
                   },
                   backgroundColor: Colors.white,
                   child: Padding(

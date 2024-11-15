@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:forpartum_adminpanel/provider/chat/chatProvider.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:provider/provider.dart';
 
 const primaryColor = Color(0xffEF6844);
 const secondaryColor = Color(0xff9A96E4);
@@ -35,4 +39,9 @@ String? _validateEmail(String? value) {
   }
 
   return null;
+}
+String? getCurrentUid(){
+  // final provider = Provider.of<ChatProvider>(Get.context!,listen: false);
+  String email = "admin123@gmail.com";
+  return email;
 }

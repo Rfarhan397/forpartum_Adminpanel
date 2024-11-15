@@ -222,48 +222,48 @@ class HomeScreen extends StatelessWidget {
                               },
                             ),
                           ),
-                           AppTextWidget(text: 'Alerts and Notifications',
-                            fontWeight: FontWeight.w500,fontSize: isMobile? 10:14,),
-                          SizedBox(height: 2.h,),
-                          Expanded(
-                            child: ListView.builder(
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: notifications.length,
-                              itemBuilder: (context, index) {
-                                final notification = notifications[index];
-                                return Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      height: 30,
-                                      width: 28.w,
-                                      padding: const EdgeInsets.all(4.0),
-                                      decoration: BoxDecoration(
-                                        color: notification.categoryColor,
-                                        borderRadius: BorderRadius.circular(15.0),
-                                      ),
-                                      child: Center(
-                                        child: AppTextWidget(
-                                          text:
-                                          notification.category,
-                                          color: Colors.white, fontWeight: FontWeight.w400),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 12.0),
-                                      child: Row(
-                                        children: [
-                                          AppTextWidget(text:notification.date,fontWeight: FontWeight.w400, fontSize: 10),
-                                           SizedBox(width: 1.w),
-                                          Expanded(child: AppTextWidget(text:notification.description,fontWeight: FontWeight.w400,textAlign: TextAlign.start, fontSize: 10)),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              },
-                      ),
-                    ),
+                    //        AppTextWidget(text: 'Alerts and Notifications',
+                    //         fontWeight: FontWeight.w500,fontSize: isMobile? 10:14,),
+                    //       SizedBox(height: 2.h,),
+                    //       Expanded(
+                    //         child: ListView.builder(
+                    //           physics: const NeverScrollableScrollPhysics(),
+                    //           itemCount: notifications.length,
+                    //           itemBuilder: (context, index) {
+                    //             final notification = notifications[index];
+                    //             return Column(
+                    //               crossAxisAlignment: CrossAxisAlignment.start,
+                    //               children: [
+                    //                 Container(
+                    //                   height: 30,
+                    //                   width: 28.w,
+                    //                   padding: const EdgeInsets.all(4.0),
+                    //                   decoration: BoxDecoration(
+                    //                     color: notification.categoryColor,
+                    //                     borderRadius: BorderRadius.circular(15.0),
+                    //                   ),
+                    //                   child: Center(
+                    //                     child: AppTextWidget(
+                    //                       text:
+                    //                       notification.category,
+                    //                       color: Colors.white, fontWeight: FontWeight.w400),
+                    //                   ),
+                    //                 ),
+                    //                 Padding(
+                    //                   padding: const EdgeInsets.symmetric(vertical: 12.0),
+                    //                   child: Row(
+                    //                     children: [
+                    //                       AppTextWidget(text:notification.date,fontWeight: FontWeight.w400, fontSize: 10),
+                    //                        SizedBox(width: 1.w),
+                    //                       Expanded(child: AppTextWidget(text:notification.description,fontWeight: FontWeight.w400,textAlign: TextAlign.start, fontSize: 10)),
+                    //                     ],
+                    //                   ),
+                    //                 ),
+                    //               ],
+                    //             );
+                    //           },
+                    //   ),
+                    // ),
                   SizedBox(height: 2.h,),
                 ],),
                     ),

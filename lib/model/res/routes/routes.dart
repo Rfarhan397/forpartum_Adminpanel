@@ -26,6 +26,7 @@ import '../../../screens/menu_settings/termsNCondition/termsNCondition.dart';
 import '../../../screens/notifications/AddNotification.dart';
 import '../../../screens/notifications/notifications.dart';
 import '../../../screens/splash/splash_screen.dart';
+import '../../../screens/users/userTrackerHistory/userTrackerHistoryScreen.dart';
 
 class Routes {
   static final routes = [
@@ -53,5 +54,6 @@ class Routes {
     GetPage(name: RoutesName.addtermsNCondition, page: () => AddtermsNConditions()),
     GetPage(name: RoutesName.Notifications, page: () => Notifications()),
     GetPage(name: RoutesName.addNewNotifications, page: () => AddNotification()),
+    GetPage(name: RoutesName.userTrackerHistory, page: () => UserTrackerHistoryScreen()),
   ];
 }

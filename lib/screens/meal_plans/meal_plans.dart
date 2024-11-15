@@ -48,17 +48,24 @@ class MealPlanScreen extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                Provider.of<MenuAppController>(context,
-                                        listen: false)
-                                    .changeScreen(10);
+                        InkWell(
+                          hoverColor: Colors.transparent,
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                          onTap: () {
+                            Provider.of<MenuAppController>(context,
+                                listen: false)
+                                .addBackPage(5);
+                            
+                            Provider.of<MenuAppController>(context,
+                                listen: false)
+                                .changeScreen(10);
 
-                                // Get.toNamed(RoutesName.addMealPlan);
-                              },
-                              child: Container(
+                            // Get.toNamed(RoutesName.addMealPlan);
+                          },
+                          child: Row(
+                            children: [
+                              Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(15),
                                   color: primaryColor,
@@ -70,12 +77,12 @@ class MealPlanScreen extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(
-                              width: 15,
-                            ),
-                            const AppTextWidget(text: 'Create New Meal Plan'),
-                          ],
+                              const SizedBox(
+                                width: 15,
+                              ),
+                              const AppTextWidget(text: 'Create New Meal Plan'),
+                            ],
+                          ),
                         ),
                         SizedBox(
                           width: 10.w,

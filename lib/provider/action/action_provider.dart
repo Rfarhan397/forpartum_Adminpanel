@@ -2,7 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:forpartum_adminpanel/constant.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:provider/provider.dart';
 
+import '../../controller/menu_App_Controller.dart';
 import '../../model/res/constant/app_utils.dart';
 import '../../model/services/enum/toastType.dart';
 
@@ -244,4 +248,21 @@ class ActionProvider extends ChangeNotifier{
       },
     ) ?? false;
   }
+
+  int _backIndex = 0;
+
+  int get backIndex => _backIndex;
+
+  void setBackIndex(int index) {
+    _backIndex = index;
+    notifyListeners();
+  }
+
+
+  void changeScreen(){
+    Provider.of<MenuAppController>(Get.context!,
+        listen: false)
+        .changeScreen(_backIndex);
+  }
+
 }

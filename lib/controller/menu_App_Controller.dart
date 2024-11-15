@@ -27,17 +27,32 @@ class MenuAppController extends ChangeNotifier {
   User? _parameters;
   User? get parameters => _parameters;
 
+  String? _type;
+
+  String? get type => _type;
   void changeScreen(int index) {
+    log("Change Screen Index:: $index");
     _selectedIndex = index;
     notifyListeners();
   }
 
   void changeScreenWithParams(int routeName,
-      { required User parameters}) {
+      {  User? parameters,String? type}) {
     _selectedIndex = routeName;
     _parameters = parameters;
+    _type = type; // Store the passed type
+
     notifyListeners();
   }
+
+  void changeScreens(int routeName,
+      {String? type}) {
+    _selectedIndex = routeName;
+    _type = type; // Store the passed type
+    notifyListeners();
+  }
+
+
   ///////to controll the toggle state in user details/////////
   bool _isActive = true;
 
@@ -63,5 +78,32 @@ class MenuAppController extends ChangeNotifier {
     } catch (e) {
       log('Failed to update status: $e');
     }
+  }
+
+
+  List<int> _backPagesList = [];
+  List<int> get backPagesList => _backPagesList;
+
+  void addBackPage(int page){
+    log("Index:: $page");
+    _backPagesList.add(page);
+    notifyListeners();
+  }
+  void removeBackPage(){
+    log("Running");
+    if (_backPagesList.isEmpty) return;
+    changeScreen(_backPagesList.last);
+    _backPagesList.removeLast();
+    notifyListeners();
+    // if(_backPagesList.isEmpty) return;
+    // log("Last Index:: ${_backPagesList.last}");
+    // changeScreen(_backPagesList.last);
+  }
+
+
+
+  void  goBack (){
+    int back = 0;
+
   }
 }

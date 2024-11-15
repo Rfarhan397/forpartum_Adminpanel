@@ -486,6 +486,7 @@ class AddMealScreen extends StatelessWidget {
               : "false",
           'description': descriptionController.text.toString(),
           'likes': [],
+
         });
 
         ActionProvider.stopLoading();

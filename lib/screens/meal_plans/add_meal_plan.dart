@@ -397,7 +397,7 @@ class AddMealPlanScreen extends StatelessWidget {
                               Padding(
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 40.0, horizontal: 25),
-                                child: GestureDetector(
+                                child: InkWell(
                                   onTap: () {
                                     Provider.of<MenuAppController>(context, listen: false)
                                         .changeScreen(10);

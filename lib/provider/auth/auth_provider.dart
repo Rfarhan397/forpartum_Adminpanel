@@ -1,52 +1,48 @@
 import 'dart:developer';
-
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Add Firestore import
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
 import '../../model/res/constant/app_utils.dart';
 import '../../model/res/routes/routes_name.dart';
-import '../../model/services/enum/toastType.dart';
 import '../action/action_provider.dart';
 
-class AuthProvider extends ChangeNotifier{
-  Future<void>signInUser({
+class AuthProvider extends ChangeNotifier {
+  Future<void> signInUser({
     required String email,
     required String password,
     required BuildContext context,
   }) async {
     try {
-      final login = await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      if (login.user != null) {
+      // Check if the user exists in the Firestore admin collection
+      final adminSnapshot = await FirebaseFirestore.instance
+          .collection('admin') // Replace with your admin collection name
+          .where('email', isEqualTo: email)
+          .where('password', isEqualTo: password) // Assumes passwords are stored securely (hashed)
+          .get();
+
+      if (adminSnapshot.docs.isNotEmpty) {
+        AppUtils().showToast(text: 'Please enter your correct username and password');
+        // Admin record found, proceed with login logic
         ActionProvider.stopLoading();
         AppUtils().showToast(text: "Login Successful");
         Get.offNamed(RoutesName.mainScreen);
-
         log("Login successful");
-      }
-    } on FirebaseAuthException catch (e) {
-      ActionProvider.stopLoading();
-      if (e.code == 'user-not-found') {
-        log('No user found for that email.');
-        // ToastService().showToast("No user found for that email.", ToastType.error);
-
-        AppUtils().showToast(text:  "Login failed, No user found for that email.",);
-
-      } else if (e.code == 'wrong-password') {
-        log('Wrong password provided for that user.');
-        AppUtils().showToast(text: "Wrong password provided.",);
-        //AppUtils().showToast(text:  "Login failed Wrong password provided.",);
-
       } else {
-        AppUtils().showToast(text:"Login failed: ${e.message}",);
-
-        log('Login failed: ${e.message}');
+        // No matching admin record found
+        ActionProvider.stopLoading();
+        log('No admin record found for that email and password.');
+        AppUtils().showToast(
+          text: "Login failed: No admin record found for that email and password.",
+        );
       }
+    } catch (e) {
+      ActionProvider.stopLoading();
+      log('Error: $e');
+      AppUtils().showToast(
+        text: "Login failed: An unexpected error occurred.",
+      );
     }
   }
-  
 }

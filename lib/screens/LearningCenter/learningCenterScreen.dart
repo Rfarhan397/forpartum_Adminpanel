@@ -54,6 +54,9 @@ class _LearningCenterScreenState extends State<LearningCenterScreen> {
                 hoverColor: Colors.transparent,
                 splashColor: Colors.transparent,
                 onTap: () {
+
+                  Provider.of<MenuAppController>(context, listen: false)
+                      .addBackPage(26);
                   Provider.of<MenuAppController>(context, listen: false)
                       .changeScreen(27);
                 },

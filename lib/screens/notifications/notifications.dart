@@ -52,6 +52,9 @@ class Notifications extends StatelessWidget {
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,
                     onTap: () {
+                      Provider.of<MenuAppController>(context,
+                          listen: false)
+                          .addBackPage(6);
                       Provider.of<MenuAppController>(context, listen: false)
                           .changeScreen(20);
                     },
@@ -74,19 +77,19 @@ class Notifications extends StatelessWidget {
                         count: '0',
         
                       ),
-                      StatsCard(
-                        iconPath: AppIcons.time,
-                        iconBackgroundColor: secondaryColor,
-                        title: 'Open Rate',
-                        count: '75%',
-        
-                      ),
-                      StatsCard(
-                        iconPath: AppIcons.feedback,
-                        iconBackgroundColor: primaryColor,
-                        title: 'Click-Through Rate:',
-                        count: notificationProvider.clickThroughRate,
-                      ),
+                      // StatsCard(
+                      //   iconPath: AppIcons.time,
+                      //   iconBackgroundColor: secondaryColor,
+                      //   title: 'Open Rate',
+                      //   count: '75%',
+                      //
+                      // ),
+                      // StatsCard(
+                      //   iconPath: AppIcons.feedback,
+                      //   iconBackgroundColor: primaryColor,
+                      //   title: 'Click-Through Rate:',
+                      //   count: notificationProvider.clickThroughRate,
+                      // ),
         
                     ],
                   ),

@@ -128,7 +128,17 @@ class LearningCategory extends StatelessWidget {
                             .collection('learningCategories')
                         .orderBy("createdAt", descending: false)
                             .snapshots(),
+
                         builder: (context, snapShots) {
+                          if (snapShots.connectionState == ConnectionState.waiting) {
+                            return Center(child: CircularProgressIndicator());
+                          }
+                          if (snapShots.hasError) {
+                            return Center(child: Text('Error: ${snapShots.error}'));
+                          }
+                          if (!snapShots.hasData || snapShots.data!.docs.isEmpty) {
+                            return Center(child: Text('No learning Category found'));
+                          }
                           return ListView.builder(
                               itemCount: snapShots.data?.docs.length,
                               itemBuilder: (context, index) {

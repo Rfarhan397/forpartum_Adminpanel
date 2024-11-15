@@ -34,7 +34,7 @@ class _BlogScreenState extends State<BlogScreen> {
 
 
     return Scaffold(
-      appBar: CustomAppbar(text: 'DashBoard'),
+      appBar: CustomAppbar(text: 'Dashboard'),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -52,13 +52,19 @@ class _BlogScreenState extends State<BlogScreen> {
                     children: [
                       Row(
                         children: [
-                          Row(
-                            children: [
-                              InkWell(
-                                onTap: () {
-                                  Provider.of<MenuAppController>(context, listen: false)
-                                      .changeScreen(13);                            },
-                                child: Container(
+                          InkWell(
+                            hoverColor: Colors.transparent,
+                            splashColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            onTap: () {
+                              Provider.of<MenuAppController>(context,
+                                  listen: false)
+                                  .addBackPage(4);
+                              Provider.of<MenuAppController>(context, listen: false)
+                                  .changeScreen(13);                            },
+                            child: Row(
+                              children: [
+                                Container(
                                   width: 30,
                                   height: 30,
                                   decoration: BoxDecoration(
@@ -69,20 +75,27 @@ class _BlogScreenState extends State<BlogScreen> {
                                     child: Icon(Icons.add,color: Colors.white,),
                                   ),
                                 ),
-                              ),
-                              SizedBox(width: 5,),
-                              AppTextWidgetFira(text: 'New Blog Post',fontSize: 14,color: Colors.black,)
-                            ],
+                                SizedBox(width: 5,),
+                                AppTextWidgetFira(text: 'New Blog Post',fontSize: 14,color: Colors.black,)
+                              ],
+                            ),
                           ),
                           SizedBox(width: 3.w,),
-                          Row(
-                            children: [
-                              InkWell(
-                                onTap: () {
-                                  Provider.of<MenuAppController>(context, listen: false)
-                                      .changeScreen(23);
-                                  },
-                                child: Container(
+                          InkWell(
+                            hoverColor: Colors.transparent,
+                            splashColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            onTap: () {
+
+                              Provider.of<MenuAppController>(context,
+                                  listen: false)
+                                  .addBackPage(4);
+                              Provider.of<MenuAppController>(context, listen: false)
+                                  .changeScreen(23);
+                            },
+                            child: Row(
+                              children: [
+                                Container(
                                   width: 30,
                                   height: 30,
                                   decoration: BoxDecoration(
@@ -93,10 +106,10 @@ class _BlogScreenState extends State<BlogScreen> {
                                     child: Icon(Icons.add,color: Colors.white,),
                                   ),
                                 ),
-                              ),
-                              SizedBox(width: 5,),
-                              AppTextWidgetFira(text: 'Add Category',fontSize: 14,color: Colors.black,)
-                            ],
+                                SizedBox(width: 5,),
+                                AppTextWidgetFira(text: 'Add Category',fontSize: 14,color: Colors.black,)
+                              ],
+                            ),
                           ),
                           SizedBox(width: 5,),
                         ],

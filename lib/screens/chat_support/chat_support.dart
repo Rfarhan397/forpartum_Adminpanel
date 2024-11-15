@@ -1,14 +1,20 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
-
+import 'package:timeago/timeago.dart' as timeago;
 import '../../constant.dart';
+import '../../model/chat/chatMOdel.dart';
 import '../../model/res/components/custom_appBar.dart';
 import '../../model/res/constant/app_assets.dart';
 import '../../model/res/constant/app_colors.dart';
 import '../../model/res/constant/app_icons.dart';
 import '../../model/res/widgets/app_text.dart.dart';
+import '../../provider/chat/chatProvider.dart';
 import '../../provider/dropDOwn/dropdown.dart';
 
 class ChatSupportScreen extends StatelessWidget {
@@ -17,6 +23,7 @@ class ChatSupportScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dropdownProvider = Provider.of<DropdownProvider>(context);
+    final provider = Provider.of<ChatProvider>(context,listen: false);
     return Scaffold(
         backgroundColor: const Color(0xffFFFAF9),
         appBar: const CustomAppbar(text: 'Dashboard'),
@@ -76,103 +83,145 @@ class ChatSupportScreen extends StatelessWidget {
                       // Left Sidebar (Contact List)
                       Container(
                         height: 70.h,
-                        width: 20.w,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(topLeft: Radius.circular(10),bottomLeft: Radius.circular(10)),
-                          border: Border(
-                            right: BorderSide
-                              (color: Colors.grey.shade300, width: 1
-                            )
+                          width: 20.w,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(topLeft: Radius.circular(10),bottomLeft: Radius.circular(10)),
+                            border: Border(
+                              right: BorderSide
+                                (color: Colors.grey.shade300, width: 1
+                              )
+                            ),
+                            color: Colors.white,
                           ),
-                          color: Colors.white,
-                        ),
-                        child: ListView(
-                          shrinkWrap: true,
-                          scrollDirection: Axis.vertical,
-                          children: [
-                            _buildContactItem(
-                                primaryColor,
-                                'Emily Kelly',
-                                'Newly Postpartum',
-                                '3 min ago',
-                                'assets/profile1.png'),
-                            Divider(
-                              color: Colors.grey.shade300,
-                              thickness: 1,
-                            ),
-                            _buildContactItem(
-                                secondaryColor,
-                                'Erin Love',
-                                'Newly Postpartum',
-                                '10 min ago',
-                                'assets/profile2.png'),
-                            Divider(
-                              color: Colors.grey.shade300,
-                              thickness: 1,
-                            ),
-                            _buildContactItem(
-                                primaryColor,
-                                'Kemi Olowojaje',
-                                'Newly Postpartum',
-                                '30 min ago',
-                                'assets/profile3.png'),
-                            Divider(
-                              color: Colors.grey.shade300,
-                              thickness: 1,
-                            ),
-                            _buildContactItem(
-                                secondaryColor,
-                                'Denise Stewart',
-                                'Newly Postpartum',
-                                '1 hr ago',
-                                'assets/profile4.png'),
-                            Divider(
-                              color: Colors.grey.shade300,
-                              thickness: 1,
-                            ),
-                            _buildContactItem(
-                                primaryColor,
-                                'Scut Tom',
-                                'Health Specialist',
-                                '2 hrs ago',
-                                'assets/profile5.png'),
-                            Divider(
-                              color: Colors.grey.shade300,
-                              thickness: 1,
-                            ),
-                            _buildContactItem(
-                                primaryColor,
-                                'Amina Ahmed',
-                                'Health Counselor',
-                                '4 hrs ago',
-                                'assets/profile6.png'),
-                            Divider(
-                              color: Colors.grey.shade300,
-                              thickness: 1,
-                            ),
-                            _buildContactItem(
-                                primaryColor,
-                                'Banabas Paul',
-                                'General Care',
-                                '2 days ago',
-                                'assets/profile7.png'),
-                            Divider(
-                              color: Colors.grey.shade300,
-                              thickness: 1,
-                            ),
-                            _buildContactItem(
-                                secondaryColor,
-                                'Ayo Jones',
-                                'Family Practitioner',
-                                '4 days ago',
-                                'assets/profile8.png'),
-                            Divider(
-                              color: Colors.grey.shade300,
-                              thickness: 1,
-                            ),
-                          ],
+                        child: Consumer<ChatProvider>(
+                          builder: (context, chatProvider, _) {
+                            return StreamBuilder<List<ChatRoomModel>>(
+                              stream: chatProvider.getChatRoomsStream(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return const  Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                }
+                                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                  return const  Center(
+                                    child: Text('No chats available'),
+                                  );
+                                }
+                                var chatRooms = snapshot.data!;
+                                return ListView.separated(
+                                  itemCount: snapshot.data!.length,
+                                  shrinkWrap: true,
+                                  itemBuilder: (context, index) {
+                                    final chatRoom = chatRooms[index];
+                                    final unreadCount =  chatProvider.unreadMessageCounts[chatRoom.id] ?? 0;
+                                    var otherUserEmail = chatRoom.users.firstWhere((user) => user != getCurrentUid());
+                                    var lastMessage = chatRoom.lastMessage;
+                                    // var timeStamp = chatRoom[index].lastTimestamp;
+
+
+                                    log("message $unreadCount");
+                                    // final relativeTime = timeStamp != null
+                                    //     ? timeago.format(timeStamp.toDate())
+                                    //     : '';
+
+                                    log("message ${chatProvider.users.firstWhere(
+                                            (user) => user.email == otherUserEmail,
+                                        orElse: () => UserChatModel(uid: '', name: 'Unknown', email: otherUserEmail))}");
+
+                                    // Retrieve user information from ChatProvider
+                                    var otherUser =  chatProvider.users.firstWhere(
+                                          (user) => user.email == otherUserEmail,
+                                      orElse: () => UserChatModel(uid: '', name: 'Unknown', email: otherUserEmail), // Default user
+                                    );
+
+                                    return ListTile(
+                                      leading: CircleAvatar(
+                                        backgroundImage: AssetImage(AppAssets.person), // Assuming image is a URL
+                                      ),
+                                      title: AppTextWidget(
+                                        text: otherUser.name,
+                                        fontSize: 14.0,
+                                        textAlign: TextAlign.start,
+                                        color: Colors.black,fontWeight: FontWeight.bold,),
+                                      // title: Text(otherUserEmail),
+                                      subtitle: AppTextWidget(
+                                        text: lastMessage.toString(),
+                                        fontSize: 12.0,color: Colors.black,
+                                        textAlign: TextAlign.start,
+                                      ),
+                                      trailing: chatRoom.isMessage == getCurrentUid() && chatRoom.isMessage !="seen"
+                                          ? const CircleAvatar(
+                                        radius: 7,
+                                        backgroundColor: primaryColor,
+                                      )
+                                          : null,
+                                      onTap: () async{
+                                        final chatRoomId = await context.read<ChatProvider>().createOrGetChatRoom(otherUser.email,"");
+                                        Provider.of<ChatProvider>(context,listen: false).updateMessageStatus(chatRoomId);
+                                        Provider.of<ChatProvider>(context,listen: false).setResponse(
+                                            chatRoomId: chatRoomId,
+                                            otherUserEmail: otherUserEmail
+                                        );
+
+
+                                        log("User:: $otherUserEmail");
+
+
+                                        //Get.to(ChatScreen());
+                                        await chatProvider.getUnreadMessageCount(chatRoom.id);
+
+                                        // await chatProvider.getCollectionLength(chatRoom.id);
+                                        // log('get Messages ${chatProvider.collectionLength}');
+
+                                      },
+                                    );
+                                  },
+                                  separatorBuilder: (context, index) {
+                                    return const Divider(
+                                      color: Colors.black,
+                                    );
+                                  },
+                                );
+
+                              },
+                            );
+                          },
                         ),
                       ),
+                      // Container(
+                      //   height: 70.h,
+                      //   width: 20.w,
+                      //   decoration: BoxDecoration(
+                      //     borderRadius: BorderRadius.only(topLeft: Radius.circular(10),bottomLeft: Radius.circular(10)),
+                      //     border: Border(
+                      //       right: BorderSide
+                      //         (color: Colors.grey.shade300, width: 1
+                      //       )
+                      //     ),
+                      //     color: Colors.white,
+                      //   ),
+                      //   child: ListView.builder(
+                      //     itemBuilder: (context, index) {
+                      //       return Column(
+                      //         children: [
+                      //           _buildContactItem(
+                      //               primaryColor,
+                      //               'Emily Kelly',
+                      //               'Newly Postpartum',
+                      //               '3 min ago',
+                      //               'assets/profile1.png'),
+                      //           Divider(
+                      //             color: Colors.grey.shade300,
+                      //             thickness: 1,
+                      //           ),
+                      //         ],
+                      //       );
+                      //     },
+                      //     shrinkWrap: true,
+                      //     scrollDirection: Axis.vertical,
+                      //   ),
+                      // ),
 
                       // Main Chat Window
                       Container(
@@ -189,7 +238,158 @@ class ChatSupportScreen extends StatelessWidget {
                               color: Colors.grey.shade300,
                               thickness: 1,
                             ),
-                            _buildChatMessages(),
+                            Flexible(
+                              child: Container(
+                                margin: EdgeInsets.only(
+                                  top: 15.w,
+                                ),
+                                padding: EdgeInsets.only(
+                                  top: 5.w,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.only(
+                                    topRight: Radius.circular(12.w),
+                                    topLeft: Radius.circular(12.w),
+                                  ),
+                                ),
+                                child: StreamBuilder(
+                                  stream: context.read<ChatProvider>().getMessages(provider.chatRoomId),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState == ConnectionState.waiting) {
+                                      return const Center(child: CircularProgressIndicator());
+                                    }
+                                    if (snapshot.hasError) {
+                                      return Center(child: Text('Error: ${snapshot.error}'));
+                                    }
+                                    if (!snapshot.hasData) {
+                                      log("no");
+                                      return const Center(child: Text('No chat history found'));
+                                    }
+                                    provider.markMessageAsRead(provider.chatRoomId);
+                                    provider.updateDeliveryStatus(provider.chatRoomId);
+                                    final messages = snapshot.data!.docs;
+                                    List<Widget> messageWidgets = [];
+                                    for (var message in messages) {
+                                      final messageText = message["text"];
+                                      final messageSender = message["sender"];
+                                      final messageTimestamp = message["timestamp"];
+                                      final isDelivered = message["delivered"];
+                                      final type = message["type"];
+                                      final documentId = message.id.toString();
+
+                                      final relativeTime = messageTimestamp != null
+                                          ? timeago.format(
+                                          messageTimestamp.toDate())
+                                          : '';
+                                      // return ListView
+                                      final isCurrentUser = messageSender == getCurrentUid();
+
+                                      final messageWidget = Align(
+                                        alignment: isCurrentUser ? Alignment
+                                            .centerRight : Alignment.centerLeft,
+                                        child: Column(
+                                          mainAxisAlignment: isCurrentUser
+                                              ? MainAxisAlignment.end
+                                              : MainAxisAlignment.start,
+                                          crossAxisAlignment: isCurrentUser
+                                              ? CrossAxisAlignment.end
+                                              : CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                color: type == "image" ? Colors
+                                                    .transparent : isCurrentUser
+                                                    ? primaryColor
+                                                    : Colors.white,
+                                                borderRadius: BorderRadius
+                                                    .circular(10),
+                                              ),
+                                              padding: EdgeInsets.all(10),
+                                              margin: EdgeInsets.symmetric(
+                                                  vertical: 5, horizontal: 10),
+                                              child: Column(
+                                                crossAxisAlignment: isCurrentUser
+                                                    ? CrossAxisAlignment.end
+                                                    : CrossAxisAlignment.start,
+                                                children: [
+                                                  type == "text" ?
+                                                  Text(
+                                                    messageText,
+                                                    style: TextStyle(
+                                                        color: isCurrentUser
+                                                            ? Colors.white
+                                                            : Colors.black),
+                                                  ) :
+                                                  type == "image" ?
+                                                  Image.network(
+                                                    message['url']!.toString(),
+                                                    width: 200.0,
+                                                    height: 200.0,
+                                                    fit: BoxFit.cover,)
+                                                      : type == "voice" ?
+                                                  SizedBox(
+                                                    width: Get.width * 0.54,
+                                                    child: const ListTile(
+                                                      title: Text(
+                                                          "Voice Message"),
+                                                      // trailing: PlayButton(
+                                                      //     audioUrl: message['url']),
+                                                    ),
+                                                  )
+
+                                                      : const SizedBox.shrink(),
+                                                  const SizedBox(height: 3),
+                                                  Row(
+                                                    mainAxisSize: MainAxisSize
+                                                        .min,
+                                                    children: [
+                                                      Text(
+                                                        relativeTime,
+                                                        style: TextStyle(
+                                                          color: type == "image"
+                                                              ?
+                                                          Colors.black
+                                                              : isCurrentUser ?
+                                                          Colors.white70 : Colors
+                                                              .grey,
+                                                          fontSize: 10,
+                                                        ),
+                                                      ),
+                                                      if (isCurrentUser) ...[
+                                                        const SizedBox(width: 5),
+                                                        Icon(message["read"] ? Icons.done_all : Icons.done,
+                                                          color: type == "image" ? Colors.black : message["read"] ?
+                                                          Colors.white : Colors.white70,
+                                                          size: 12,
+                                                        ),
+                                                      ],
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            if(isCurrentUser)
+                                              Container(
+                                                  margin: const EdgeInsets.symmetric(horizontal: 10),
+                                                  child: AppTextWidget(
+                                                      text: isDelivered ? "seen" : "deliver",
+                                                      fontSize: 12.0)
+                                              )
+                                          ],
+                                        ),
+                                      );
+                                      messageWidgets.add(messageWidget);
+                                    }
+                                    return ListView(
+                                      reverse: true,
+                                      children: messageWidgets,
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                            // _buildChatMessages(),
                             _buildMessageInput(),
                           ],
                         ),

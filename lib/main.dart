@@ -5,6 +5,7 @@ import 'package:forpartum_adminpanel/provider/action/action_provider.dart';
 import 'package:forpartum_adminpanel/provider/activity/acitivity_provider.dart';
 import 'package:forpartum_adminpanel/provider/auth/auth_provider.dart';
 import 'package:forpartum_adminpanel/provider/blog/blog_provider.dart';
+import 'package:forpartum_adminpanel/provider/chat/chatProvider.dart';
 import 'package:forpartum_adminpanel/provider/chip/chip_provider.dart';
 import 'package:forpartum_adminpanel/provider/cloudinary/cloudinary_provider.dart';
 import 'package:forpartum_adminpanel/provider/constant/password_visibility_provider.dart';
@@ -82,6 +83,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => StreamDataProvider()),
         ChangeNotifierProvider(create: (_) => MilestoneProvider()),
         ChangeNotifierProvider(create: (_) => TrackerProvider()),
+        ChangeNotifierProvider(create: (_) => ChatProvider()),
       ],
       child: Consumer<ThemeLanguageProvider>(
         builder: (context,provider,child){
