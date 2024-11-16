@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:forpartum_adminpanel/model/res/components/app_back_button.dart';
 import 'package:forpartum_adminpanel/model/res/components/responsive.dart';
+import 'package:forpartum_adminpanel/provider/profileInfo/profileInfoProvider.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import '../constant/app_colors.dart';
 import '../widgets/app_text.dart.dart';
@@ -15,6 +17,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final profile = Provider.of<ProfileInfoProvider>(context,listen: false);
     final isMobile = Responsive.isMobile(context);
     return AppBar(
       elevation: 0,
@@ -79,7 +82,9 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      AppTextWidget(text: 'Alex meian', fontSize: 12, color: Colors.black,fontWeight: FontWeight.w500,),
+                      AppTextWidget(text: profile.profileName == null ?
+                        profile.profileName.toString() : "Admin"
+                        , fontSize: 12, color: Colors.black,fontWeight: FontWeight.w500,),
                       SizedBox(height: 0.7.h),
                       AppTextWidget(text: 'Prodcut manager', fontSize: 10, color: Colors.grey),
                     ],
@@ -104,7 +109,9 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
     );
+
   }
+
 
   @override
   Size get preferredSize => Size.fromHeight(kToolbarHeight);

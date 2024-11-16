@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:forpartum_adminpanel/controller/menu_App_Controller.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
@@ -8,7 +11,9 @@ import '../../../model/res/components/custom_dropDown.dart';
 import '../../../model/res/components/custom_switch_widget.dart';
 import '../../../model/res/widgets/app_text.dart.dart';
 import '../../../model/res/widgets/custom_richtext.dart';
+import '../../../model/user_model/user_model.dart';
 import '../../../provider/dropDOwn/dropdown.dart';
+import '../../../provider/stream/streamProvider.dart';
 
 class MenuSettingsDetailScreen extends StatelessWidget {
   MenuSettingsDetailScreen({super.key});
@@ -129,174 +134,295 @@ class MenuSettingsDetailScreen extends StatelessWidget {
                         SizedBox(
                           height: 2.h,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 5),
-                                  decoration: BoxDecoration(
-                                      color: primaryColor,
-                                      borderRadius: BorderRadius.circular(25)),
-                                  child: const AppTextWidget(
-                                      text: 'Admin Name',
-                                      fontWeight: FontWeight.w300,
-                                      fontSize: 14,
-                                      color: Colors.white),
-                                ),
-                                const Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      SizedBox(
-                                        height: 5,
-                                      ),
-                                      AppTextWidget(
-                                        text: 'Jane Smith',
-                                        fontSize: 12,
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      AppTextWidget(
-                                        text: 'Jane Smith',
-                                        fontSize: 12,
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      AppTextWidget(
-                                        text: 'Jane Smith',
-                                        fontSize: 12,
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      AppTextWidget(
-                                        text: 'Jane Smith',
-                                        fontSize: 12,
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      AppTextWidget(
-                                        text: 'Jane Smith',
-                                        fontSize: 12,
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                    ],
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.start,
+                        //   crossAxisAlignment: CrossAxisAlignment.start,
+                        //   children: [
+                        //     Column(
+                        //       crossAxisAlignment: CrossAxisAlignment.start,
+                        //       children: [
+                        //         Container(
+                        //           padding: const EdgeInsets.symmetric(
+                        //               horizontal: 16, vertical: 5),
+                        //           decoration: BoxDecoration(
+                        //               color: primaryColor,
+                        //               borderRadius: BorderRadius.circular(25)),
+                        //           child: const AppTextWidget(
+                        //               text: 'Admin Name',
+                        //               fontWeight: FontWeight.w300,
+                        //               fontSize: 14,
+                        //               color: Colors.white),
+                        //         ),
+                        //         const Padding(
+                        //           padding: EdgeInsets.all(8.0),
+                        //           child: Column(
+                        //             crossAxisAlignment:
+                        //                 CrossAxisAlignment.start,
+                        //             children: [
+                        //               SizedBox(
+                        //                 height: 5,
+                        //               ),
+                        //               AppTextWidget(
+                        //                 text: 'Jane Smith',
+                        //                 fontSize: 12,
+                        //               ),
+                        //               SizedBox(
+                        //                 height: 10,
+                        //               ),
+                        //               AppTextWidget(
+                        //                 text: 'Jane Smith',
+                        //                 fontSize: 12,
+                        //               ),
+                        //               SizedBox(
+                        //                 height: 10,
+                        //               ),
+                        //               AppTextWidget(
+                        //                 text: 'Jane Smith',
+                        //                 fontSize: 12,
+                        //               ),
+                        //               SizedBox(
+                        //                 height: 10,
+                        //               ),
+                        //               AppTextWidget(
+                        //                 text: 'Jane Smith',
+                        //                 fontSize: 12,
+                        //               ),
+                        //               SizedBox(
+                        //                 height: 10,
+                        //               ),
+                        //               AppTextWidget(
+                        //                 text: 'Jane Smith',
+                        //                 fontSize: 12,
+                        //               ),
+                        //               SizedBox(
+                        //                 height: 10,
+                        //               ),
+                        //             ],
+                        //           ),
+                        //         )
+                        //       ],
+                        //     ),
+                        //     SizedBox(
+                        //       width: 3.w,
+                        //     ),
+                        //     Column(
+                        //       crossAxisAlignment: CrossAxisAlignment.center,
+                        //       children: [
+                        //         Container(
+                        //           padding: const EdgeInsets.symmetric(
+                        //               horizontal: 16, vertical: 5),
+                        //           decoration: BoxDecoration(
+                        //               color: secondaryColor,
+                        //               borderRadius: BorderRadius.circular(25)),
+                        //           child: const AppTextWidget(
+                        //               text: 'Email',
+                        //               fontWeight: FontWeight.w300,
+                        //               fontSize: 14,
+                        //               color: Colors.white),
+                        //         ),
+                        //         const Padding(
+                        //           padding: EdgeInsets.all(8.0),
+                        //           child: Column(
+                        //             crossAxisAlignment:
+                        //                 CrossAxisAlignment.start,
+                        //             children: [
+                        //               SizedBox(
+                        //                 height: 5,
+                        //               ),
+                        //               AppTextWidget(
+                        //                 text: 'john@example.com',
+                        //                 fontSize: 12,
+                        //               ),
+                        //               SizedBox(
+                        //                 height: 10,
+                        //               ),
+                        //               AppTextWidget(
+                        //                 text: 'john@example.com',
+                        //                 fontSize: 12,
+                        //               ),
+                        //               SizedBox(
+                        //                 height: 10,
+                        //               ),
+                        //               AppTextWidget(
+                        //                 text: 'john@example.com',
+                        //                 fontSize: 12,
+                        //               ),
+                        //               SizedBox(
+                        //                 height: 10,
+                        //               ),
+                        //               AppTextWidget(
+                        //                 text: 'john@example.com',
+                        //                 fontSize: 12,
+                        //               ),
+                        //               SizedBox(
+                        //                 height: 10,
+                        //               ),
+                        //               AppTextWidget(
+                        //                 text: 'john@example.com',
+                        //                 fontSize: 12,
+                        //               ),
+                        //             ],
+                        //           ),
+                        //         )
+                        //       ],
+                        //     ),
+                        //     SizedBox(
+                        //       width: 2.w,
+                        //     ),
+                        //     Column(
+                        //       crossAxisAlignment: CrossAxisAlignment.start,
+                        //       children: [
+                        //         Container(
+                        //           padding: const EdgeInsets.symmetric(
+                        //               horizontal: 16, vertical: 5),
+                        //           decoration: BoxDecoration(
+                        //               color: primaryColor,
+                        //               borderRadius: BorderRadius.circular(25)),
+                        //           child: const AppTextWidget(
+                        //               text: 'Actions',
+                        //               fontWeight: FontWeight.w300,
+                        //               fontSize: 14,
+                        //               color: Colors.white),
+                        //         ),
+                        //         SizedBox(
+                        //           height: 8,
+                        //         ),
+                        //         Column(
+                        //           crossAxisAlignment: CrossAxisAlignment.start,
+                        //           children: [
+                        //             buildRow(),
+                        //             buildRow(),
+                        //             buildRow(),
+                        //             buildRow(),
+                        //             buildRow(),
+                        //           ],
+                        //         )
+                        //       ],
+                        //     ),
+                        //   ],
+                        // )
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Table(
+                            columnWidths: const {
+                              0: FlexColumnWidth(),
+                              1: FlexColumnWidth(),
+                              2: FlexColumnWidth(),
+                            },
+                            children: [
+                              TableRow(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 5),
+                                    decoration: BoxDecoration(
+                                        color: primaryColor,
+                                        borderRadius: BorderRadius.circular(25)),
+                                    child: const AppTextWidget(
+                                        text: 'Admin Name',
+                                        fontWeight: FontWeight.w300,
+                                        fontSize: 14,
+                                        color: Colors.white),
                                   ),
-                                )
-                              ],
-                            ),
-                            SizedBox(
-                              width: 3.w,
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 5),
-                                  decoration: BoxDecoration(
-                                      color: secondaryColor,
-                                      borderRadius: BorderRadius.circular(25)),
-                                  child: const AppTextWidget(
-                                      text: 'Email',
-                                      fontWeight: FontWeight.w300,
-                                      fontSize: 14,
-                                      color: Colors.white),
-                                ),
-                                const Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      SizedBox(
-                                        height: 5,
-                                      ),
-                                      AppTextWidget(
-                                        text: 'john@example.com',
-                                        fontSize: 12,
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      AppTextWidget(
-                                        text: 'john@example.com',
-                                        fontSize: 12,
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      AppTextWidget(
-                                        text: 'john@example.com',
-                                        fontSize: 12,
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      AppTextWidget(
-                                        text: 'john@example.com',
-                                        fontSize: 12,
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      AppTextWidget(
-                                        text: 'john@example.com',
-                                        fontSize: 12,
-                                      ),
-                                    ],
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 5),
+                                      decoration: BoxDecoration(
+                                          color: secondaryColor,
+                                          borderRadius: BorderRadius.circular(25)),
+                                      child: const AppTextWidget(
+                                          text: 'E-mail',
+                                          fontWeight: FontWeight.w300,
+                                          fontSize: 14,
+                                          color: Colors.white),
+                                    ),
                                   ),
-                                )
-                              ],
-                            ),
-                            SizedBox(
-                              width: 2.w,
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 5),
-                                  decoration: BoxDecoration(
-                                      color: primaryColor,
-                                      borderRadius: BorderRadius.circular(25)),
-                                  child: const AppTextWidget(
-                                      text: 'Actions',
-                                      fontWeight: FontWeight.w300,
-                                      fontSize: 14,
-                                      color: Colors.white),
-                                ),
-                                SizedBox(
-                                  height: 8,
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    buildRow(),
-                                    buildRow(),
-                                    buildRow(),
-                                    buildRow(),
-                                    buildRow(),
-                                  ],
-                                )
-                              ],
-                            ),
-                          ],
-                        )
-                      ],
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 5),
+                                    decoration: BoxDecoration(
+                                        color: primaryColor,
+                                        borderRadius: BorderRadius.circular(25)),
+                                    child: const AppTextWidget(
+                                        text: 'Actions',
+                                        fontWeight: FontWeight.w300,
+                                        fontSize: 14,
+                                        color: Colors.white),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          StreamBuilder<List<Admin>>(
+                            stream: Provider.of<StreamDataProvider>(context).getAdminStream(), // Replace with your actual stream function
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return CircularProgressIndicator(); // Loading indicator
+                              } else if (snapshot.hasError) {
+                                return Text('Error: ${snapshot.error}'); // Error message
+                              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                return Text('No data available'); // Message for empty data
+                              } else {
+                                final adminList = snapshot.data!;
+                                return Table(
+                                  columnWidths: const {
+                                    0: FlexColumnWidth(),
+                                    1: FlexColumnWidth(),
+                                    2: FlexColumnWidth(),
+                                  },
+                                  children: adminList.map((admin) {
+                                    return TableRow(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: AppTextWidget(
+                                            text: admin.name,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 14,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: AppTextWidget(
+                                            text: admin.email,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: buildRow(
+                                            onEditTap: () {
+                                              Provider.of<MenuAppController>(context,
+                                                  listen: false)
+                                                  .addBackPage(30);
+                                              Provider.of<MenuAppController>(context, listen: false)
+                                                  .changeScreen(30);
+                                            },
+                                          ), // Replace with actual action widgets if needed
+                                        ),
+                                      ],
+                                    );
+                                  }).toList(),
+                                );
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 3.w),
+                    // Other widgets can remain similar, with modifications as needed
+                  ],
+                )
+                ],
                     ),
                   ),
                   SizedBox(
@@ -379,27 +505,28 @@ class MenuSettingsDetailScreen extends StatelessWidget {
     );
   }
 
-  Padding buildRow() {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 5.5),
-      child: Row(
-        children: [
-          //SizedBox(height:10,),
-          AppTextWidget(
+  Widget buildRow({required VoidCallback onEditTap,}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        //SizedBox(height:10,),
+        InkWell(
+          onTap: onEditTap,
+          child: AppTextWidget(
             text: '[Edit]',
             fontWeight: FontWeight.bold,
             fontSize: 12,
           ),
-          SizedBox(
-            width: 20,
-          ),
-          AppTextWidget(
-            text: '[Delete]',
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-          ),
-        ],
-      ),
+        ),
+        SizedBox(
+          width: 20,
+        ),
+        AppTextWidget(
+          text: '[Delete]',
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+        ),
+      ],
     );
   }
 }

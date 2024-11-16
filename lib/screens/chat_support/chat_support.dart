@@ -45,26 +45,26 @@ class ChatSupportScreen extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                       fontSize: 18,
                     ),
-                    DropdownButton<String>(
-                      value: dropdownProvider.selectedValue,
-                      items: <String>[
-                        'Last 30 Days',
-                        'Last 10 Days',
-                        'Yesterday'
-                      ].map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: AppTextWidget(text: value),
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        if (newValue != null) {
-                          dropdownProvider.setSelectedValue(newValue);
-                        }
-                      },
-                      underline: const SizedBox(),
-                      icon: const Icon(Icons.arrow_drop_down, color: Colors.black),
-                    ),
+                    // DropdownButton<String>(
+                    //   value: dropdownProvider.selectedValue,
+                    //   items: <String>[
+                    //     'Last 30 Days',
+                    //     'Last 10 Days',
+                    //     'Yesterday'
+                    //   ].map((String value) {
+                    //     return DropdownMenuItem<String>(
+                    //       value: value,
+                    //       child: AppTextWidget(text: value),
+                    //     );
+                    //   }).toList(),
+                    //   onChanged: (String? newValue) {
+                    //     if (newValue != null) {
+                    //       dropdownProvider.setSelectedValue(newValue);
+                    //     }
+                    //   },
+                    //   underline: const SizedBox(),
+                    //   icon: const Icon(Icons.arrow_drop_down, color: Colors.black),
+                    // ),
                   ],
                 ),
               ),
@@ -85,7 +85,7 @@ class ChatSupportScreen extends StatelessWidget {
                         height: 70.h,
                           width: 20.w,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(topLeft: Radius.circular(10),bottomLeft: Radius.circular(10)),
+                            borderRadius: const BorderRadius.only(topLeft: Radius.circular(10),bottomLeft: Radius.circular(10)),
                             border: Border(
                               right: BorderSide
                                 (color: Colors.grey.shade300, width: 1
@@ -118,18 +118,11 @@ class ChatSupportScreen extends StatelessWidget {
                                     var otherUserEmail = chatRoom.users.firstWhere((user) => user != getCurrentUid());
                                     var lastMessage = chatRoom.lastMessage;
                                     // var timeStamp = chatRoom[index].lastTimestamp;
-
-
                                     log("message $unreadCount");
-                                    // final relativeTime = timeStamp != null
-                                    //     ? timeago.format(timeStamp.toDate())
-                                    //     : '';
-
                                     log("message ${chatProvider.users.firstWhere(
                                             (user) => user.email == otherUserEmail,
-                                        orElse: () => UserChatModel(uid: '', name: 'Unknown', email: otherUserEmail))}");
+                                        orElse: () => UserChatModel(uid: '', name: 'Unknown', email: otherUserEmail,image: ''))}");
 
-                                    // Retrieve user information from ChatProvider
                                     var otherUser =  chatProvider.users.firstWhere(
                                           (user) => user.email == otherUserEmail,
                                       orElse: () => UserChatModel(uid: '', name: 'Unknown', email: otherUserEmail), // Default user
@@ -137,7 +130,9 @@ class ChatSupportScreen extends StatelessWidget {
 
                                     return ListTile(
                                       leading: CircleAvatar(
-                                        backgroundImage: AssetImage(AppAssets.person), // Assuming image is a URL
+                                        backgroundImage: otherUser.image.toString().isNotEmpty
+                                            ? NetworkImage(otherUser.image.toString())
+                                            :const AssetImage(AppAssets.person),
                                       ),
                                       title: AppTextWidget(
                                         text: otherUser.name,
@@ -264,7 +259,7 @@ class ChatSupportScreen extends StatelessWidget {
                                     }
                                     if (!snapshot.hasData) {
                                       log("no");
-                                      return const Center(child: Text('No chat history found'));
+                                      return const Center(child: Text('No chat history found',style: TextStyle(color: Colors.black),));
                                     }
                                     provider.markMessageAsRead(provider.chatRoomId);
                                     provider.updateDeliveryStatus(provider.chatRoomId);
@@ -305,8 +300,8 @@ class ChatSupportScreen extends StatelessWidget {
                                                 borderRadius: BorderRadius
                                                     .circular(10),
                                               ),
-                                              padding: EdgeInsets.all(10),
-                                              margin: EdgeInsets.symmetric(
+                                              padding: const EdgeInsets.all(10),
+                                              margin: const EdgeInsets.symmetric(
                                                   vertical: 5, horizontal: 10),
                                               child: Column(
                                                 crossAxisAlignment: isCurrentUser
@@ -600,7 +595,7 @@ class ChatSupportScreen extends StatelessWidget {
           ),
           const Spacer(),
           Image.asset(AppIcons.menu),
-          SizedBox(width: 20,),
+          const SizedBox(width: 20,),
         ],
       ),
     );
@@ -759,7 +754,7 @@ class ChatSupportScreen extends StatelessWidget {
             child: Container(
               height: 30,
               width: 40,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: primaryColor,
                 borderRadius: BorderRadius.horizontal(left: Radius.circular(20),right: Radius.circular(20))
               ),

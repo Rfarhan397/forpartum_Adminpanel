@@ -20,6 +20,7 @@ import '../../../screens/menu_settings/FAQ/faqScreen.dart';
 import '../../../screens/menu_settings/menu_setting.dart';
 import '../../../screens/menu_settings/policy/addNewPolicy.dart';
 import '../../../screens/menu_settings/policy/privacy.dart';
+import '../../../screens/menu_settings/setting/editProfileScreen.dart';
 import '../../../screens/menu_settings/setting/menuSettingsDetail_screen.dart';
 import '../../../screens/menu_settings/termsNCondition/addTermsNConditions.dart';
 import '../../../screens/menu_settings/termsNCondition/termsNCondition.dart';
@@ -43,7 +44,7 @@ class Routes {
     GetPage(name: RoutesName.addMeal, page: () => BlogScreen()),
     GetPage(name: RoutesName.addBlogPost, page: () => AddBlogScreen()),
     GetPage(name: RoutesName.libraryScreen, page: () => LibraryScreen()),
-    GetPage(name: RoutesName.cardDetailsScreen, page: () => LibraryCardDetails(),),
+    GetPage(name: RoutesName.cardDetailsScreen, page: () => MileStoneScreen(),),
     GetPage(name: RoutesName.cardDetailsScreen, page: () => MenuSetting()),
     GetPage(name: RoutesName.menuSettingsDetailScreen, page: () => MenuSettingsDetailScreen()),
     GetPage(name: RoutesName.faqDetailScreen, page: () => FaqScreen()),
@@ -55,5 +56,6 @@ class Routes {
     GetPage(name: RoutesName.Notifications, page: () => Notifications()),
     GetPage(name: RoutesName.addNewNotifications, page: () => AddNotification()),
     GetPage(name: RoutesName.userTrackerHistory, page: () => UserTrackerHistoryScreen()),
+    GetPage(name: RoutesName.editProfile, page: () => EditProfileScreen()),
   ];
 }

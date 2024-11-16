@@ -173,7 +173,7 @@ class ChatProvider extends ChangeNotifier{
       uid: doc['uid'] ?? "",
       name: doc['name'] ?? "",
       email: doc['email'] ?? "",
-      // image: doc['image'] ?? "",
+       image: doc['imageUrl'] ?? "",
     ))
         .toList();
     notifyListeners();
@@ -188,5 +188,16 @@ class ChatProvider extends ChangeNotifier{
     _chatRoomId = chatRoomId;
     _otherUserEmail = otherUserEmail;
     notifyListeners();
+  }
+
+
+  ChatRoomModel? _selectedChatRoom;
+  String? _selectedUserEmail;
+  ChatRoomModel? get selectedChatRoom => _selectedChatRoom;
+  String? get selectedUserEmail => _selectedUserEmail;
+  void setSelectedChatRoom(ChatRoomModel chatRoom, String userEmail) {
+    _selectedChatRoom = chatRoom;
+    _selectedUserEmail = userEmail;
+    notifyListeners(); // Notify consumers about the change
   }
 }

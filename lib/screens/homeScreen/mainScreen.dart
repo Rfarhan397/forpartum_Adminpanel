@@ -28,6 +28,7 @@ import '../menu_settings/FAQ/faqScreen.dart';
 import '../menu_settings/menu_setting.dart';
 import '../menu_settings/policy/addNewPolicy.dart';
 import '../menu_settings/policy/privacy.dart';
+import '../menu_settings/setting/editProfileScreen.dart';
 import '../menu_settings/setting/menuSettingsDetail_screen.dart';
 import '../menu_settings/termsNCondition/addTermsNConditions.dart';
 import '../menu_settings/termsNCondition/termsNCondition.dart';
@@ -95,7 +96,7 @@ class MainScreen extends StatelessWidget {
           screen = AddBlogScreen();
           break;
           case 14:
-          screen = LibraryCardDetails();
+          screen = MileStoneScreen();
           break;
           case 15:
           screen = FaqScreen();
@@ -141,6 +142,9 @@ class MainScreen extends StatelessWidget {
           break;
           case 29:
           screen =  UserTrackerHistoryScreen();
+          break;
+          case 30:
+          screen =  EditProfileScreen();
           break;
 
       default:

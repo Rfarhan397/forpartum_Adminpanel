@@ -1,31 +1,24 @@
-// class User {
-//   final String id;
-//   final String name;
-//   final String email;
-//   final String isActive;
-//   final String imageUrl;
-//
-//   User({
-//     required this.id,
-//     required this.name,
-//     required this.email,
-//     required this.isActive,
-//     required this.imageUrl,
-//   });
-//   factory User.fromMap(Map<String, dynamic> data) {
-//     return User(
-//       name: data['name'] ?? '',
-//       email: data['email'] ?? '',
-//       id: data['id'] ?? '',
-//       isActive: data['isActive'] ?? '',
-//       imageUrl: data['imageUrl'] ?? '',
-//
-//     );
-//   }
-// }
-import 'package:forpartum_adminpanel/provider/user_provider/user_provider.dart';
-
 import '../tracker/trackerModel.dart';
+
+
+class Admin {
+  final String name;
+  final String email;
+
+  Admin({
+    required this.name,
+    required this.email,
+
+  });
+  factory Admin.fromMap(Map<String, dynamic> data) {
+    return Admin(
+      name: data['name'] ?? '',
+      email: data['email'] ?? '',
+
+    );
+  }
+}
+
 
 class User {
    String? accountType;

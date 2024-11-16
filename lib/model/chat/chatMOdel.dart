@@ -24,7 +24,7 @@ class ChatRoomModel {
       lastMessage: data['lastMessage'] ?? '',
       isMessage: data['isMessage'] ?? '',
       lastTimestamp: (data['lastTimestamp'] as Timestamp?)?.toDate() ?? DateTime.now(), // Provide a default date
-      unreadMessageCount: 0, // Initialize with 0; it will be updated later
+      unreadMessageCount: 0,
     );
   }
 
@@ -44,13 +44,13 @@ class UserChatModel {
   final String uid;
   final String name;
   final String email;
-  // final String image;
+  final String? image;
 
   UserChatModel({
     required this.uid,
     required this.name,
     required this.email,
-    // required this.image,
+     this.image,
   });
 
   factory UserChatModel.fromMap(Map<String, dynamic> map) {
@@ -58,12 +58,12 @@ class UserChatModel {
       uid: map['uid'] ?? "",
       name: map['name'] ?? "",
       email: map['email'] ?? "",
-      // image: map['image'] ?? "",
+      image: map['imageUrl'] ?? "",
     );
   }
 
   @override
   String toString() {
-    return 'UserModel{id: $uid, name: $name, email: $email}';
+    return 'UserModel{id: $uid, name: $name, email: $email, image:$image}';
   }
 }

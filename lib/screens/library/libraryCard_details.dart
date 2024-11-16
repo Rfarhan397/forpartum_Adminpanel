@@ -19,8 +19,8 @@ import '../../model/res/widgets/button_widget.dart';
 import '../../provider/chip/chip_provider.dart';
 import '../../provider/stream/streamProvider.dart';
 
-class LibraryCardDetails extends StatelessWidget {
-  LibraryCardDetails({super.key});
+class MileStoneScreen extends StatelessWidget {
+  MileStoneScreen({super.key});
   final List<String> categories = [
     '1-12 Months Postpartum ',
     '12-24 Months Postpartum ',
@@ -31,7 +31,8 @@ class LibraryCardDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final milestone = Provider.of<MilestoneProvider>(context);
+    final chipProvider = Provider.of<ChipProvider>(context);
+    final milestone = Provider.of<ChipProvider>(context);
     final action = Provider.of<ActionProvider>(context);
 
     return Scaffold(
@@ -44,6 +45,44 @@ class LibraryCardDetails extends StatelessWidget {
                 height: 1.0,
                 color: Colors.grey[300],
               ),
+              SizedBox(height: 1.h),
+                  Padding(
+                    padding:  EdgeInsets.symmetric(horizontal: 2.w,vertical: 2.h),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: categories.map((category) {
+                        final isSelected = chipProvider.selectedCategory == category;
+
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: MouseRegion(
+                            child: GestureDetector(
+                              onTap: () {
+                                chipProvider.selectCategory(category);
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 5.0, horizontal: 14.0),
+                                decoration: BoxDecoration(
+                                  color: isSelected
+                                      ? primaryColor
+                                          : secondaryColor,
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: AppTextWidget(
+                                  text: category,
+                                  color: isSelected
+                                      ? Colors.white
+                                          : Colors.white,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
               SizedBox(height: 1.h),
               Padding(
                 padding:  EdgeInsets.symmetric(horizontal: 2.w,vertical: 1.h),

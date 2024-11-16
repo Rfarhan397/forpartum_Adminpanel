@@ -152,6 +152,14 @@ class StreamDataProvider extends ChangeNotifier{
       }).toList();
     });
   }
+  Stream<List<Admin>> getAdminStream() {
+    // Replace this with your actual stream source, such as a Firestore collection.
+    return FirebaseFirestore.instance.collection('admin').snapshots().map((snapshot) {
+     return snapshot.docs.map((doc) {
+        return Admin.fromMap(doc.data());
+      }).toList();
+    });
+  }
 
 
 }

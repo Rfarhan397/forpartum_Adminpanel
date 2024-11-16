@@ -24,4 +24,5 @@ class RoutesName{
   static const addNewNotifications = "/addNewNotifications";
   static const addMealCategory = "/addMealCategory";
   static const userTrackerHistory = "/userTrackerHistoryScreen";
+  static const editProfile = "/editProfileScreen";
 }
