@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class BlogPost {
-  final String imageUrl;
+   final String imageUrl;
   final String title;
   final String category;
   final String readTime;

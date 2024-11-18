@@ -124,7 +124,7 @@ class MyApp extends StatelessWidget {
                       surface: Colors.black
                   ),
                 ),
-                initialRoute: RoutesName.mainScreen,
+                initialRoute: RoutesName.splashScreen,
                 getPages: Routes.routes,
               );
             }

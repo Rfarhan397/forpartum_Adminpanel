@@ -13,6 +13,7 @@ import '../LearningCenter/learningCategory.dart';
 import '../LearningCenter/learningCenterScreen.dart';
 import '../blog/add_blog_screen.dart';
 import '../blog/blog_screen.dart';
+import '../blog/editBlogPost.dart';
 import '../chat_support/chat_support.dart';
 import '../guidline/guidelineScreen.dart';
 import '../insight/insight.dart';
@@ -145,6 +146,9 @@ class MainScreen extends StatelessWidget {
           break;
           case 30:
           screen =  EditProfileScreen();
+          break;
+          case 31:
+          screen =  EditBlogPost();
           break;
 
       default:

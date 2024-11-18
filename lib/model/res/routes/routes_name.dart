@@ -25,4 +25,5 @@ class RoutesName{
   static const addMealCategory = "/addMealCategory";
   static const userTrackerHistory = "/userTrackerHistoryScreen";
   static const editProfile = "/editProfileScreen";
+  static const editBlogPost = "/editBlogPost";
 }

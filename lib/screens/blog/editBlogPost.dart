@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:flutter_quill/quill_delta.dart' as quill;
+import 'package:forpartum_adminpanel/controller/menu_App_Controller.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'dart:html' as html;
@@ -20,17 +22,17 @@ import '../../provider/blog/blog_provider.dart';
 import '../../provider/cloudinary/cloudinary_provider.dart';
 import '../../provider/dropDOwn/dropdown.dart';
 
-class AddBlogScreen extends StatefulWidget {
-  AddBlogScreen({super.key});
+class EditBlogPost extends StatefulWidget {
+  EditBlogPost({super.key});
 
   @override
-  State<AddBlogScreen> createState() => _AddBlogScreenState();
+  State<EditBlogPost> createState() => _EditBlogPostState();
 }
 
-class _AddBlogScreenState extends State<AddBlogScreen> {
+class _EditBlogPostState extends State<EditBlogPost> {
   Uint8List? _imageData; // Store image data
   TextEditingController _titleController = TextEditingController();
-  final quill.QuillController _quillController = quill.QuillController.basic();
+  late quill.QuillController _quillController = quill.QuillController.basic();
 
   @override
   void initState() {
@@ -42,6 +44,23 @@ class _AddBlogScreenState extends State<AddBlogScreen> {
   @override
   Widget build(BuildContext context) {
     final blogPostProvider = Provider.of<BlogPostProvider>(context);
+    final menuApp = Provider.of<MenuAppController>(context);
+    final dropP = Provider.of<DropdownProviderN>(context);
+
+    // final documentContent  = Document.fromJson(jsonDecode(menuApp.arguments!.content));
+    final List<dynamic> decodedJson = jsonDecode(menuApp.arguments!.content);
+    final quill.Delta delta = quill.Delta.fromJson(decodedJson);
+
+    _quillController = quill.QuillController(
+      document: quill.Document.fromDelta(delta),
+      selection: const TextSelection.collapsed(offset: 0),
+    );
+
+    if(!menuApp.isUpdate){
+      dropP.setSelectedCategory(menuApp.arguments!.category,menuApp.arguments!.id);
+      menuApp.toggleUpdate(true);
+    }
+
 
     return Scaffold(
       appBar: const CustomAppbar(text: 'Dashboard'),
@@ -74,7 +93,7 @@ class _AddBlogScreenState extends State<AddBlogScreen> {
                           height: 8.h,
                           width: 30.w,
                           child: AppTextFieldBlue(
-                            hintText: 'Postpartum Nutrition',
+                            hintText: _titleController.text = menuApp.arguments!.title,
                             radius: 5,
                             controller: _titleController,
                           ),
@@ -87,7 +106,7 @@ class _AddBlogScreenState extends State<AddBlogScreen> {
                             return CustomDropdownWidget(
                               index: 1,
                               items: blogPostProvider.categories,
-                              dropdownType: 'Category',
+                              dropdownType: "Category",
                             );
                           },
                         ),
@@ -140,12 +159,7 @@ class _AddBlogScreenState extends State<AddBlogScreen> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: Center(
-                            child: AppTextWidget(
-                              text: 'No image selected',
-                              color: Colors.grey,
-                            ),
-                          ),
+                          child:Image.network(menuApp.arguments!.imageUrl)
                         );
                       },
                     ),
@@ -210,9 +224,9 @@ class _AddBlogScreenState extends State<AddBlogScreen> {
                         child: ButtonWidget(
                           onClicked: () {
                             ActionProvider().setLoading(true);
-                            _uploadBlog(context);
+                            _updateBlog(context);
                           },
-                          text: 'Upload',
+                          text: 'Update',
                           height: 5.h,
                           width: 10.w,
                           textColor: Colors.white,
@@ -257,52 +271,57 @@ class _AddBlogScreenState extends State<AddBlogScreen> {
     uploadInput.click(); // Trigger the file picker dialog
   }
 
-  Future<void> _uploadBlog(BuildContext context) async {
+  Future<void> _updateBlog(BuildContext context) async {
     final cloudinaryProvider = Provider.of<CloudinaryProvider>(context, listen: false);
     final dropdownProvider = Provider.of<DropdownProviderN>(context, listen: false);
+    final mneuP = Provider.of<MenuAppController>(context, listen: false);
     log('title:${_titleController.text.toString()}');
-
+    log('image:${mneuP.arguments!.imageUrl}');
+    log('categoryId:${dropdownProvider.selectedCategoryId}');
+    log('category:${dropdownProvider.selectedCategory}');
     // Convert Quill document to JSON
     String contentJson = jsonEncode(_quillController.document.toDelta().toJson());
     log('contentJson:$contentJson');
 
-    if (_titleController.text.isEmpty ||
-        contentJson.isEmpty ||
-        dropdownProvider.selectedCategory.isEmpty ||
-        cloudinaryProvider.imageData == null) {
-      ActionProvider.stopLoading();
-      AppUtils().showToast(text: 'Please fill all fields and upload an image');
-      return;
-    }
 
     try {
-      await cloudinaryProvider.uploadImage(cloudinaryProvider.imageData!);
-      var id = FirebaseFirestore.instance.collection('blogs').doc().id.toString();
+
+      var id = mneuP.arguments!.id;
+      if(cloudinaryProvider.imageData !=null){
+        await cloudinaryProvider.uploadImage(cloudinaryProvider.imageData!);
+      }
       if (cloudinaryProvider.imageUrl.isNotEmpty) {
-        await FirebaseFirestore.instance.collection('blogs').doc(id).set({
+        await FirebaseFirestore.instance.collection('blogs').doc(id).update({
           'title': _titleController.text,
-          'content': contentJson, // save as JSON for formatted text
+          'content': contentJson,
           'categoryId': dropdownProvider.selectedCategoryId,
           'category': dropdownProvider.selectedCategory,
           'imageUrl': cloudinaryProvider.imageUrl.toString(),
-          'readTime': '5 mints',
-          'createdAt': DateTime.now().millisecondsSinceEpoch.toString(),
-          'id': id,
         });
         ActionProvider.stopLoading();
         _titleController.clear();
         _quillController.clear();
         cloudinaryProvider.clearImage();
 
-        AppUtils().showToast(text: 'Blog uploaded successfully');
+        AppUtils().showToast(text: 'Blog updated successfully');
       } else {
+        ActionProvider.startLoading();
+        await FirebaseFirestore.instance.collection('blogs').doc(id).update({
+          'title': _titleController.text,
+          'content': contentJson,
+          'categoryId': dropdownProvider.selectedCategoryId,
+          'category': dropdownProvider.selectedCategory,
+          'imageUrl': mneuP.arguments!.imageUrl.toString(),
+        });
+        AppUtils().showToast(text: 'Blog updated successfully');
         ActionProvider.stopLoading();
-        AppUtils().showToast(text: 'Image upload failed');
+        _titleController.clear();
+        _quillController.clear();
       }
     } catch (e) {
       log('Error uploading blog: $e');
       ActionProvider.stopLoading();
-      AppUtils().showToast(text: 'Failed to upload blog');
+      AppUtils().showToast(text: 'Failed to update blog');
     }
   }
 }

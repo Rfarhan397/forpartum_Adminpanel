@@ -8,6 +8,7 @@ class DropdownProvider with ChangeNotifier {
   String _selectedBlogCategory = 'Category';
 
   bool _isDropdownOpen = false;
+  bool _isUpdate = false;
 
   String get selectedValue => _selectedValue;
   String get selectedCategory => _selectedCategory;
@@ -15,9 +16,15 @@ class DropdownProvider with ChangeNotifier {
   String get selectedMealCategory => _selectedMealCategory;
   String get selectedBlogCategory => _selectedBlogCategory;
   bool get isDropdownOpen => _isDropdownOpen;
+  bool get isUpdate => _isUpdate;
 
   void toggleDropdown() {
     _isDropdownOpen = !_isDropdownOpen;
+    notifyListeners();
+  }
+
+  void toggleUpdate(bool update) {
+    _isUpdate =  update;
     notifyListeners();
   }
 

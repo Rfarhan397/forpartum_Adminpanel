@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:forpartum_adminpanel/model/blog_post/blog_model.dart';
 
 import '../model/user_model/user_model.dart';
 
@@ -26,8 +27,17 @@ class MenuAppController extends ChangeNotifier {
 
   User? _parameters;
   User? get parameters => _parameters;
+  BlogPost? _arguments ;
+  BlogPost? get arguments => _arguments;
 
   String? _type;
+  bool _isUpdate = false;
+  bool get isUpdate => _isUpdate;
+
+  void toggleUpdate(bool update) {
+    _isUpdate =  update;
+    notifyListeners();
+  }
 
   String? get type => _type;
   void changeScreen(int index) {
@@ -44,7 +54,13 @@ class MenuAppController extends ChangeNotifier {
 
     notifyListeners();
   }
-
+  void changeScreenWithParam(int routeName,
+      { BlogPost? arguments}) {
+    _selectedIndex = routeName;
+    _arguments = arguments;
+    _isUpdate = false;
+    notifyListeners();
+  }
   void changeScreens(int routeName,
       {String? type}) {
     _selectedIndex = routeName;

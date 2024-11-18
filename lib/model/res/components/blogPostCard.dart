@@ -3,7 +3,11 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/quill_delta.dart' as quill;
 import 'package:flutter_quill/flutter_quill.dart' as quill;
+import 'package:forpartum_adminpanel/controller/menu_App_Controller.dart';
+import 'package:forpartum_adminpanel/model/res/routes/routes_name.dart';
 import 'package:forpartum_adminpanel/provider/action/action_provider.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import '../../../constant.dart';
@@ -19,6 +23,7 @@ class BlogPostCard extends StatelessWidget {
   final String readTime;
   final String content;
   final String id;
+  final BlogPost arguments;
 
   const BlogPostCard({
     super.key,
@@ -28,6 +33,7 @@ class BlogPostCard extends StatelessWidget {
     required this.category,
     required this.readTime,
     required this.content,
+    required this.arguments,
   });
 
   quill.QuillController getQuillController(String contentJson,) {
@@ -43,13 +49,13 @@ class BlogPostCard extends StatelessWidget {
       return quill.QuillController.basic();
     }
   }
-  void _showDeleteDialog(BuildContext context,id) {
+  void _showDeleteDialog(BuildContext context, id, BlogPost arguments) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Delete Post'),
-          content: Text('Are you sure you want to delete "$title"? This action cannot be undone.'),
+          title: const Text('Blog!'),
+          content: Text('Are you sure you want to edit or delete "$title"? This action cannot be undone.'),
           actions: [
             TextButton(
               onPressed: () {
@@ -59,14 +65,23 @@ class BlogPostCard extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                // Add your delete logic here
+                Provider.of<MenuAppController>(context, listen: false).addBackPage(4);
+                Provider.of<MenuAppController>(context, listen: false).changeScreenWithParam(31,
+                    arguments: arguments
+                );
+                Navigator.of(context).pop();
+              },
+              child: const Text('Edit', style: TextStyle(color: primaryColor)),
+            ),
+            TextButton(
+              onPressed: () {
+                Provider.of<ActionProvider>(context, listen: false).deleteItem('blogs', id);
                 Navigator.of(context).pop(); // Close the dialog
-                Provider.of<ActionProvider>(context).deleteItem('blogs', id);
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Post deleted successfully')),
                 );
               },
-              child: const Text('Delete', style: TextStyle(color: Colors.red)),
+              child: const Text('Delete', style: TextStyle(color: primaryColor)),
             ),
           ],
         );
@@ -74,7 +89,7 @@ class BlogPostCard extends StatelessWidget {
     );
   }
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context,) {
     final quill.QuillController quillController = getQuillController(content);
 
     return Card(
@@ -88,7 +103,8 @@ class BlogPostCard extends StatelessWidget {
                 padding: EdgeInsets.only(right: 2.5.w),
                 child: InkWell(
                     onTap: () {
-                      _showDeleteDialog(context,id);
+                      log('argument $arguments');
+                      _showDeleteDialog(context,id,arguments);
                     },
                     child: const Icon(Icons.more_vert,color: primaryColor,))),
           ),
@@ -182,8 +198,10 @@ class BlogPostGrid extends StatelessWidget {
                         readTime: post.readTime ?? "",
                         content: post.content ?? "",
                         id: post.id ?? "",
+                        arguments: post
                       );
                     },
+
                   );
             },
           );
@@ -194,35 +212,3 @@ class BlogPostGrid extends StatelessWidget {
 
   }
 }
-// class BlogPostGrid extends StatelessWidget {
-//   final List<Map<String, String>> posts;
-//
-//   BlogPostGrid({required this.posts});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       height: 80.h,
-//       child: GridView.builder(
-//         shrinkWrap: true,
-//         padding: const EdgeInsets.all(8.0),
-//         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-//           crossAxisCount: 4,
-//           crossAxisSpacing: 1.0,
-//           mainAxisSpacing: 1.0,
-//           childAspectRatio: 3 / 2.5,
-//         ),
-//         itemCount: posts.length,
-//         itemBuilder: (ctx, index) {
-//           return BlogPostCard(
-//             imageUrl: posts[index]['imageUrl']!,
-//             title: posts[index]['title']!,
-//             category: posts[index]['category']!,
-//             readTime: posts[index]['readTime']!,
-//             //color: null,
-//           );
-//         },
-//       ),
-//     );
-//   }
-// }
