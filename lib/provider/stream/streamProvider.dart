@@ -160,6 +160,22 @@ class StreamDataProvider extends ChangeNotifier{
       }).toList();
     });
   }
+  Stream<List<MilestoneModel>> getMilestone({String? userUid,int? limit, bool? isComplete, }) {
+    Query query = FirebaseFirestore.instance.collection("milestones");
 
+    if (limit != null) {
+      query = query.limit(limit);
+    }
+
+    if (isComplete != null && isComplete) {
+      query = query.where("milestones", arrayContains: userUid);
+    }
+    return query.snapshots().map((snapshot) {
+      List<MilestoneModel> milestones = snapshot.docs.map((doc) {
+        return MilestoneModel.fromMap(doc.data() as Map<String, dynamic>);
+      }).toList();
+      return milestones;
+    });
+  }
 
 }

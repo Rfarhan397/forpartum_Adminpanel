@@ -101,6 +101,8 @@ class UserDetail extends StatelessWidget {
                       InkWell(
                         onTap: () {
                           Provider.of<MenuAppController>(context, listen: false)
+                              .addBackPage(12);
+                          Provider.of<MenuAppController>(context, listen: false)
                               .changeScreen(3);
                         },
                         child: Container(
@@ -220,6 +222,10 @@ class UserDetail extends StatelessWidget {
                                 : 'N/A',
                             'Traditional',
                             ''),
+                        MilestoneListWidget(
+                          userUid: dataP.parameters!.uid.toString(),
+                          isComplete: true,
+                        ),
                         SizedBox(
                           height: 3.h,
                         ),
@@ -662,6 +668,101 @@ class TrackerTab extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(25),
           color: secondaryColor,
+        ),
+      ),
+    );
+  }
+}
+class MilestoneListWidget extends StatelessWidget {
+  final bool isComplete;
+  final String userUid;
+  const MilestoneListWidget({super.key, this.isComplete = false, required this.userUid,});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 50.w,
+      height: 20.h,
+      child: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 1.h,horizontal: 0.5.w),
+            child: Consumer<StreamDataProvider>(
+              builder: (context, provider, child) {
+                return StreamBuilder<List<MilestoneModel>>(
+                  stream: provider.getMilestone(userUid: userUid,isComplete: isComplete,),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    }
+                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Center(child: Text('No milestone found'));
+                    }
+
+                    List<MilestoneModel> milestoneList = snapshot.data!;
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AppTextWidget(text: 'Completed milestones:',fontSize: 16,fontWeight: FontWeight.w500,),
+                        SizedBox(height: 1.h,),
+                        ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: milestoneList.length,
+                          itemBuilder: (ctx, index) {
+                            MilestoneModel milestone = milestoneList[index];
+                            final isComplete = milestone.milestones.contains(userUid);
+                            return _milestoneBox(
+                              title: milestone.title,
+                              isComplete: isComplete,
+                              milestoneId: milestone.id,
+                              onToggleSelection: () {
+                              },
+                            );
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+          SizedBox(height: 5.h),
+
+        ],
+      ),
+    );
+  }
+
+  Widget _milestoneBox({
+    required String title,
+    required bool isComplete,
+    required String milestoneId,
+    required VoidCallback onToggleSelection,
+  }) {
+    return GestureDetector(
+      onTap: onToggleSelection,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 4),
+        margin: EdgeInsets.symmetric(horizontal: 4,vertical: 4),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20.w),
+          // boxShadow: [
+          //   BoxShadow(
+          //     color: Colors.grey.withOpacity(0.5),
+          //     blurRadius: 10,
+          //   ),
+          // ],
+        ),
+        child: AppTextWidget(
+          text: title,
+          fontSize: 14.0,
+          textAlign: TextAlign.start,
+          fontWeight: FontWeight.w600,
+          color: Colors.black,
         ),
       ),
     );

@@ -58,11 +58,17 @@ class CardProviderMenu with ChangeNotifier {
 
 class FaqProvider with ChangeNotifier {
   List<bool> _expanded = [false, false, false]; // Adjust according to your number of items
+  List<bool> _expandedd = [false, false, false, false, false, false, false, false, false]; // Adjust according to your number of items
 
   List<bool> get expanded => _expanded;
+  List<bool> get expandedd => _expandedd;
 
   void toggleExpand(int index) {
     _expanded[index] = !_expanded[index];
+    notifyListeners();
+  }
+  void toggleExpandd(int index) {
+    _expandedd[index] = !_expandedd[index];
     notifyListeners();
   }
 }

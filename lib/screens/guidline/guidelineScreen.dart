@@ -55,23 +55,25 @@ class GuidelineScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 1.h,),
                   Container(
-                    height: 10.h,
-                    width: 30.w,// 50% of screen height
+                    width: 30.w, // Keep the width as needed
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.black.withOpacity(0.8)),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child:  TextField(
-                      maxLines: null, // Allows the text to wrap within the height
-                      expands: true,  // Expands the TextField to fill the parent container
-                      controller: _answerController,
-                      decoration: const InputDecoration(
+                    child: IntrinsicHeight(
+                      child: TextField(
+                        controller: _answerController,
+                        maxLines: null, // Allows the text to wrap and expand
+                        keyboardType: TextInputType.multiline,
+                        decoration: const InputDecoration(
                           contentPadding: EdgeInsets.all(12.0),
                           border: InputBorder.none,
                           hintText: '',
                           hintStyle: TextStyle(
-                            fontWeight: FontWeight.w900,fontSize: 15,
-                          )
+                            fontWeight: FontWeight.w900,
+                            fontSize: 15,
+                          ),
+                        ),
                       ),
                     ),
                   ),

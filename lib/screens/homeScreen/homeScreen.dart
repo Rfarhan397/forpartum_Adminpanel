@@ -129,19 +129,23 @@ class HomeScreen extends StatelessWidget {
               //!Responsive.isMobile(context) ?
                 Row(
                 children: [
-                  StatsCard(
-                    onTap: () {
-                      Provider.of<MenuAppController>(context, listen: false)
-                          .changeScreen(1);
-                    },
-                    iconPath: AppIcons.totalUsers,
-                    progressIcon: totalUsersPercentageChange >= 0 ? 'assets/icons/arrowUp.svg' : 'assets/icons/arrowDown.svg',
-                    iconBackgroundColor: secondaryColor,
-                    title: 'Total Users',
-                    count: totalUsersCount.toString(),
-                    percentageIncrease: '${totalUsersPercentageChange.abs().toStringAsFixed(2)}% ${totalUsersPercentageChange >= 0 ? 'increase' : 'decrease'} from last month',
-                    increaseColor: totalUsersPercentageChange >= 0 ? Colors.green : Colors.red,
+                  Tooltip(
 
+                    message: 'Users',
+                    child: StatsCard(
+                      onTap: () {
+                        Provider.of<MenuAppController>(context, listen: false)
+                            .changeScreen(1);
+                      },
+                      iconPath: AppIcons.totalUsers,
+                      progressIcon: totalUsersPercentageChange >= 0 ? 'assets/icons/arrowUp.svg' : 'assets/icons/arrowDown.svg',
+                      iconBackgroundColor: secondaryColor,
+                      title: 'Total Users',
+                      count: totalUsersCount.toString(),
+                      percentageIncrease: '${totalUsersPercentageChange.abs().toStringAsFixed(2)}% ${totalUsersPercentageChange >= 0 ? 'increase' : 'decrease'} from last month',
+                      increaseColor: totalUsersPercentageChange >= 0 ? Colors.green : Colors.red,
+
+                    ),
                   ),
                   StatsCard(
                     progressIcon: activeUsersPercentageChange >= 0 ? 'assets/icons/arrowUp.svg' : 'assets/icons/arrowDown.svg',
@@ -163,15 +167,24 @@ class HomeScreen extends StatelessWidget {
                     increaseColor: newSignupsPercentageChange >= 0 ? Colors.green : Colors.red,
 
                   ),
-                  StatsCard(
-                    progressIcon: feedbackPercentageChange >= 0 ? 'assets/icons/arrowUp.svg' : 'assets/icons/arrowDown.svg',
-                    iconPath: AppIcons.feedback,
-                    iconBackgroundColor: primaryColor,
-                    title: 'Feedback',
-                    count: feedbackCount.toString(),
-                    percentageIncrease: '${feedbackPercentageChange.abs().toStringAsFixed(2)}% ${feedbackPercentageChange >= 0 ? 'increase' : 'decrease'} from last month',
-                    increaseColor: feedbackPercentageChange >= 0 ? Colors.green : Colors.red,
+                  Tooltip(
+                    message: 'Feedbacks',
+                    child: StatsCard(
+                      onTap: () {
+                        Provider.of<MenuAppController>(context, listen: false)
+                            .changeScreen(0);
+                        Provider.of<MenuAppController>(context, listen: false)
+                            .changeScreen(32);
+                      },
+                      progressIcon: feedbackPercentageChange >= 0 ? 'assets/icons/arrowUp.svg' : 'assets/icons/arrowDown.svg',
+                      iconPath: AppIcons.feedback,
+                      iconBackgroundColor: primaryColor,
+                      title: 'Feedback',
+                      count: feedbackCount.toString(),
+                      percentageIncrease: '${feedbackPercentageChange.abs().toStringAsFixed(2)}% ${feedbackPercentageChange >= 0 ? 'increase' : 'decrease'} from last month',
+                      increaseColor: feedbackPercentageChange >= 0 ? Colors.green : Colors.red,
 
+                    ),
                   ),
 
                 ],

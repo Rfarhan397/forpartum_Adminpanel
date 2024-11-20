@@ -1,506 +1,112 @@
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:forpartum_adminpanel/constant.dart';
-import 'package:forpartum_adminpanel/main.dart';
-import 'package:forpartum_adminpanel/model/res/components/custom_appBar.dart';
-import 'package:forpartum_adminpanel/model/res/constant/app_assets.dart';
-import 'package:forpartum_adminpanel/model/res/widgets/app_text.dart.dart';
-import 'package:forpartum_adminpanel/model/user_model/user_model.dart';
-import 'package:intl/intl.dart';
+import 'package:forpartum_adminpanel/model/res/widgets/app_text_field.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../../constant.dart';
 import '../../../controller/menu_App_Controller.dart';
-import '../../../model/res/constant/app_colors.dart';
+import '../../../model/res/components/custom_appBar.dart';
+import '../../../model/res/constant/app_assets.dart';
+import '../../../model/res/widgets/app_text.dart.dart';
+import '../../../model/user_model/user_model.dart';
 import '../../../provider/stream/streamProvider.dart';
-import '../user_detail.dart';
 
 class UserTrackerHistoryScreen extends StatelessWidget {
-  const UserTrackerHistoryScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
     final dataP = Provider.of<MenuAppController>(context);
-    // Retrieve the trackers and type values
     final type = dataP.type;
-    final parameters = dataP.parameters;
+    final uid = dataP.parameters?.uid ?? '';
 
     return Scaffold(
-      appBar: const CustomAppbar(
-        text: 'Tracker History',
-      ),
+      appBar: const CustomAppbar(text: 'Tracker History'),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Divider(
-              height: 1,
-              color: customGrey,
+            Divider(height: 1, color: customGrey),
+            SizedBox(height: 1.h),
+            AppTextWidget(
+              text: '$type Tracker History',
+              fontSize: 22,
+              fontWeight: FontWeight.w500,
             ),
-            SizedBox(height: 1.h,),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AppTextWidget(
-                  text: '$type Tracker History',
-                  fontSize: 22,
-                  fontWeight: FontWeight.w500,
-                ),
-                const SizedBox(height: 20),
-
-                /// Table header row
-                if (type == 'sleep') _sleepView(),
-                if (type == 'mood') _moodView(),
-                if (type == 'pain') _painView(),
-                if (type == 'stress') _stressView(),
-                if (type == 'energy') _energyView(),
-                const SizedBox(height: 10),
-
-                /// Table content rows with vertical padding
-
-                if (type == 'sleep')
-                  // sleepViewDetails(dataP),
-                  TrackerLodData(
-                    type: "sleep",
-                    uid: dataP.parameters!.uid!,
-                  ),
-                if (type == 'mood')
-                  TrackerLodData(
-                    type: "mood",
-                    uid: dataP.parameters!.uid!,
-                  ),
-                  if (type == 'pain')
-                    TrackerLodData(
-                      type: "pain",
-                      uid: dataP.parameters!.uid!,
-                    ),
-                    if (type == 'stress')
-                      TrackerLodData(
-                        type: "stress",
-                        uid: dataP.parameters!.uid!,
-                      ),
-                      if (type == 'energy')
-                        TrackerLodData(
-                          type: "energy",
-                          uid: dataP.parameters!.uid!,
-                        ),
-              ],
-            ),
+            const SizedBox(height: 20),
+            _buildTrackerView(type!),
+            const SizedBox(height: 10),
+            TrackerLodData(type: type, uid: uid),
           ],
         ),
       ),
     );
   }
+  Widget _buildTrackerView(String type) {
+    final headerTitles = _getHeaderTitles(type);
+    if (headerTitles.isEmpty) return Container();
 
-  // Widget sleepViewDetails(MenuAppController parameterP) {
-  //   log("List Data:: ${parameterP.parameters!.trackers}");
-  //   if (parameterP.parameters == null || parameterP.parameters!.trackers.isEmpty) {
-  //     return Center(child: Text('No sleep data ss.'));
-  //   }
-  //
-  //   return Expanded(
-  //     child: ListView.builder(
-  //       itemCount: parameterP.parameters!.trackers.length,
-  //       itemBuilder: (context, index) {
-  //         final tracker = parameterP.parameters!.trackers[index];
-  //         return Column(
-  //           children: [
-  //             Table(
-  //               columnWidths: const {
-  //                 0: FlexColumnWidth(1),
-  //                 1: FlexColumnWidth(1),
-  //                 2: FlexColumnWidth(1),
-  //                 3: FlexColumnWidth(1),
-  //               },
-  //               children: [
-  //                 TableRow(
-  //                   decoration: BoxDecoration(
-  //                     borderRadius: BorderRadius.circular(8),
-  //                     border: Border.all(color: customGrey),
-  //                     color: Colors.white,
-  //                   ),
-  //                   children: [
-  //                     _buildContentCell(tracker.timeStamp ?? ""), // Replace with actual property
-  //                     _buildContentCell(tracker.sleetAt?? ""), // Replace with actual property
-  //                     _buildContentCell(tracker.wakeUpAt?? ""), // Replace with actual property
-  //                     _buildContentCell(tracker.wakeDuringNight?? ""), // Replace with actual property
-  //                   ],
-  //                 ),
-  //               ],
-  //             ),
-  //             SizedBox(height: 1.h), // Vertical space after each row
-  //           ],
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
-  //
-  //
-  // Widget stressViewDetails() {
-  //   return Column(
-  //           children: List.generate(10, (index) {
-  //             return Column(
-  //               children: [
-  //                 Table(
-  //                   columnWidths: const {
-  //                     0: FlexColumnWidth(1),
-  //                     1: FlexColumnWidth(1),
-  //                     2: FlexColumnWidth(1),
-  //                     3: FlexColumnWidth(1),
-  //                   },
-  //                   children: [
-  //                     TableRow(
-  //                       decoration: BoxDecoration(
-  //                         borderRadius: BorderRadius.circular(8),
-  //                         border: Border.all(color: customGrey),
-  //                         color: Colors.white,
-  //                       ),
-  //                       children: [
-  //                         _buildContentCell('20-2-2023'),
-  //                         _buildContentCell('11:00 PM'),
-  //                         _buildContentCell('6:00 AM'),
-  //                         _buildContentCell('3 Times'),
-  //                       ],
-  //                     ),
-  //                   ],
-  //                 ),
-  //                 SizedBox(height: 1.h), // Vertical space after each row
-  //               ],
-  //             );
-  //           }),
-  //         );
-  // }
-  // Widget painViewDetails() {
-  //   return Column(
-  //           children: List.generate(10, (index) {
-  //             return Column(
-  //               children: [
-  //                 Table(
-  //                   columnWidths: const {
-  //                     0: FlexColumnWidth(1),
-  //                     1: FlexColumnWidth(1),
-  //                     2: FlexColumnWidth(1),
-  //                     3: FlexColumnWidth(1),
-  //                   },
-  //                   children: [
-  //                     TableRow(
-  //                       decoration: BoxDecoration(
-  //                         borderRadius: BorderRadius.circular(8),
-  //                         border: Border.all(color: customGrey),
-  //                         color: Colors.white,
-  //                       ),
-  //                       children: [
-  //                         _buildContentCell('20-2-2023'),
-  //                         _buildContentCell('11:00 PM'),
-  //                         _buildContentCell('6:00 AM'),
-  //                         _buildContentCell('3 Times'),
-  //                       ],
-  //                     ),
-  //                   ],
-  //                 ),
-  //                 SizedBox(height: 1.h), // Vertical space after each row
-  //               ],
-  //             );
-  //           }),
-  //         );
-  // }
-  // Widget energyViewDetails() {
-  //   return Column(
-  //           children: List.generate(10, (index) {
-  //             return Column(
-  //               children: [
-  //                 Table(
-  //                   columnWidths: const {
-  //                     0: FlexColumnWidth(1),
-  //                     1: FlexColumnWidth(1),
-  //                     2: FlexColumnWidth(1),
-  //                     3: FlexColumnWidth(1),
-  //                   },
-  //                   children: [
-  //                     TableRow(
-  //                       decoration: BoxDecoration(
-  //                         borderRadius: BorderRadius.circular(8),
-  //                         border: Border.all(color: customGrey),
-  //                         color: Colors.white,
-  //                       ),
-  //                       children: [
-  //                         _buildContentCell('20-2-2023'),
-  //                         _buildContentCell('11:00 PM'),
-  //                         _buildContentCell('6:00 AM'),
-  //                         _buildContentCell('3 Times'),
-  //                       ],
-  //                     ),
-  //                   ],
-  //                 ),
-  //                 SizedBox(height: 1.h), // Vertical space after each row
-  //               ],
-  //             );
-  //           }),
-  //         );
-  // }
+    return Table(
+      columnWidths: {
+        for (int i = 0; i < headerTitles.length; i++) i: const FlexColumnWidth(1),
+      },
+      border: TableBorder.all(color: Colors.transparent, width: 2),
+      children: [
+        TableRow(
+          decoration: const BoxDecoration(color: Colors.transparent),
+          children: headerTitles.map((title) => _buildHeaderCell(title)).toList(),
+        ),
+      ],
+    );
+  }
 
-  /// Method to create header cells
+
+  List<String> _getHeaderTitles(String type) {
+    switch (type) {
+      case 'sleep':
+        return ['Date', 'Sleep At', 'Wake Up At', 'Num of Wake Up at Night'];
+      case 'mood':
+        return ['Date', 'Mood Emotion', 'Mood Title', 'Note'];
+      case 'pain':
+        return ['Date', 'Pain', 'Troubling Issue', 'Pain Duration', 'Pain Level'];
+      case 'stress':
+        return ['Date', 'Stress Level', 'Stress Causing', 'Note'];
+      case 'energy':
+        return ['Date', 'Energy Level', 'Meal Today', 'Rested Today', 'Time Spent Passion', 'Note'];
+      default:
+        return [];
+    }
+  }
+
   Widget _buildHeaderCell(String text) {
-    return Container(
-      padding: const EdgeInsets.all(8.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: primaryColor,
+    return Padding(
+      padding:  EdgeInsets.symmetric(horizontal: 3.w), // Adjust the horizontal padding as needed
+      child: Container(
+        padding: const EdgeInsets.all(8.0),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: primaryColor),
+        alignment: Alignment.center,
+        child: Text(text, style: const TextStyle(fontSize: 16, color: Colors.white)),
       ),
-      alignment: Alignment.center,
-      child: Text(
-        text,
-        style: const TextStyle(fontSize: 16, color: Colors.white),
-      ),
-    );
-  }
-
-
-  Widget _stressView() {
-    return Table(
-      columnWidths: const {
-        0: FlexColumnWidth(1),
-        1: FlexColumnWidth(1),
-        2: FlexColumnWidth(1),
-        3: FlexColumnWidth(1),
-      },
-      border: TableBorder.all(
-        color: Colors.transparent,
-        width: 2,
-      ),
-      children: [
-        TableRow(
-          decoration: BoxDecoration(
-            color: Colors.transparent,
-            border: Border.all(
-              color: Colors.transparent,
-              style: BorderStyle.none,
-            ),
-          ),
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.w),
-              child: _buildHeaderCell('Date'),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4.w),
-              child: _buildHeaderCell('Stress level'),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4.w),
-              child: _buildHeaderCell('Stress causing'),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4.w),
-              child: _buildHeaderCell('Note'),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _moodView() {
-    return Table(
-      columnWidths: const {
-        0: FlexColumnWidth(1),
-        1: FlexColumnWidth(1),
-        2: FlexColumnWidth(1),
-      },
-      border: TableBorder.all(
-        color: Colors.transparent,
-        width: 2,
-      ),
-      children: [
-        TableRow(
-          decoration: BoxDecoration(
-            color: Colors.transparent,
-            border: Border.all(
-              color: Colors.transparent,
-              style: BorderStyle.none,
-            ),
-          ),
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.w),
-              child: _buildHeaderCell('Date'),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4.w),
-              child: _buildHeaderCell('Mood Emotion'),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.w),
-              child: _buildHeaderCell('Note'),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _sleepView() {
-    return Table(
-      columnWidths: const {
-        0: FlexColumnWidth(1),
-        1: FlexColumnWidth(1),
-        2: FlexColumnWidth(1),
-        3: FlexColumnWidth(1),
-      },
-      border: TableBorder.all(
-        color: Colors.transparent,
-        width: 2,
-      ),
-      children: [
-        TableRow(
-          decoration: BoxDecoration(
-            color: Colors.transparent,
-            border: Border.all(
-              color: Colors.transparent,
-              style: BorderStyle.none,
-            ),
-          ),
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.w),
-              child: _buildHeaderCell('Date'),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4.w),
-              child: _buildHeaderCell('Sleep At'),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4.w),
-              child: _buildHeaderCell('Wake Up At'),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4.w),
-              child: _buildHeaderCell('Num of Wake Up at Night'),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _painView() {
-    return Table(
-      columnWidths: const {
-        0: FlexColumnWidth(1),
-        1: FlexColumnWidth(1),
-        2: FlexColumnWidth(1),
-        3: FlexColumnWidth(1),
-        4: FlexColumnWidth(1),
-      },
-      border: TableBorder.all(
-        color: Colors.transparent,
-        width: 2,
-      ),
-      children: [
-        TableRow(
-          decoration: BoxDecoration(
-            color: Colors.transparent,
-            border: Border.all(
-              color: Colors.transparent,
-              style: BorderStyle.none,
-            ),
-          ),
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4.w),
-              child: _buildHeaderCell('Date'),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4.w),
-              child: _buildHeaderCell('Pain'),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4.w),
-              child: _buildHeaderCell('Troubling Issue'),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4.w),
-              child: _buildHeaderCell('Pain Duration'),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4.w),
-              child: _buildHeaderCell('Pain Level'),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _energyView() {
-    return Table(
-      columnWidths: const {
-        0: FlexColumnWidth(1),
-        1: FlexColumnWidth(1),
-        2: FlexColumnWidth(1),
-        3: FlexColumnWidth(1),
-        4: FlexColumnWidth(1),
-        5: FlexColumnWidth(1),
-      },
-      border: TableBorder.all(
-        color: Colors.transparent,
-        width: 2,
-      ),
-      children: [
-        TableRow(
-          decoration: BoxDecoration(
-            color: Colors.transparent,
-            border: Border.all(
-              color: Colors.transparent,
-              style: BorderStyle.none,
-            ),
-          ),
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 2.w),
-              child: _buildHeaderCell('Date'),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 2.w),
-              child: _buildHeaderCell('Energy Level'),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 2.w),
-              child: _buildHeaderCell(' Meal Today'),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 2.w),
-              child: _buildHeaderCell('Rested Today'),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 2.w),
-              child: _buildHeaderCell('Time Spend Passion'),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 2.w),
-              child: _buildHeaderCell('Note'),
-            ),
-          ],
-        ),
-      ],
     );
   }
 }
 
 class TrackerLodData extends StatelessWidget {
-  final String type, uid;
-  int? limit;
-  TrackerLodData(
-      {super.key, required this.type, this.limit, required this.uid});
+  final String type;
+  final String uid;
+  final int? limit;
+
+  TrackerLodData({required this.type, required this.uid, this.limit});
 
   @override
   Widget build(BuildContext context) {
     return Consumer<StreamDataProvider>(
       builder: (context, provider, child) {
         return StreamBuilder<List<Tracker>>(
-          stream: provider.getTrackerLogs(limit: limit, type: type, uid: uid),
+          stream: provider.getTrackerLogs(type: type, uid: uid, limit: limit),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: Text("loading..."));
@@ -512,212 +118,197 @@ class TrackerLodData extends StatelessWidget {
               return const Center(child: Text('No log found'));
             }
 
-            List<Tracker> trackerList = snapshot.data!;
-            return ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(8.0),
-              itemCount: trackerList.length,
-              itemBuilder: (ctx, index) {
-                Tracker tracker = trackerList[index];
-                return type == 'sleep'
-                    ? Column(
-                        children: [
-                          Table(
-                            columnWidths: const {
-                              0: FlexColumnWidth(1),
-                              1: FlexColumnWidth(1),
-                              2: FlexColumnWidth(1),
-                              3: FlexColumnWidth(1),
-                            },
-                            children: [
-                              TableRow(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: customGrey),
-                                  color: Colors.white,
-                                ),
-                                children: [
-                                  _buildContentCell(formatTimestamp(tracker.timeStamp.toString()) ??
-                                      ""), // Replace with actual property
-                                  _buildContentCell(tracker.sleetAt ??
-                                      ""), // Replace with actual property
-                                  _buildContentCell(tracker.wakeUpAt ??
-                                      ""), // Replace with actual property
-                                  _buildContentCell(tracker.wakeDuringNight ??
-                                      ""), // Replace with actual property
-                                ],
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                              height: 1.h), // Vertical space after each row
-                        ],
-                      )
-                    : type == 'mood'
-                        ? Column(
-                            children: [
-                              Table(
-                                columnWidths: const {
-                                  0: FlexColumnWidth(1),
-                                  1: FlexColumnWidth(1),
-                                  2: FlexColumnWidth(1),
-                                },
-                                children: [
-                                  TableRow(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(color: customGrey),
-                                      color: Colors.white,
-                                    ),
-                                    children: [
-                                      _buildContentCell(formatTimestamp(tracker.timeStamp.toString())??
-                                          "date"), // Replace with actual property
-                                      _buildContentCellImage(tracker.image ??
-                                          "image"), // Replace with actual property
-                                      _buildContentCell(tracker.messageNote ??
-                                          "message"), // Replace with actual property
-                                     ],
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                  height: 1.h), // Vertical space after each row
-                            ],
-                          )
-                        : type == 'pain'
-                            ? Column(
-                                children: [
-                                  Table(
-                                    columnWidths: const {
-                                      0: FlexColumnWidth(1),
-                                      1: FlexColumnWidth(1),
-                                      2: FlexColumnWidth(1),
-                                      3: FlexColumnWidth(1),
-                                      4: FlexColumnWidth(1),
-                                    },
-                                    children: [
-                                      TableRow(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          border: Border.all(color: customGrey),
-                                          color: Colors.white,
-                                        ),
-                                        children: [
-                                          _buildContentCell(formatTimestamp(tracker.timeStamp.toString())??
-                                              "N/A"), // Replace with actual property
-                                          _buildContentCell(tracker.intensity??
-                                              "N/A"), // Replace with actual property
-                                          _buildContentCell(tracker.causesList?[0].toString() ??
-                                              "N/A"), // Replace with actual property
-                                          _buildContentCell("${tracker.days} days" ??
-                                              "N/A"),
-                                          _buildContentCell(tracker
-                                                  .painLevel ??
-                                              "N/A"), // Replace with actual property
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                      height:
-                                          1.h), // Vertical space after each row
-                                ],
-                              )
-                            : type == 'stress'
-                                ? Column(
-                                    children: [
-                                      Table(
-                                        columnWidths: const {
-                                          0: FlexColumnWidth(1),
-                                          1: FlexColumnWidth(1),
-                                          2: FlexColumnWidth(1),
-                                          3: FlexColumnWidth(1),
-                                        },
-                                        children: [
-                                          TableRow(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                              border:
-                                                  Border.all(color: customGrey),
-                                              color: Colors.white,
-                                            ),
-                                            children: [
-                                              _buildContentCell(formatTimestamp(tracker.timeStamp.toString())??
-                                                  ""), // Replace with actual property
-                                              _buildContentCell(tracker
-                                                      .stressLevel ??
-                                                  ""), // Replace with actual property
-                                              _buildContentCell(tracker
-                                                      .causesList?[0] ??
-                                                  ""), // Replace with actual property
-                                              _buildContentCell(tracker
-                                                      .messageNote ??
-                                                  ""), // Replace with actual property
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                          height: 1
-                                              .h), // Vertical space after each row
-                                    ],
-                                  )
-                                : Column(
-                                    children: [
-                                      Table(
-                                        columnWidths: const {
-                                          0: FlexColumnWidth(1),
-                                          1: FlexColumnWidth(1),
-                                          2: FlexColumnWidth(1),
-                                          3: FlexColumnWidth(1),
-                                        },
-                                        children: [
-                                          TableRow(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                              border:
-                                                  Border.all(color: customGrey),
-                                              color: Colors.white,
-                                            ),
-                                            children: [
-                                              _buildContentCell(formatTimestamp(tracker.timeStamp.toString()) ??
-                                                  ""), // Replace with actual property
-                                              _buildContentCell(tracker
-                                                      .questions?[0].allOptions[0] ??
-                                                  ""), // Replace with actual property
-                                              _buildContentCell(tracker
-                                                      .questions?[1].allOptions[0] ??
-                                                  ""), // Replace with actual property
-                                              _buildContentCell(tracker
-                                                      .questions?[0].allOptions[0] ??
-                                                  ""), /// Replace with actual property
-                                              _buildContentCell(tracker
-                                                      .questions?[0].allOptions[0] ??
-                                                  ""), /// Replace with actual property
-                                              _buildContentCell(tracker
-                                                      .messageNote ??
-                                                  ""), // Replace with actual property
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                          height: 1
-                                              .h), // Vertical space after each row
-                                    ],
-                                  );
-              },
-            );
+            return _buildTrackerList(context,snapshot.data!, type,uid);
           },
         );
       },
     );
-
   }
+
+  Widget _buildTrackerList(context ,List<Tracker> trackerList, String type,userId) {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.all(8.0),
+      itemCount: trackerList.length,
+      itemBuilder: (ctx, index) {
+        Tracker tracker = trackerList[index];
+        DateTime date = DateTime.fromMillisecondsSinceEpoch(int.parse(tracker.timeStamp!));
+        bool showIcon = DateTime.now().difference(date).inDays > 7;
+        return Column(
+          children: [
+            Table(
+              columnWidths: {
+                for (int i = 0; i < _getColumnCount(type); i++) i: const FlexColumnWidth(1),
+              },
+              children: [
+                TableRow(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: customGrey),
+                    color: Colors.white,
+                  ),
+                  children: [
+                    ..._buildContentCells(tracker, type),
+
+                  ],                ),
+              ],
+            ),
+            if (showIcon)
+              InkWell(
+                onTap: () {
+                  _showDialog(context,userId);
+                },
+                child: Container(
+                  margin: EdgeInsets.all(4),
+                  alignment: Alignment.centerRight,
+                  child: AppTextWidget(text: 'Add results',fontWeight: FontWeight.w500,fontSize: 16,textDecoration: TextDecoration.underline,underlinecolor: Colors.black,color: primaryColor,) // Customize icon as needed
+                ),
+              ),
+            SizedBox(height: 1.h),
+          ],
+        );
+      },
+    );
+  }
+  // Method to show the dialog with a text field and save button
+  Future<void> _showDialog(BuildContext context,userID) async {
+    TextEditingController textController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Enter Details"),
+          content: AppTextField(
+            hintText: 'Result',
+            controller: textController,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                // Save the text to Firestore
+                _saveToFirestore(textController.text,userID);
+                Navigator.pop(context); // Close the dialog
+              },
+              child: Text("Save"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close the dialog
+              },
+              child: Text("Cancel"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+  Future<void> _saveToFirestore(String text, userId) async {
+    if (text.isNotEmpty) {
+      try {
+        var id = FirebaseFirestore.instance.collection('users').doc(userId).collection('trackerResult').doc().id;
+        FirebaseFirestore.instance.collection('users').doc(userId).collection('trackerResult').doc(id).set({
+          'id' : id,
+          'type': type,
+          'text': text,
+          'timestamp': DateTime.now().microsecondsSinceEpoch.toString(),
+        });
+
+        // Optionally, you can confirm the save by fetching the document after it's been added
+        DocumentSnapshot doc = await FirebaseFirestore.instance.collection('users').doc(userId).collection('trackerResult').doc(id).get();
+        if (doc.exists) {
+          log("Data saved successfully: ${doc.data()}");
+        } else {
+          log("Data not found in Firestore.");
+        }
+      } catch (e) {
+        log("Error saving text to Firestore: $e");
+      }
+    } else {
+      log("Text input is empty, nothing to save.");
+    }
+  }
+  int _getColumnCount(String type) {
+    switch (type) {
+      case 'sleep':
+        return 4;
+      case 'mood':
+        return 4;
+      case 'pain':
+        return 5;
+      case 'stress':
+        return 4;
+      case 'energy':
+        return 6;
+      default:
+        return 0;
+    }
+  }
+
+  List<Widget> _buildContentCells(Tracker tracker, String type) {
+    switch (type) {
+      case 'sleep':
+        return [
+          _buildContentCell(formatTimestamp(tracker.timeStamp!)),
+          _buildContentCell(tracker.sleetAt ?? 'N/A'),
+          _buildContentCell(tracker.wakeUpAt ?? 'N/A'),
+          _buildContentCell(tracker.wakeDuringNight ?? 'N/A'),
+        ];
+      case 'mood':
+        return [
+          _buildContentCell(formatTimestamp(tracker.timeStamp!)),
+          _buildContentCellImage(tracker.image ?? ''),
+          _buildContentCell(tracker.moodName ?? 'N/A'),
+          _buildContentCell(tracker.messageNote ?? 'N/A'),
+        ];
+      case 'pain':
+        return [
+          _buildContentCell(formatTimestamp(tracker.timeStamp!)),
+          _buildContentCell(tracker.intensity ?? 'N/A'),
+          _buildContentCell(tracker.causesList?.first ?? 'N/A'),
+          _buildContentCell('${tracker.days} days'),
+          _buildContentCell(tracker.painLevel ?? 'N/A'),
+        ];
+      case 'stress':
+        return [
+          _buildContentCell(formatTimestamp(tracker.timeStamp!)),
+          _buildContentCell(tracker.stressLevel ?? 'N/A'),
+          _buildContentCell(tracker.causesList?.first ?? 'N/A'),
+          _buildContentCell(tracker.messageNote ?? 'N/A'),
+        ];
+      case 'energy':
+        return [
+          _buildContentCell(formatTimestamp(tracker.timeStamp!)),
+          _buildContentCell(tracker.questions?[0].allOptions[0] ?? 'N/A'),
+          _buildContentCell(tracker.questions?[1].allOptions[0] ?? 'N/A'),
+          _buildContentCell(tracker.questions?[2].allOptions[0] ?? 'N/A'),
+          _buildContentCell(tracker.questions?[3].allOptions[0] ?? 'N/A'),
+          _buildContentCell(tracker.messageNote ?? 'N/A'),
+        ];
+      default:
+        return [];
+    }
+  }
+
+  Widget _buildContentCell(String text) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 15),
+      alignment: Alignment.center,
+      child: Text(text, style: const TextStyle(fontSize: 16)),
+    );
+  }
+
+  Widget _buildContentCellImage(String image) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
+      alignment: Alignment.center,
+      child: image.isNotEmpty
+          ? Image.network(image, width: 40, height: 40)
+          : Image.asset(AppAssets.person),
+    );
+  }
+
   String formatTimestamp(String timestamp) {
     if (timestamp.isNotEmpty) {
       int milliseconds = int.parse(timestamp);
@@ -726,36 +317,5 @@ class TrackerLodData extends StatelessWidget {
       return DateFormat('dd-MM-yyyy').format(date);
     }
     return 'N/A';
-  }
-
-  Widget _buildContentCell(String text) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 15),
-      alignment: Alignment.center,
-      child: Text(
-        text,
-        style: const TextStyle(fontSize: 16),
-      ),
-    );
-  }
-  Widget _buildContentCellImage(String image) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
-      alignment: Alignment.center,
-      child: image.isNotEmpty? Image.network(
-        image,
-        width: 40,
-        height: 40,
-      ):Image.asset(AppAssets.person)
-    );
-  }
-
-  String convertTimestampToDate(int timestamp) {
-    // Convert timestamp from milliseconds to DateTime object
-    DateTime date = DateTime.fromMillisecondsSinceEpoch(timestamp);
-
-    // Format the date to 'MM-dd-yyyy'
-    final DateFormat formatter = DateFormat('MM-dd-yyyy');
-    return formatter.format(date);
   }
 }

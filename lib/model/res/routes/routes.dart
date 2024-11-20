@@ -7,6 +7,7 @@ import '../../../screens/blog/add_blog_screen.dart';
 import '../../../screens/blog/blog_screen.dart';
 import '../../../screens/blog/editBlogPost.dart';
 import '../../../screens/chat_support/chat_support.dart';
+import '../../../screens/feedback/feedbacks.dart';
 import '../../../screens/homeScreen/homeScreen.dart';
 import '../../../screens/homeScreen/mainScreen.dart';
 import '../../../screens/library/libraryCard_details.dart';
@@ -59,5 +60,6 @@ class Routes {
     GetPage(name: RoutesName.userTrackerHistory, page: () => UserTrackerHistoryScreen()),
     GetPage(name: RoutesName.editProfile, page: () => EditProfileScreen()),
     GetPage(name: RoutesName.editBlogPost, page: () => EditBlogPost()),
+    GetPage(name: RoutesName.feedbackScreen, page: () => FeedbackScreen()),
   ];
 }

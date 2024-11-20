@@ -121,4 +121,14 @@ class DropdownProviderN with ChangeNotifier {
       }
     });
   }
+
+  ////insights dropdown
+  String _selectedInsightCategory = 'Hair and skin'; // Default value
+
+  String get selectedInsightCategory => _selectedInsightCategory;
+
+  void setSelectedInsightsCategory(String value) {
+    _selectedInsightCategory = value;
+    notifyListeners();
+  }
 }

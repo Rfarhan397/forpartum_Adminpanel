@@ -55,73 +55,75 @@ class MenuSettingsDetailScreen extends StatelessWidget {
                         CustomRichText(
                           firstText: 'App Name:',
                           secondText: 'Forpartum',
+                          firstSize: 18,
+                          secondSize: 18,
                           press: () {},
                         ),
                         SizedBox(
                           height: 1.h,
                         ),
-                        Row(
-                          children: [
-                            AppTextWidget(
-                              text: 'Default language:',
-                            ),
-                            SizedBox(
-                              width: 0.5.w,
-                            ),
-                            // buildDropDown(context, 2),
-                            //CategoryPopupMenu(),
-                            // CustomDropdownWidget(
-                            //   index: 1,
-                            //   items: ['English', 'French'],
-                            //   dropdownType: 'Language',
-                            // ),
-                          ],
-                        ),
+                        // Row(
+                        //   children: [
+                        //     AppTextWidget(
+                        //       text: 'Default language:',
+                        //     ),
+                        //     SizedBox(
+                        //       width: 0.5.w,
+                        //     ),
+                        //     // buildDropDown(context, 2),
+                        //     //CategoryPopupMenu(),
+                        //     // CustomDropdownWidget(
+                        //     //   index: 1,
+                        //     //   items: ['English', 'French'],
+                        //     //   dropdownType: 'Language',
+                        //     // ),
+                        //   ],
+                        // ),
                         SizedBox(
                           height: 1.h,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            AppTextWidget(
-                              text: 'Time Zone:',
-                            ),
-                            SizedBox(
-                              width: 0.5.w,
-                            ),
-                            // CustomDropdownWidget(
-                            //   index: 2,
-                            //   items: ['Uk', 'France'],
-                            //  dropdownType: 'TimeZone',
-                            // ),                             //buildDropDownT(context, 3),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 5.h,
-                        ),
-                        AppTextWidget(
-                          text: 'Privacy Settings',
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          textAlign: TextAlign.start,
-                        ),
-                        SizedBox(
-                          height: 1.h,
-                        ),
-                        AppTextWidget(
-                          text:
-                              'Date Retention Period: [ Input Field] (in days)',
-                          textAlign: TextAlign.start,
-                          fontSize: 10,
-                        ),
-                        SizedBox(
-                          height: 1.h,
-                        ),
-                        buildToggleContainer('User Data Export'),
-                        SizedBox(
-                          height: 2.h,
-                        ),
-                        buildToggleContainer('User Data Deletion'),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.start,
+                        //   children: [
+                        //     AppTextWidget(
+                        //       text: 'Time Zone:',
+                        //     ),
+                        //     SizedBox(
+                        //       width: 0.5.w,
+                        //     ),
+                        //     // CustomDropdownWidget(
+                        //     //   index: 2,
+                        //     //   items: ['Uk', 'France'],
+                        //     //  dropdownType: 'TimeZone',
+                        //     // ),                             //buildDropDownT(context, 3),
+                        //   ],
+                        // ),
+                        // SizedBox(
+                        //   height: 5.h,
+                        // ),
+                        // AppTextWidget(
+                        //   text: 'Privacy Settings',
+                        //   fontSize: 24,
+                        //   fontWeight: FontWeight.bold,
+                        //   textAlign: TextAlign.start,
+                        // ),
+                        // SizedBox(
+                        //   height: 1.h,
+                        // ),
+                        // AppTextWidget(
+                        //   text:
+                        //       'Date Retention Period: [ Input Field] (in days)',
+                        //   textAlign: TextAlign.start,
+                        //   fontSize: 10,
+                        // ),
+                        // SizedBox(
+                        //   height: 1.h,
+                        // ),
+                        // buildToggleContainer('User Data Export'),
+                        // SizedBox(
+                        //   height: 2.h,
+                        // ),
+                        // buildToggleContainer('User Data Deletion'),
                         SizedBox(
                           height: 5.h,
                         ),
@@ -428,43 +430,43 @@ class MenuSettingsDetailScreen extends StatelessWidget {
                   SizedBox(
                     width: 10.w,
                   ),
-                  Container(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        AppTextWidget(
-                          text: 'Feature Toggles ',
-                          fontSize: 24,
-                          textAlign: TextAlign.start,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        SizedBox(
-                          height: 2.h,
-                        ),
-                        buildToggleContainer('Mood Tracker'),
-                        SizedBox(
-                          height: 2.h,
-                        ),
-                        buildToggleContainer('Stress Energy Tracker'),
-                        SizedBox(
-                          height: 2.h,
-                        ),
-                        buildToggleContainer('Pain Symptom Tracker'),
-                        SizedBox(
-                          height: 2.h,
-                        ),
-                        buildToggleContainer('Sleep Tracker'),
-                        SizedBox(
-                          height: 2.h,
-                        ),
-                        buildToggleContainer('Meal Plans'),
-                        SizedBox(
-                          height: 2.h,
-                        ),
-                        buildToggleContainer('Milestone Tracker '),
-                      ],
-                    ),
-                  ),
+                  // Container(
+                  //   child: Column(
+                  //     crossAxisAlignment: CrossAxisAlignment.start,
+                  //     children: [
+                  //       AppTextWidget(
+                  //         text: 'Feature Toggles ',
+                  //         fontSize: 24,
+                  //         textAlign: TextAlign.start,
+                  //         fontWeight: FontWeight.bold,
+                  //       ),
+                  //       SizedBox(
+                  //         height: 2.h,
+                  //       ),
+                  //       buildToggleContainer('Mood Tracker'),
+                  //       SizedBox(
+                  //         height: 2.h,
+                  //       ),
+                  //       buildToggleContainer('Stress Energy Tracker'),
+                  //       SizedBox(
+                  //         height: 2.h,
+                  //       ),
+                  //       buildToggleContainer('Pain Symptom Tracker'),
+                  //       SizedBox(
+                  //         height: 2.h,
+                  //       ),
+                  //       buildToggleContainer('Sleep Tracker'),
+                  //       SizedBox(
+                  //         height: 2.h,
+                  //       ),
+                  //       buildToggleContainer('Meal Plans'),
+                  //       SizedBox(
+                  //         height: 2.h,
+                  //       ),
+                  //       buildToggleContainer('Milestone Tracker '),
+                  //     ],
+                  //   ),
+                  // ),
                 ],
               ),
             )

@@ -6,8 +6,8 @@ class ProfileInfoProvider with ChangeNotifier {
   String? _profileImageUrl;
   String? _profileName;
   String? _profileEmail;
-  String? _profileAddress;
   String? _profilePhone;
+  String? _profileAddress;
   String? _profileRole;
 
   String? get profileImageUrl => _profileImageUrl;
@@ -18,12 +18,12 @@ class ProfileInfoProvider with ChangeNotifier {
   String? get profileRole => _profileRole;
 
   // Method to set the profile information and notify listeners
-  void setProfileInfo(String imageUrl, String name, String email,address,phone,role) {
+  void setProfileInfo(String imageUrl, String name, String email,phone,address,role) {
     _profileImageUrl = imageUrl;
     _profileName = name;
     _profileEmail = email;
-    _profileAddress = address;
     _profilePhone = phone;
+    _profileAddress = address;
     _profileRole = role;
     notifyListeners();
   }
@@ -43,14 +43,14 @@ class ProfileInfoProvider with ChangeNotifier {
         if (data != null) {
           // Extract the necessary fields with null checks
           String imageUrl = data['imageUrl'] ?? '';
-          String name = data['name  '] ?? 'Unknown';
+          String name = data['name'] ?? 'Unknown';
           String email = data['email'] ?? 'Unknown';
           String phone = data['phone'] ?? 'Unknown';
           String address = data['address'] ?? 'Unknown';
           String role = data['role'] ?? 'Unknown';
 
           // Update the profile information
-          setProfileInfo(imageUrl, name, email,address,phone,role);
+          setProfileInfo(imageUrl, name, email,phone,address,role);
         }
       } else {
         if (kDebugMode) {

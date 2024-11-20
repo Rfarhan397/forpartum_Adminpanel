@@ -169,3 +169,32 @@ class Tracker {
 }
 
 
+class MilestoneModel {
+  final String id;
+  final String createdAt;
+  final String months;
+  final String status;
+  final String title;
+  final List<String> milestones;
+
+  MilestoneModel({
+    required this.id,
+    required this.createdAt,
+    required this.months,
+    required this.status,
+    required this.title,
+    required this.milestones,
+  });
+
+
+  factory MilestoneModel.fromMap(Map<String, dynamic> data) {
+    return MilestoneModel(
+      id: data['id'] ?? '',
+      createdAt: data['createdAt'] ?? '',
+      months: data['months'] ?? '',
+      status: data['status'] ?? '',
+      title: data['title'] ?? '',
+      milestones: List<String>.from(data['milestones'] ?? []),
+    );
+  }
+}

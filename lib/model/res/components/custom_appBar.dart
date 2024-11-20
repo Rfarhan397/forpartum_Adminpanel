@@ -1,4 +1,8 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:forpartum_adminpanel/constant.dart';
+import 'package:forpartum_adminpanel/controller/menu_App_Controller.dart';
 import 'package:forpartum_adminpanel/model/res/components/app_back_button.dart';
 import 'package:forpartum_adminpanel/model/res/components/responsive.dart';
 import 'package:forpartum_adminpanel/provider/profileInfo/profileInfoProvider.dart';
@@ -7,7 +11,9 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
+import '../constant/app_assets.dart';
 import '../constant/app_colors.dart';
+import '../constant/app_icons.dart';
 import '../widgets/app_text.dart.dart';
 
 class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
@@ -17,8 +23,13 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final profile = Provider.of<ProfileInfoProvider>(context,listen: false);
+    final profile = Provider.of<ProfileInfoProvider>(context, listen: false); // Listen to updates
+    // Initialize the profile listener when the widget is first built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      profile.listenToProfileInfo();
+    });
     final isMobile = Responsive.isMobile(context);
+
     return AppBar(
       elevation: 0,
       surfaceTintColor: AppColors.scaffoldColor,
@@ -29,42 +40,14 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(width: 0.5.w,),
-            AppTextWidget(text: text, fontWeight: FontWeight.w400, fontSize: isMobile? 15: 28),
-            Spacer(
-              flex: 3,
+            SizedBox(width: 0.5.w),
+            AppTextWidget(
+              text: text,
+              fontWeight: FontWeight.w400,
+              fontSize: isMobile ? 15 : 28,
             ),
-            // if(!isMobile)
-            //   Container(
-            //   width: 250,
-            //   height: 40,
-            //   decoration: BoxDecoration(
-            //     color: Colors.white,
-            //     borderRadius: BorderRadius.circular(20),
-            //   ),
-            //   child: Padding(
-            //     padding: const EdgeInsets.symmetric(horizontal: 15),
-            //     child: Row(
-            //       children: [
-            //         SizedBox(width: 10),
-            //         Expanded(
-            //           child: TextField(
-            //             decoration: InputDecoration(
-            //               hintText: 'Search for anything...',
-            //               fillColor: Colors.white,
-            //               hintStyle: GoogleFonts.poppins(
-            //                 fontSize: 10,
-            //                 color: Colors.grey.shade400
-            //               ),
-            //               border: InputBorder.none,
-            //             ),
-            //           ),
-            //         ),
-            //       ],
-            //     ),
-            //   ),
-            // ),
-            Spacer(),
+            const Spacer(flex: 3),
+            const Spacer(),
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -73,46 +56,172 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
               child: Row(
                 children: [
                   CircleAvatar(
-                    radius: 15,
-                    //backgroundImage:
-                    //AssetImage(AppAssets.alex)
-                   // NetworkImage('https://s3-alpha-sig.figma.com/img/44ce/677a/3a8bdf19c7b4f7e27422dcf2c356ae9e?Expires=1725235200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=iARFpGK6cNiNDUu-EZdZReyIq5Flp3f-mPQgz1RZ7NIDx~5K-JrVqw3BYDNBnRw6If7L~wT6sJzN4eOjMUnlrdf5fmMK59mlbbrA5ZkcXHIxtEynNj495pTegN7NDHt99Kw5jaT-o2PSuduVB3WO6qG5Ba~OWrjKXPD6cx-2zkwTk1Pkt4dMnZkl8WJzIiUsN6RgB-3gU7~p3x~kXGvF6tlegc2QlXC5KtJ2VY3oZwORkEKlowpasv5Hy3GLiNnTtgj6djpToK0KuWmCc3bZ2p9zWqJ0PknPpDBO0510xXMO-ey4usJUXrlaltb0Rf2oTBRJWQRFfo1zvqDg5ZPblQ__'),
+                    radius: 20,
+                    backgroundImage: profile.profileImageUrl != null && profile.profileImageUrl!.isNotEmpty
+                        ? NetworkImage(profile.profileImageUrl!)
+                        : const AssetImage(AppAssets.logoImage) as ImageProvider,
                   ),
-                  SizedBox(width: 1.w,),
+                  SizedBox(width: 1.w),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      AppTextWidget(text: profile.profileName == null ?
-                        profile.profileName.toString() : "Admin"
-                        , fontSize: 12, color: Colors.black,fontWeight: FontWeight.w500,),
+                      AppTextWidget(
+                        text: profile.profileName?.isNotEmpty == true
+                            ? profile.profileName!
+                            : "Admin",
+                        fontSize: 16,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500,
+                      ),
                       SizedBox(height: 0.7.h),
-                      AppTextWidget(text: 'Prodcut manager', fontSize: 10, color: Colors.grey),
+                      AppTextWidget(
+                        text: profile.profileRole?.isNotEmpty == true
+                            ? profile.profileRole!
+                            : 'Super Admin',
+                        fontSize: 15,
+                        color: Colors.grey,
+                      ),
                     ],
                   ),
                   SizedBox(width: 0.8.w),
-                  Icon(Icons.keyboard_arrow_down_outlined, color: Colors.black.withOpacity(0.5)),
+                  InkWell(
+                    onTap: () {
+                      _showCustomPopupMenu(context, _buildProfilePopUp(context));
+                    },
+                    child: Icon(
+                      Icons.keyboard_arrow_down_outlined,
+                      color: Colors.black.withOpacity(0.5),
+                    ),
+                  ),
                 ],
               ),
-            )
-            // DropdownButton<String>(
-            //   items: <String>['Profile', 'Settings', 'Logout'].map((String value) {
-            //     return DropdownMenuItem<String>(
-            //       value: value,
-            //       child: Text(value),
-            //     );
-            //   }).toList(),
-            //   onChanged: (_) {},
-            //   underline: SizedBox(),
-            //   icon: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black),
-            // ),
+            ),
           ],
         ),
       ),
     );
-
   }
 
+  void _showCustomPopupMenu(BuildContext context, Widget child) {
+    final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
+
+    showMenu(
+      context: context,
+      color: bgColor,
+      surfaceTintColor: whiteColor,
+      position: RelativeRect.fromLTRB(
+        overlay.size.width + 10.w,
+        kToolbarHeight,
+        0,
+        0,
+      ),
+      items: [
+        PopupMenuItem(
+          enabled: false,
+          child: child,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProfilePopUp(BuildContext context) {
+    final profileProvider = Provider.of<ProfileInfoProvider>(context, listen: false);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      profileProvider.listenToProfileInfo();
+    });
+    return Consumer<ProfileInfoProvider>(
+      builder: (context, profileInfo, child) {
+        return Center(
+          child: Container(
+            decoration: BoxDecoration(
+              color: bgColor,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            height: 200,
+            width: 120,
+            child: Column(
+              children: [
+                CircleAvatar(
+                  radius: 20,
+                  backgroundImage: profileInfo.profileImageUrl != null
+                      ? NetworkImage(profileInfo.profileImageUrl!)
+                      : const AssetImage(AppAssets.logoImage) as ImageProvider,
+                ),
+                AppTextWidget(
+                  text: profileInfo.profileName.toString(),
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: primaryColor,
+                ),
+                AppTextWidget(
+                  text:  profileInfo.profileEmail.toString(),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                InkWell(
+                  onTap: () {
+                    Provider.of<MenuAppController>(context, listen: false)
+                        .addBackPage(30);
+                    Provider.of<MenuAppController>(context, listen: false)
+                        .changeScreen(30);
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Image.asset(
+                          AppIcons.activeUser,
+                          color: primaryColor,
+                          height: 15,
+                        ),
+                        SizedBox(width: 1.h),
+                        const AppTextWidget(
+                          text: "View Profile",
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: primaryColor,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    // Implement sign out logic here
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Image.asset(
+                          AppIcons.insight,
+                          color: primaryColor,
+                          height: 15,
+                        ),
+                        SizedBox(width: 1.h),
+                        const AppTextWidget(
+                          text: "Log Out",
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: primaryColor,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

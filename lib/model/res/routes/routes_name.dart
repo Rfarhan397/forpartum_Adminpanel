@@ -26,4 +26,5 @@ class RoutesName{
   static const userTrackerHistory = "/userTrackerHistoryScreen";
   static const editProfile = "/editProfileScreen";
   static const editBlogPost = "/editBlogPost";
+  static const feedbackScreen = "/feedbacks";
 }
