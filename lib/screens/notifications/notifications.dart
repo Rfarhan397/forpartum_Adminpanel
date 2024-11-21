@@ -107,9 +107,11 @@ class Notifications extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                              _buildHeaderButtonWithDropDown(context, 'Date', primaryColor),
-                              SizedBox(width: 2.w,),
-                              _buildHeaderButton(context,secondaryColor,2, 'Notification Title', secondaryColor,2.0),
+                              // _buildHeaderButtonWithDropDown(context, 'Date', primaryColor),
+                                _buildHeaderButton(context,secondaryColor,2, 'Date', secondaryColor,2.0),
+
+                                SizedBox(width: 2.w,),
+                              _buildHeaderButton(context,secondaryColor,2, 'Title', secondaryColor,2.0),
                                 SizedBox(width: 2.w,),
                               _buildHeaderButton(context,primaryColor,1, 'Status', secondaryColor,0.0),
                                 SizedBox(width: 2.w,),

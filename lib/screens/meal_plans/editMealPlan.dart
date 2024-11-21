@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../constant.dart';
+import '../../controller/menu_App_Controller.dart';
 import '../../model/res/components/app_button_widget.dart';
 import '../../model/res/components/custom_appBar.dart';
 import '../../model/res/constant/app_utils.dart';
@@ -15,51 +16,29 @@ import '../../model/res/widgets/button_widget.dart';
 import '../../provider/action/action_provider.dart';
 import '../../provider/cloudinary/cloudinary_provider.dart';
 
-class AddMealScreen extends StatelessWidget {
-  AddMealScreen({super.key});
+class EditMealPlan extends StatelessWidget {
+  EditMealPlan({super.key});
   Uint8List? _imageData; // Store image data
   Uint8List? _breakfastImageData;
   Uint8List? _lunchImageData;
   Uint8List? _snackImageData;
   Uint8List? _dinnerImageData;
   TextEditingController breakFastController = TextEditingController();
-  TextEditingController lunchController = TextEditingController();
-  TextEditingController snackController = TextEditingController();
-  TextEditingController dinnerController = TextEditingController();
   TextEditingController proteinController = TextEditingController();
   TextEditingController carbsController = TextEditingController();
   TextEditingController fatController = TextEditingController();
   TextEditingController recipeController = TextEditingController();
   TextEditingController ingredientsController = TextEditingController();
   TextEditingController recommendedBreakfastController =
-      TextEditingController();
+  TextEditingController();
   TextEditingController descriptionBreakfastController =
-      TextEditingController();
-  TextEditingController recommendedLunchController = TextEditingController();
-  TextEditingController descriptionLunchController = TextEditingController();
-  TextEditingController recommendedSnackController = TextEditingController();
-  TextEditingController descriptionSnackController = TextEditingController();
-  TextEditingController recommendedDinnerController = TextEditingController();
-  TextEditingController descriptionDinnerController = TextEditingController();
-  TextEditingController lunchProteinController = TextEditingController();
-  TextEditingController lunchCarbsController = TextEditingController();
-  TextEditingController lunchFatController = TextEditingController();
-  TextEditingController lunchRecipeController = TextEditingController();
-  TextEditingController lunchIngredientsController = TextEditingController();
-  TextEditingController snackProteinController = TextEditingController();
-  TextEditingController snackCarbsController = TextEditingController();
-  TextEditingController snackFatController = TextEditingController();
-  TextEditingController snackRecipeController = TextEditingController();
-  TextEditingController snackIngredientsController = TextEditingController();
-  TextEditingController dinnerProteinController = TextEditingController();
-  TextEditingController dinnerCarbsController = TextEditingController();
-  TextEditingController dinnerFatController = TextEditingController();
-  TextEditingController dinnerRecipeController = TextEditingController();
-  TextEditingController dinnerIngredientsController = TextEditingController();
+  TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     final currentP = Provider.of<CloudinaryProvider>(context);
+    final menuApp = Provider.of<MenuAppController>(context);
+
     return Scaffold(
       appBar: CustomAppbar(text: 'Mother Essence Plan'),
       body: Padding(
@@ -67,22 +46,6 @@ class AddMealScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              height: 40,
-              width: 120,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(25),
-                color: primaryColor,
-              ),
-              child: Center(
-                child: AppTextWidget(
-                  text: 'Day 1',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w300,
-                  color: Colors.white,
-                ),
-              ),
-            ),
             SizedBox(height: 1.h),
             Expanded(
               child: SingleChildScrollView(
@@ -92,10 +55,10 @@ class AddMealScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       buildMealFields(context, () {
-                        currentP.setCurrentType("Breakfast");
-                        _uploadBreakFast(context);
+                        currentP.setCurrentType(menuApp.model!.mealType!);
+                        _updateMeal(context);
                       },
-                          'Breakfast',
+                          menuApp.model!.mealType!,
                           breakFastController,
                           proteinController,
                           carbsController,
@@ -104,45 +67,6 @@ class AddMealScreen extends StatelessWidget {
                           ingredientsController,
                           recommendedBreakfastController,
                           descriptionBreakfastController),
-                      buildMealFields(context, () {
-                        currentP.setCurrentType("Lunch");
-                        _uploadLunch(context);
-                      },
-                          'Lunch',
-                          lunchController,
-                          lunchProteinController,
-                          lunchCarbsController,
-                          lunchFatController,
-                          lunchRecipeController,
-                          lunchIngredientsController,
-                          recommendedLunchController,
-                          descriptionLunchController),
-                      buildMealFields(context, () {
-                        currentP.setCurrentType("Snack");
-                        _uploadsnack(context);
-                      },
-                          'Snack',
-                          snackController,
-                          snackProteinController,
-                          snackCarbsController,
-                          snackFatController,
-                          snackRecipeController,
-                          snackIngredientsController,
-                          recommendedSnackController,
-                          descriptionSnackController),
-                      buildMealFields(context, () {
-                        currentP.setCurrentType("Dinner");
-                        _uploadDinner(context);
-                      },
-                          'Dinner',
-                          dinnerController,
-                          dinnerProteinController,
-                          dinnerCarbsController,
-                          dinnerFatController,
-                          dinnerRecipeController,
-                          dinnerIngredientsController,
-                          recommendedDinnerController,
-                          descriptionDinnerController),
                     ],
                   ),
                 ),
@@ -155,32 +79,26 @@ class AddMealScreen extends StatelessWidget {
   }
 
   Column buildMealFields(
-    BuildContext context,
-    VoidCallback onPressed,
-    String heading,
-    TextEditingController mealController,
-    TextEditingController proteinController,
-    TextEditingController carbsController,
-    TextEditingController fatController,
-    TextEditingController recipeController,
-    TextEditingController ingredientsController,
-    TextEditingController recommendedController,
-    TextEditingController descriptionController,
-  ) {
+      BuildContext context,
+      VoidCallback onPressed,
+      String heading,
+      TextEditingController mealController,
+      TextEditingController proteinController,
+      TextEditingController carbsController,
+      TextEditingController fatController,
+      TextEditingController recipeController,
+      TextEditingController ingredientsController,
+      TextEditingController recommendedController,
+      TextEditingController descriptionController,
+      ) {
+    final menuApp = Provider.of<MenuAppController>(context);
+
     bool isRecommended = false; // Track recommendation state
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ButtonWidget(
-          fontWeight: FontWeight.w400,
-          height: 5.h,
-          width: 120,
-          alignment: Alignment.centerRight,
-          onClicked: onPressed,
-          text: 'Upload',
-          radius: 20,
-        ),
+
         Padding(
           padding: const EdgeInsets.only(left: 8.0, right: 200),
           child: Row(
@@ -207,9 +125,9 @@ class AddMealScreen extends StatelessWidget {
                           borderSide: BorderSide(color: Color(0xffD1DBE8)),
                           borderRadius: BorderRadius.circular(15),
                         ),
-                        hintText: 'Mother Essence',
+                        hintText: mealController.text = menuApp.model!.name!,
                         hintStyle:
-                            TextStyle(fontSize: 16, color: Color(0xff4F7396)),
+                        TextStyle(fontSize: 16, color: Color(0xff4F7396)),
                       ),
                     ),
                   ],
@@ -220,9 +138,9 @@ class AddMealScreen extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    buildNutrientField(proteinController, 'Protein', '20'),
-                    buildNutrientField(carbsController, 'Carbs', '30'),
-                    buildNutrientField(fatController, 'Fat', '4'),
+                    buildNutrientField(proteinController, 'Protein', proteinController.text = menuApp.model!.protein!),
+                    buildNutrientField(carbsController, 'Carbs', carbsController.text = menuApp.model!.carbs!),
+                    buildNutrientField(fatController, 'Fat', fatController.text = menuApp.model!.fat!),
                   ],
                 ),
               ),
@@ -231,15 +149,16 @@ class AddMealScreen extends StatelessWidget {
         ),
         Row(
           children: [
-            buildTextFieldColumn('Recipe', recipeController),
+            buildTextFieldColumn('Recipe:',recipeController.text = menuApp.model!.recipe!, recipeController),
             SizedBox(width: 5.w),
-            buildTextFieldColumn('Ingredients', ingredientsController),
+            buildTextFieldColumn("Ingredients:",ingredientsController.text = menuApp.model!.ingredients!, ingredientsController),
             SizedBox(width: 5.w),
             buildUploadImagedButton(context, heading),
             SizedBox(width: 0.5.w),
             buildImageDisplay(
               context,
               heading,
+              menuApp.model!.imageUrl
             ), // Display corresponding image
           ],
         ),
@@ -247,13 +166,22 @@ class AddMealScreen extends StatelessWidget {
         Row(
           children: [
             buildNutrientField(
-                recommendedController, 'Recommended', 'eg: Yes/No'),
+                recommendedController,  'Recommended',recommendedController.text = menuApp.model!.recommended!,),
             SizedBox(
               width: 5.w,
             ),
             buildNutrientField(
-                descriptionController, 'Description', 'Description'),
+                descriptionController,  'Description',descriptionController.text = menuApp.model!.description!,),
           ],
+        ),
+        ButtonWidget(
+          fontWeight: FontWeight.w400,
+          height: 5.h,
+          width: 120,
+          alignment: Alignment.centerRight,
+          onClicked: onPressed,
+          text: 'Update',
+          radius: 20,
         ),
       ],
     );
@@ -263,23 +191,24 @@ class AddMealScreen extends StatelessWidget {
       TextEditingController controller, String heading, String hintText) {
     return SizedBox(
       width: 10.w,
-      height: 100,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AppTextWidget(text: heading, fontWeight: FontWeight.w600),
           SizedBox(height: 1.h),
-          TextField(
-            controller: controller,
-            decoration: InputDecoration(
-              fillColor: Color(0xffF7FAFC),
-              filled: true,
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xffD1DBE8)),
-                borderRadius: BorderRadius.circular(15),
+          IntrinsicHeight(
+            child: TextField(
+              controller: controller,
+              decoration: InputDecoration(
+                fillColor: Color(0xffF7FAFC),
+                filled: true,
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xffD1DBE8)),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                hintText: hintText,
+                hintStyle: TextStyle(fontSize: 16, color: Color(0xff4F7396)),
               ),
-              hintText: hintText,
-              hintStyle: TextStyle(fontSize: 16, color: Color(0xff4F7396)),
             ),
           ),
         ],
@@ -288,24 +217,26 @@ class AddMealScreen extends StatelessWidget {
   }
 
   Widget buildTextFieldColumn(
-      String heading, TextEditingController controller) {
+      String heading,hintText, TextEditingController controller) {
     return Container(
-      height: 30.h,
+      // height: 30.h,
       width: 18.w,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AppTextWidget(
-              text: heading, fontWeight: FontWeight.w400, fontSize: 14),
-          SizedBox(height: 3.h),
-          TextFormField(
-            maxLines: 6,
-            controller: controller,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.black),
-              ),
+          AppTextWidget(text: heading, fontWeight: FontWeight.w600),
+          SizedBox(height: 1.h),
+          IntrinsicHeight(
+            child: TextField(
+              controller: controller,
+              decoration: InputDecoration(
+                hintText:hintText ,
+                fillColor: Color(0xffF7FAFC),
+                filled: true,
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xffD1DBE8)),
+                  borderRadius: BorderRadius.circular(15),
+                ),),
             ),
           ),
         ],
@@ -341,8 +272,9 @@ class AddMealScreen extends StatelessWidget {
     );
   }
 
-  Widget buildImageDisplay(BuildContext context, String mealType) {
+  Widget buildImageDisplay(BuildContext context, String mealType,modelImage) {
     final cloudinaryProvider = Provider.of<CloudinaryProvider>(context);
+    final menuApp = Provider.of<MenuAppController>(context);
     log('sdsdasds ::  ${cloudinaryProvider.currentType}');
     Uint8List? imageData;
     switch (mealType) {
@@ -367,39 +299,43 @@ class AddMealScreen extends StatelessWidget {
         break;
     }
 
-    return imageData != null &&
-            mealType == cloudinaryProvider.currentType.toString()
-        ? Container(
+    return  Consumer<CloudinaryProvider>(
+      builder: (context, provider, child) {
+        return provider.imageData != null
+            ? Container(
+          height: 20.h,
+          width: 20.w,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: Colors.black),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Image.memory(
+              provider.imageData!,
+              fit: BoxFit.cover,
+            ),
+          ),
+        )
+            : Container(
             height: 20.h,
             width: 20.w,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               border: Border.all(color: Colors.black),
             ),
-            child: Image.memory(
-              imageData,
-              fit: BoxFit.cover,
-            ),
-          )
-        : Container(
-            height: 20.h,
-            width: 20.w,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Center(
-              child: AppTextWidget(
-                text: 'No image selected',
-                color: Colors.grey,
-              ),
-            ),
-          );
+            child:ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.network(menuApp.model!.imageUrl!,fit: BoxFit.cover,))
+        );
+      },
+    );
   }
 
   Future<void> _pickAndUploadImage(
       BuildContext context, String mealType) async {
     final html.FileUploadInputElement uploadInput =
-        html.FileUploadInputElement();
+    html.FileUploadInputElement();
     uploadInput.accept = 'image/*'; // Accept only images
 
     uploadInput.onChange.listen((e) async {
@@ -413,7 +349,7 @@ class AddMealScreen extends StatelessWidget {
         final bytes = reader.result as Uint8List;
 
         final cloudinaryProvider =
-            Provider.of<CloudinaryProvider>(context, listen: false);
+        Provider.of<CloudinaryProvider>(context, listen: false);
         cloudinaryProvider.setImageData(bytes);
 
         // Assign the image data to the respective meal field
@@ -435,6 +371,7 @@ class AddMealScreen extends StatelessWidget {
         AppUtils().showToast(text: '$mealType image uploaded successfully');
       });
     });
+
     uploadInput.click(); // Trigger the file picker dialog
   }
 
@@ -453,6 +390,7 @@ class AddMealScreen extends StatelessWidget {
 
     ActionProvider.startLoading();  // Show loading indicator
     final cloudinaryProvider = Provider.of<CloudinaryProvider>(context, listen: false);
+    final menuP = Provider.of<MenuAppController>(context, listen: false);
 
     if (mealController.text.isEmpty ||
         proteinController.text.isEmpty ||
@@ -461,27 +399,28 @@ class AddMealScreen extends StatelessWidget {
         recipeController.text.isEmpty ||
         ingredientsController.text.isEmpty ||
         recommendedController.text.isEmpty ||
-        descriptionController.text.isEmpty ||
-        mealImageData == null) {
+        descriptionController.text.isEmpty ) {
       ActionProvider.stopLoading();  // Hide loading indicator
       AppUtils().showToast(text: 'Please fill all fields and upload an image');
       return;
     }
 
     try {
+      await cloudinaryProvider.uploadImage(mealImageData!);
       // Upload the image to Cloudinary and get the image URL
-      await cloudinaryProvider.uploadImage(mealImageData);
-      var mealId = FirebaseFirestore.instance.collection('addMeal').doc().id.toString();
+      var mealId =  menuP.model!.id;
 
       if (cloudinaryProvider.imageUrl.isNotEmpty) {
+        log('image url :: ${cloudinaryProvider.imageUrl}');
         // Save the meal data to Firestore
-        await FirebaseFirestore.instance.collection('addMeal').doc(mealId).set({
+        await FirebaseFirestore.instance.collection('addMeal').doc(mealId).update({
           'mealType': mealType.toLowerCase(),
           'name': mealController.text,
           'protein': proteinController.text,
           'carbs': carbsController.text,
           'fat': fatController.text,
-          'imageUrl': cloudinaryProvider.imageUrl,  // URL from Cloudinary
+          'imageUrl': cloudinaryProvider.imageUrl.isNotEmpty ? cloudinaryProvider.imageUrl
+          :menuP.model!.imageUrl,  // URL from Cloudinary
           'createdAt': DateTime.now().millisecondsSinceEpoch.toString(),
           'Id': mealId,
           'ingredients': ingredientsController.text,
@@ -494,8 +433,24 @@ class AddMealScreen extends StatelessWidget {
         ActionProvider.stopLoading();  // Hide loading indicator
         AppUtils().showToast(text: '$mealType uploaded successfully');
       } else {
+        // await FirebaseFirestore.instance.collection('addMeal').doc(mealId).update({
+        //   'mealType': mealType.toLowerCase(),
+        //   'name': mealController.text,
+        //   'protein': proteinController.text,
+        //   'carbs': carbsController.text,
+        //   'fat': fatController.text,
+        //   'imageUrl': menuP.model!.imageUrl.toString(),  // URL from Cloudinary
+        //   'createdAt': DateTime.now().millisecondsSinceEpoch.toString(),
+        //   'Id': mealId,
+        //   'ingredients': ingredientsController.text,
+        //   'recipe': recipeController.text,
+        //   'recommended': recommendedController.text.toLowerCase() == 'yes' ? "true" : "false",
+        //   'description': descriptionController.text,
+        //   'likes': [],  // You can adjust this as necessary
+        // });
+
         ActionProvider.stopLoading();  // Hide loading indicator
-        AppUtils().showToast(text: 'Image upload failed');
+        AppUtils().showToast(text: '$mealType uploaded successfully');
       }
     } catch (e) {
       log('Error uploading $mealType: $e');
@@ -505,7 +460,7 @@ class AddMealScreen extends StatelessWidget {
   }
 
 
-  Future<void> _uploadBreakFast(BuildContext context) async {
+  Future<void> _updateMeal(BuildContext context) async {
     await _uploadMeal(
       context,
       'Breakfast',
@@ -521,50 +476,4 @@ class AddMealScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _uploadLunch(BuildContext context) async {
-    await _uploadMeal(
-        context,
-        'Lunch',
-        lunchController,
-        lunchProteinController,
-        lunchCarbsController,
-        lunchFatController,
-        lunchRecipeController,
-        lunchIngredientsController,
-        recommendedLunchController,
-        descriptionLunchController,
-        Provider.of<CloudinaryProvider>(context, listen: false).luchImageData);
-  }
-
-// Similar refactor for other meals
-  Future<void> _uploadsnack(BuildContext context) async {
-    await _uploadMeal(
-        context,
-        'Snack',
-        snackController,
-        snackProteinController,
-        snackCarbsController,
-        snackFatController,
-        snackRecipeController,
-        snackIngredientsController,
-        recommendedSnackController,
-        descriptionSnackController,
-        Provider.of<CloudinaryProvider>(context, listen: false).snackImageData);
-  }
-
-  Future<void> _uploadDinner(BuildContext context) async {
-    await _uploadMeal(
-        context,
-        'Dinner',
-        dinnerController,
-        dinnerProteinController,
-        dinnerCarbsController,
-        dinnerFatController,
-        dinnerRecipeController,
-        dinnerIngredientsController,
-        recommendedDinnerController,
-        descriptionDinnerController,
-        Provider.of<CloudinaryProvider>(context, listen: false)
-            .dinnerImageData);
-  }
 }

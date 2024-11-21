@@ -35,7 +35,7 @@ class AddNewPolicy extends StatelessWidget {
                  child: Column(
                    children: [
                      Container(
-                       height: 20.h,
+                       // height: 20.h,
                        width: 70.w,// 50% of screen height
                        decoration: BoxDecoration(
                          border: Border.all(color: Colors.black.withOpacity(0.8)),

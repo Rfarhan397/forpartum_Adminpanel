@@ -80,7 +80,7 @@ class MealPlanScreen extends StatelessWidget {
                               const SizedBox(
                                 width: 15,
                               ),
-                              const AppTextWidget(text: 'Create New Meal Plan'),
+                              const AppTextWidget(text: 'View Meal Plans'),
                             ],
                           ),
                         ),
@@ -238,70 +238,74 @@ class MealPlanScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                Container(
-                  // height: 60.h,
-                  width: 35.w,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      AppTextWidget(
-                        text: 'User Engagement',
-                        fontWeight: FontWeight.w400,
-                        fontSize: 28,
-                      ),
-                      SizedBox(height: 2.h),
-                      Row(
-                        children: [
-                          buildContainer('Total User Enrolled:', '500'),
-                          SizedBox(
-                            width: 4.w,
-                          ),
-                          buildContainer('Avg Completion Rate:', '80%'),
-                        ],
-                      ),
-                      SizedBox(height: 2.h),
-                      Column(
+                Consumer<BlogPostProvider>(
+                  builder: (context, value, child) {
+                    return Container(
+                      // height: 60.h,
+                      width: 35.w,
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            width: 23.w,
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 15, vertical: 6),
-                            alignment: Alignment.centerLeft,
-                            decoration: BoxDecoration(
-                              color: secondaryColor,
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                            child: AppTextWidget(
-                              text: 'Most Active Users',
-                              color: Colors.white,
-                            ),
+                          AppTextWidget(
+                            text: 'User Engagement',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 28,
                           ),
+                          SizedBox(height: 2.h),
+                          Row(
+                            children: [
+                              buildContainer('Total User Enrolled:', value.totalUsersWhoTookMeals.toString()),
+                              SizedBox(
+                                width: 4.w,
+                              ),
+                              buildContainer('Avg Completion Rate:', "${(double.parse( value.totalUsersWhoTookMeals.toString()) / double.parse(blogPostProvider.totalDocuments.toString()) * 100).toStringAsFixed(2)}%"),
+                            ],
+                          ),
+                          SizedBox(height: 2.h),
+                          // Column(
+                          //   crossAxisAlignment: CrossAxisAlignment.start,
+                          //   children: [
+                          //     Container(
+                          //       width: 23.w,
+                          //       padding: EdgeInsets.symmetric(
+                          //           horizontal: 15, vertical: 6),
+                          //       alignment: Alignment.centerLeft,
+                          //       decoration: BoxDecoration(
+                          //         color: secondaryColor,
+                          //         borderRadius: BorderRadius.circular(25),
+                          //       ),
+                          //       child: AppTextWidget(
+                          //         text: 'Most Active Users',
+                          //         color: Colors.white,
+                          //       ),
+                          //     ),
+                          //   ],
+                          // ),
+                          // Padding(
+                          //   padding: const EdgeInsets.symmetric(
+                          //       horizontal: 20.0, vertical: 10),
+                          //   child: AppTextWidget(
+                          //     text: 'User A: 10 Plans ',
+                          //     textAlign: TextAlign.start,
+                          //     fontSize: 10,
+                          //     fontWeight: FontWeight.w500,
+                          //   ),
+                          // ),
+                          // Padding(
+                          //   padding: const EdgeInsets.symmetric(
+                          //     horizontal: 20.0,
+                          //   ),
+                          //   child: AppTextWidget(
+                          //     text: 'User B: 8 Plans ',
+                          //     textAlign: TextAlign.start,
+                          //     fontSize: 10,
+                          //     fontWeight: FontWeight.w500,
+                          //   ),
+                          // ),
                         ],
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20.0, vertical: 10),
-                        child: AppTextWidget(
-                          text: 'User A: 10 Plans ',
-                          textAlign: TextAlign.start,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20.0,
-                        ),
-                        child: AppTextWidget(
-                          text: 'User B: 8 Plans ',
-                          textAlign: TextAlign.start,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
+                    );
+                  },
                 )
               ],
             )
@@ -401,6 +405,10 @@ class MealPlanScreen extends StatelessWidget {
           ),
           Expanded(
             child: InkWell(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              hoverColor: Colors.transparent,
+              focusColor: Colors.transparent,
               onTap: editOnTap,
               child: AppTextWidget(
                 text: 'Edit',
@@ -413,6 +421,10 @@ class MealPlanScreen extends StatelessWidget {
           ),
           Expanded(
             child: InkWell(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              hoverColor: Colors.transparent,
+              focusColor: Colors.transparent,
               onTap: deleteOnTap,
               child: AppTextWidget(
                 text: 'Delete',

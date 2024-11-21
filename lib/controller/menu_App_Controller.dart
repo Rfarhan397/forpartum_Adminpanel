@@ -29,8 +29,11 @@ class MenuAppController extends ChangeNotifier {
   User? get parameters => _parameters;
   BlogPost? _arguments ;
   BlogPost? get arguments => _arguments;
+  AddMeal? _model ;
+  AddMeal? get model => _model;
 
   String? _type;
+  String? _mealType;
   bool _isUpdate = false;
   bool get isUpdate => _isUpdate;
 
@@ -40,6 +43,7 @@ class MenuAppController extends ChangeNotifier {
   }
 
   String? get type => _type;
+  String? get mealType => _mealType;
   void changeScreen(int index) {
     log("Change Screen Index:: $index");
     _selectedIndex = index;
@@ -59,6 +63,16 @@ class MenuAppController extends ChangeNotifier {
     _selectedIndex = routeName;
     _arguments = arguments;
     _isUpdate = false;
+    notifyListeners();
+  }
+  void changeScreenWithParamsModel(int routeName,
+      { AddMeal? arguments,String? mealType}) {
+    _selectedIndex = routeName;
+    _model = arguments;
+    _mealType = mealType; // Store the passed type
+    _isUpdate = false;
+
+
     notifyListeners();
   }
   void changeScreens(int routeName,

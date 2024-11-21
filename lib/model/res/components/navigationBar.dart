@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:forpartum_adminpanel/controller/menu_App_Controller.dart';
+import 'package:forpartum_adminpanel/model/res/routes/routes_name.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import '../../../constant.dart';
 import '../constant/app_assets.dart';
@@ -105,12 +110,13 @@ class CustomNavigationBar extends StatelessWidget {
                   title: "Chat Support",
                   svgSrc: "assets/icons/chat.svg",
                 ),
+                // const DrawerListTile(
+                //   index: 3,
+                //   screenIndex: 3,
+                //   title: "Insights",
+                //   svgSrc: "assets/icons/insights.svg",
+                // ),
                 const DrawerListTile(
-                  index: 3,
-                  screenIndex: 3,
-                  title: "Insights",
-                  svgSrc: "assets/icons/insights.svg",
-                ), const DrawerListTile(
                   index: 4,
                   screenIndex: 4,
                   title: "Blog",
@@ -168,16 +174,26 @@ class CustomNavigationBar extends StatelessWidget {
             alignment: Alignment.bottomLeft,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25,vertical: 28),
-              child:   Container(
-                height: 40,
-                width: 40,
-                padding: const EdgeInsets.all( 8),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: primaryColor,
-                ),
-                child: Image.asset(AppAssets.questionMark,
-
+              child:   InkWell(
+                onTap: () {
+                  // Provider.of<MenuAppController>(context,listen: false).changeScreen(34);
+                  
+                  Get.offAllNamed(RoutesName.splashScreen);
+                },
+                child: Tooltip(
+                  message: 'Log Out',
+                  child: Container(
+                    height: 40,
+                    width: 40,
+                    padding: const EdgeInsets.all( 8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: primaryColor,
+                    ),
+                    child: Image.asset(AppAssets.questionMark,
+                  
+                    ),
+                  ),
                 ),
               )
             ),

@@ -8,6 +8,7 @@ import '../../controller/menu_App_Controller.dart';
 import '../../model/res/components/custom_appBar.dart';
 import '../../model/res/components/pagination.dart';
 import '../../model/res/widgets/app_text.dart.dart';
+import '../../provider/action/action_provider.dart';
 import '../../provider/blog/blog_provider.dart';
 import '../../provider/chip/chip_provider.dart';
 import '../../provider/dropDOwn/dropdown.dart';
@@ -102,9 +103,9 @@ class _ViewMealScreenState extends State<ViewMealScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(
-                  width: 10,
-                ),
+                // const SizedBox(
+                //   width: 10,
+                // ),
                 // InkWell(
                 //   hoverColor: Colors.transparent,
                 //   splashColor: Colors.transparent,
@@ -143,7 +144,7 @@ class _ViewMealScreenState extends State<ViewMealScreen> {
                 //   ),
                 // ),
                 const SizedBox(
-                  width: 5,
+                  width: 10,
                 ),
                 const Expanded(
                   child: Divider(
@@ -208,35 +209,26 @@ class _ViewMealScreenState extends State<ViewMealScreen> {
                           itemCount: addMealCategory.length,
                           itemBuilder: (context, index) {
                             AddMealCategory model = addMealCategory[index];
-                            final isSelected =
-                                chipProvider.selectedCategory.toString() ==
-                                    addMealCategory[index].mealCategory;
-                            final isHovered = chipProvider.hoveredCategory ==
-                                addMealCategory[index].mealCategory;
+                            final isSelected = chipProvider.selectedCategory.toString() == addMealCategory[index].mealCategory;
+                            final isHovered = chipProvider.hoveredCategory == addMealCategory[index].mealCategory;
                             return InkWell(
                               splashColor: Colors.transparent,
                               highlightColor: Colors.transparent,
                               onTap: () {
-                                chipProvider.selectCategory(
-                                    addMealCategory[index].mealCategory);
+                                chipProvider.selectCategory(addMealCategory[index].mealCategory);
                               },
                               child: Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 8.0),
                                 child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 5.0, horizontal: 10.0),
+                                  padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
                                   decoration: BoxDecoration(
-                                    color: isSelected
-                                        ? primaryColor
-                                        : isHovered
-                                            ? primaryColor
-                                            : secondaryColor,
+                                    color: isSelected ? primaryColor : isHovered ? primaryColor : secondaryColor,
                                     borderRadius: BorderRadius.circular(6.0),
                                   ),
                                   child: Center(
                                     child: AppTextWidget(
-                                      text: model.mealCategory,
+                                      text: model.mealCategory.toUpperCase(),
                                       color: isSelected
                                           ? Colors.white
                                           : isHovered
@@ -294,17 +286,33 @@ class _ViewMealScreenState extends State<ViewMealScreen> {
                                   SizedBox(
                                     height: 200,
                                     width: 100.w,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(12),
-                                      child: Image.network(
-                                        model.imageUrl,
-                                        fit: BoxFit.cover,
-                                      ),
+                                    child: Stack(
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(12),
+                                          child: Image.network(
+                                            model.imageUrl!,
+                                            fit: BoxFit.cover,
+                                            width: double.infinity, // Ensures the image fills the available space
+                                            height: double.infinity,
+                                          ),
+                                        ),
+                                        Positioned(
+                                          top: 0.5.h, // Adjust as needed for icon placement
+                                          right: 1.w, // Adjust as needed for icon placement
+                                          child: InkWell(
+                                              onTap: () {
+
+                                                _showDeleteDialog(context,model.id,model,model.mealType);
+                                              },
+                                              child: const Icon(Icons.more_vert,color: primaryColor,))
+                                        ),
+                                      ],
                                     ),
                                   ),
                                   const SizedBox(height: 10),
                                   AppTextWidgetFira(
-                                    text: model.name,
+                                    text: model.name!,
                                     fontWeight: FontWeight.w600,
                                     fontSize: 14,
                                     textAlign: TextAlign.start,
@@ -317,20 +325,61 @@ class _ViewMealScreenState extends State<ViewMealScreen> {
                     );
                   });
             }),
-            Container(
-              margin: const EdgeInsets.only(right: 40, bottom: 20),
-              alignment: Alignment.centerRight,
-              child: PaginationWidget(
-                currentPage: currentPage,
-                totalPages: totalPages,
-                onPageChanged: (page) {
-                  provider.goToPage(page);
-                },
-              ),
-            ),
+            // Container(
+            //   margin: const EdgeInsets.only(right: 40, bottom: 20),
+            //   alignment: Alignment.centerRight,
+            //   child: PaginationWidget(
+            //     currentPage: provider.currentPage,
+            //     totalPages: totalPages,
+            //     onPageChanged: (page) {
+            //       provider.goToPage(page);
+            //     },
+            //   ),
+            // ),
           ],
         ),
       ),
     );
   }
+  void _showDeleteDialog(BuildContext context,id,AddMeal model,mealType ) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Meal!'),
+          content: Text('Are you sure you want to edit or delete? This action cannot be undone.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+            ),
+            TextButton(
+              onPressed: () {
+                Provider.of<MenuAppController>(context, listen: false).addBackPage(10);
+                Provider.of<MenuAppController>(context, listen: false).changeScreenWithParamsModel(33,
+                    arguments: model,
+                  mealType: mealType
+                );
+                Navigator.of(context).pop();
+              },
+              child: const Text('Edit', style: TextStyle(color: primaryColor)),
+            ),
+            TextButton(
+              onPressed: () {
+                Provider.of<ActionProvider>(context, listen: false).deleteItem('addMeal', id);
+                Navigator.of(context).pop(); // Close the dialog
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Post deleted successfully')),
+                );
+              },
+              child: const Text('Delete', style: TextStyle(color: primaryColor)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 }

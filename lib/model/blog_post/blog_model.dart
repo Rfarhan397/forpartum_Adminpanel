@@ -58,23 +58,33 @@ class BlogCategory{
   }
 }
 class AddMeal{
-  final String carbs;
-  final String fat;
-  final String imageUrl;
-  final String name;
-  final String protein;
-  final String id;
-  final String createdAt;
+  final String? carbs;
+  final String? mealType;
+  final String? fat;
+  final String? imageUrl;
+  final String? name;
+  final String? protein;
+  final String? id;
+  final String? createdAt;
+  final String? recommended;
+  final String? ingredients;
+  final String? recipe;
+  final String description;
 
 
   AddMeal({
-    required this.carbs,
-    required this.fat,
-    required this.imageUrl,
-    required this.name,
-    required this.protein,
-    required this.id,
-    required this.createdAt,
+     this.carbs,
+     this.mealType,
+     this.fat,
+     this.imageUrl,
+     this.name,
+     this.protein,
+     this.id,
+     this.createdAt,
+     this.recommended,
+     this.ingredients,
+     this.recipe,
+     this.description = "",
 
   });
 
@@ -86,8 +96,13 @@ class AddMeal{
       imageUrl: data['imageUrl'] ?? '',
       name: data['name'] ?? '',
       protein: data['protein'] ?? '',
-      id: data['id'] ?? '',
+      id: data['Id'] ?? '',
       createdAt: data['createdAt'] ?? '',
+      mealType: data['mealType'] ?? '',
+      recommended: data['recommended']?? '',
+      ingredients: data['ingredients'] ?? '',
+      recipe: data['recipe'] ?? '',
+      description: data['description'] ?? '',
 
     );
   }

@@ -27,4 +27,5 @@ class RoutesName{
   static const editProfile = "/editProfileScreen";
   static const editBlogPost = "/editBlogPost";
   static const feedbackScreen = "/feedbacks";
+  static const editMealPlan = "/EditMealPlan";
 }

@@ -234,22 +234,52 @@ class BlogPostProvider extends ChangeNotifier {
   int get totalDocuments => _totalDocuments;
   int get recommendedDocuments => _recommendedDocuments;
 
+  int _totalUsersWhoTookMeals = 0;
+  int get totalUsersWhoTookMeals => _totalUsersWhoTookMeals;
+
   Future<void> fetchDocumentCounts() async {
     CollectionReference collectionRef = FirebaseFirestore.instance.collection('addMeal');
 
     // Get the total number of documents
     QuerySnapshot allDocumentsSnapshot = await collectionRef.get();
     _totalDocuments = allDocumentsSnapshot.docs.length;
-    print('Total documents count: $_totalDocuments');
+    log('Total documents count: $_totalDocuments');
 
     // Get the number of documents where 'recommended' is true
     QuerySnapshot recommendedSnapshot = await collectionRef.where('recommended', isEqualTo: 'true').get();
     _recommendedDocuments = recommendedSnapshot.docs.length;
-    print('Recommended documents count: $_recommendedDocuments');
+    log('Recommended documents count: $_recommendedDocuments');
+
+
+    // Count the total number of unique users who took the meals
+    Set<String> uniqueUsers = Set<String>(); // Set to store unique user uids
+    for (var doc in allDocumentsSnapshot.docs) {
+      // Safely get the data as Map<String, dynamic>
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+
+      // Get the 'meals' field safely
+      var mealsField = data['meals'];
+
+      // Check if 'meals' is a List, otherwise skip this document
+      if (mealsField is List) {
+        List<dynamic> meals = mealsField;
+        log('Meals for document ${doc.id}: $meals'); // Log the meals array
+
+        for (var userUid in meals) {
+          uniqueUsers.add(userUid);  // Add userUid to the set (duplicates will be ignored)
+        }
+      } else {
+        log('No valid meals field found or meals is not a list in document ${doc.id}');
+      }
+    }
+
+    _totalUsersWhoTookMeals = uniqueUsers.length;
+    log('Total unique users who took meals: $_totalUsersWhoTookMeals');
 
     // Notify listeners to update the UI
     notifyListeners();
   }
+
 
 
 }

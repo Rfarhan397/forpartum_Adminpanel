@@ -26,7 +26,7 @@ class FaqScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final action = Provider.of<ActionProvider>(context);
     return Scaffold(
-      appBar: CustomAppbar(text: 'FAQ',),
+      appBar: const CustomAppbar(text: 'FAQ',),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(
@@ -54,7 +54,7 @@ class FaqScreen extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        AppTextWidget(text: 'Question'),
+                        const AppTextWidget(text: 'Question:'),
                         SizedBox(height: 1.h,),
                         Container(
                           height: 8.h,
@@ -67,24 +67,28 @@ class FaqScreen extends StatelessWidget {
 
                         ),
                         SizedBox(height: 1.h,),
+                        const AppTextWidget(text: 'Answer:'),
+                        SizedBox(height: 1.h,),
                         Container(
-                          height: 20.h,
+                          // height: 20.h,
                           width: 40.w,// 50% of screen height
                           decoration: BoxDecoration(
                             border: Border.all(color: Colors.black.withOpacity(0.8)),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child:  TextField(
-                            maxLines: null, // Allows the text to wrap within the height
-                            expands: true,  // Expands the TextField to fill the parent container
-                            controller: _answerController,
-                            decoration: const InputDecoration(
-                                contentPadding: EdgeInsets.all(12.0),
-                                border: InputBorder.none,
-                                hintText: '',
-                                hintStyle: TextStyle(
-                                  fontWeight: FontWeight.w900,fontSize: 15,
-                                )
+                          child:  IntrinsicHeight(
+                            child: TextField(
+                              maxLines: null, // Allows the text to wrap within the height
+                              expands: true,  // Expands the TextField to fill the parent container
+                              controller: _answerController,
+                              decoration: const InputDecoration(
+                                  contentPadding: EdgeInsets.all(12.0),
+                                  border: InputBorder.none,
+                                  hintText: '',
+                                  hintStyle: TextStyle(
+                                    fontWeight: FontWeight.w900,fontSize: 15,
+                                  )
+                              ),
                             ),
                           ),
                         ),
@@ -111,7 +115,7 @@ class FaqScreen extends StatelessWidget {
                         )
                       ],),
                     SizedBox(height: 4.h,),
-                    AppTextWidget(text: "FAQ's:",fontSize: 16,color: Colors.black,fontWeight: FontWeight.w700,),
+                    const AppTextWidget(text: "FAQ's:",fontSize: 16,color: Colors.black,fontWeight: FontWeight.w700,),
                     Container(
                       width: 45.w,
                       child: Column(
@@ -164,7 +168,7 @@ class FaqScreen extends StatelessWidget {
                                                 textAlign: TextAlign.start,
                                                 fontSize: 14,
                                               ),
-                                              trailing: Icon(Icons.add,color: Color(0xff8C8C8C),size: 15,),
+                                              trailing: const Icon(Icons.add,color: Color(0xff8C8C8C),size: 15,),
                                             ),
                                           ),
                                           if (isExpanded)
@@ -176,7 +180,7 @@ class FaqScreen extends StatelessWidget {
                                                     text: answer,
                                                     textAlign: TextAlign.start,
                                                     fontSize: 14,
-                                                    color: Color(0xff585858),
+                                                    color: const Color(0xff585858),
                                                     maxLines: 30,
                                                   ),
                                                 ),

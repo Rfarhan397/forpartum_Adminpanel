@@ -156,6 +156,10 @@ class TrackerLodData extends StatelessWidget {
             ),
             if (showIcon)
               InkWell(
+                hoverColor: Colors.transparent,
+                focusColor: Colors.transparent,
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
                 onTap: () {
                   _showDialog(context,userId);
                 },

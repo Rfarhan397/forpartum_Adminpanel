@@ -23,6 +23,7 @@ import '../library/library_screen.dart';
 import '../meal_plans/addMealCategory.dart';
 import '../meal_plans/add_meal.dart';
 import '../meal_plans/add_meal_plan.dart';
+import '../meal_plans/editMealPlan.dart';
 import '../meal_plans/meal_plans.dart';
 import '../meal_plans/view_meal.dart';
 import '../menu_settings/FAQ/addNewFaq.dart';
@@ -153,6 +154,12 @@ class MainScreen extends StatelessWidget {
           break;
           case 32:
           screen =  FeedbackScreen();
+          break;
+          case 33:
+          screen =  EditMealPlan();
+          break;
+          case 34:
+          screen =  MainScreen();
           break;
 
       default:

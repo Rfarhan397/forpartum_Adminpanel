@@ -42,6 +42,10 @@ class CloudinaryProvider with ChangeNotifier {
   // clear image
   void clearImage() {
     _imageData = null;
+    _luchImageData = null;
+    _snackImageData = null;
+    _dinnerImageData = null;
+
     notifyListeners();
   }
 

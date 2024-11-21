@@ -17,12 +17,13 @@ class ChatProvider extends ChangeNotifier{
   Map<String, int> get unreadMessageCounts => _unreadMessageCounts;
 
   ChatProvider(){
-    _loadUsers();
+    loadUsers();
     _loadChatRooms();
   }
 
 
   Stream<QuerySnapshot> getMessages(String chatRoomId) {
+    log("Message Get Chat Room $chatRoomId");
     return FirebaseFirestore.instance
         .collection('chatRooms')
         .doc(chatRoomId)
@@ -31,24 +32,29 @@ class ChatProvider extends ChangeNotifier{
         .snapshots();
   }
 
-  Future<String> createOrGetChatRoom(String otherUserEmail,String lastMessage) async {
+  Future<String?> getChatRoom(String otherUserEmail,String lastMessage) async {
     final currentUserEmail = getCurrentUid().toString();
     final chatRoomId = _getChatRoomId(currentUserEmail, otherUserEmail);
 
     final chatRoomDoc = FirebaseFirestore.instance.collection('chatRooms').doc(chatRoomId);
     final chatRoomSnapshot = await chatRoomDoc.get();
 
-    if (!chatRoomSnapshot.exists) {
+    if (chatRoomSnapshot.exists) {
       await chatRoomDoc.set({
         'users': [currentUserEmail, otherUserEmail],
         'lastMessage': lastMessage,
         'isMessage': getCurrentUid().toString(),
         'lastTimestamp': FieldValue.serverTimestamp(),
         'userStatus': "active",
-      });
+      });      return chatRoomId;
     }
-    return chatRoomId;
+
+    // Chat room does not exist
+    return chatRoomId; // Or throw an error if needed
   }
+
+
+
 
   Future<void> updateMessageStatus(String chatRoomID) async{
     log("message ${chatRoomID} : run");
@@ -166,7 +172,7 @@ class ChatProvider extends ChangeNotifier{
 
   List<UserChatModel> get users => _users;
 
-  Future<void> _loadUsers() async {
+  Future<void> loadUsers() async {
     QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('users').get();
     _users = snapshot.docs
         .map((doc) => UserChatModel(
@@ -178,7 +184,7 @@ class ChatProvider extends ChangeNotifier{
         .toList();
     notifyListeners();
   }
-  String _chatRoomId = "admin@gmail.com";
+  String _chatRoomId = "";
   String _otherUserEmail = "";
 
   String get chatRoomId => _chatRoomId;
@@ -200,4 +206,5 @@ class ChatProvider extends ChangeNotifier{
     _selectedUserEmail = userEmail;
     notifyListeners(); // Notify consumers about the change
   }
+
 }

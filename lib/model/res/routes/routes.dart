@@ -15,6 +15,7 @@ import '../../../screens/library/library_screen.dart';
 import '../../../screens/meal_plans/addMealCategory.dart';
 import '../../../screens/meal_plans/add_meal.dart';
 import '../../../screens/meal_plans/add_meal_plan.dart';
+import '../../../screens/meal_plans/editMealPlan.dart';
 import '../../../screens/meal_plans/meal_plans.dart';
 import '../../../screens/meal_plans/view_meal.dart';
 import '../../../screens/menu_settings/FAQ/addNewFaq.dart';
@@ -61,5 +62,6 @@ class Routes {
     GetPage(name: RoutesName.editProfile, page: () => EditProfileScreen()),
     GetPage(name: RoutesName.editBlogPost, page: () => EditBlogPost()),
     GetPage(name: RoutesName.feedbackScreen, page: () => FeedbackScreen()),
+    GetPage(name: RoutesName.editMealPlan, page: () => EditMealPlan()),
   ];
 }

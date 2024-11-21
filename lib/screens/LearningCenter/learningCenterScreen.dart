@@ -41,7 +41,7 @@ class _LearningCenterScreenState extends State<LearningCenterScreen> {
     final blogPostProvider = Provider.of<BlogPostProvider>(context);
 
     return Scaffold(
-      appBar: CustomAppbar(text: 'Learning Center'),
+      appBar: const CustomAppbar(text: 'Learning Center'),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: SingleChildScrollView(
@@ -69,17 +69,17 @@ class _LearningCenterScreenState extends State<LearningCenterScreen> {
                         borderRadius: BorderRadius.circular(15),
                         color: primaryColor,
                       ),
-                      child: Center(
+                      child: const Center(
                         child: Icon(
                           Icons.add,
                           color: Colors.white,
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 5,
                     ),
-                    AppTextWidgetFira(
+                    const AppTextWidgetFira(
                       text: 'Add Learning Category',
                       fontSize: 14,
                       color: Colors.black,
@@ -94,13 +94,13 @@ class _LearningCenterScreenState extends State<LearningCenterScreen> {
                         stream: productProvider.getLearningCategories(),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState == ConnectionState.waiting) {
-                            return Center(child: CircularProgressIndicator());
+                            return const Center(child: CircularProgressIndicator());
                           }
                           if (snapshot.hasError) {
                             return Center(child: Text('Error: ${snapshot.error}'));
                           }
                           if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                            return Center(child: Text('No learning Category found'));
+                            return const Center(child: Text('No learning Category found'));
                           }
                           List<AddLearningCategory> addLearningCategory = snapshot.data!;
                           addLearningCategory.sort((a, b) => a.createdAt.compareTo(b.createdAt)); // Sort by datetime
@@ -129,7 +129,7 @@ class _LearningCenterScreenState extends State<LearningCenterScreen> {
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                                       child: Container(
-                                        padding: EdgeInsets.symmetric(
+                                        padding: const EdgeInsets.symmetric(
                                             vertical: 5.0, horizontal: 10.0),
                                         decoration: BoxDecoration(
                                           color:
@@ -218,13 +218,13 @@ class _LearningCenterScreenState extends State<LearningCenterScreen> {
                                 width: 30.w,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(8),
-                                  color: Color(0xffF7FAFC),
+                                  color: const Color(0xffF7FAFC),
                                   border: Border.all(
-                                    color: Color(0xffD1DBE8),
+                                    color: const Color(0xffD1DBE8),
                                   ),
                                 ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                child: const Padding(
+                                  padding: EdgeInsets.all(8.0),
                                   child: AppTextWidget(text: 'Upload Image',textAlign: TextAlign.start,color: Color(0xff4F7396),),
                                 ),
                               ),
@@ -252,7 +252,7 @@ class _LearningCenterScreenState extends State<LearningCenterScreen> {
                                     borderRadius: BorderRadius.circular(10),
                                     //border: Border.all(color: Colors.black),
                                   ),
-                                  child: Center(
+                                  child: const Center(
                                     child: AppTextWidget(text:
                                     'No image selected',
                                         color: Colors.grey),
@@ -268,15 +268,15 @@ class _LearningCenterScreenState extends State<LearningCenterScreen> {
                     ),
                   ),
                   Expanded(
-                    child: Padding(padding: EdgeInsets.all(12)
+                    child: Padding(padding: const EdgeInsets.all(12)
                     ,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          AppTextWidget(text: 'Add Description here:',fontSize: 18,fontWeight: FontWeight.w500,),
+                          const AppTextWidget(text: 'Add Description here:',fontSize: 18,fontWeight: FontWeight.w500,),
                           SizedBox(height: 1.h,),
                           Container(
-                            height: 50.h,
+                            // height: 50.h,
                             width: 45.w,
                             decoration: BoxDecoration(
                               //color: Colors.blueGrey[50],
@@ -284,13 +284,15 @@ class _LearningCenterScreenState extends State<LearningCenterScreen> {
                               border: Border.all(color: Colors.black),
                             ),
                             child:  Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: TextField(
-                                maxLines: null,
-                                expands: true,
-                                controller: _contentController,
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
+                              padding: const EdgeInsets.all(8.0),
+                              child: IntrinsicHeight(
+                                child: TextField(
+                                  maxLines: null,
+                                  expands: true,
+                                  controller: _contentController,
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                  ),
                                 ),
                               ),
                             ),
