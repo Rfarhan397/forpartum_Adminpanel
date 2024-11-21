@@ -14,7 +14,17 @@ class ChatProvider extends ChangeNotifier{
 
   List<ChatRoomModel> get chatRooms => _chatRooms;
 
+  Stream<List<Map<String, dynamic>>>? _messagesStream;
+  Stream<List<Map<String, dynamic>>>? get messagesStream => _messagesStream;
+
+
+
   Map<String, int> get unreadMessageCounts => _unreadMessageCounts;
+
+  String? _singleUserId;
+
+
+  String? get singleUserId => _singleUserId;
 
   ChatProvider(){
     loadUsers();
@@ -32,16 +42,48 @@ class ChatProvider extends ChangeNotifier{
         .snapshots();
   }
 
+  void getSingleUserChat(String userID){
+    _singleUserId = userID;
+
+    _messagesStream = FirebaseFirestore.instance
+        .collection('chatRooms')
+        .doc(userID)
+        .collection('messages')
+        .orderBy('timestamp', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs
+          .map((doc) => doc.data() as Map<String, dynamic>)
+          .toList();
+
+    });
+
+  }
+  //to get the user name,image
+  String? selectedUserId;
+  String? selectedUserName;
+  String? selectedUserImage;
+
+  void setSelectedUser({required String userId, required String name, required String image}) {
+    selectedUserId = userId;
+    selectedUserName = name;
+    selectedUserImage = image;
+    notifyListeners();
+  }
+
+
+
+
   Future<String?> getChatRoom(String otherUserEmail,String lastMessage) async {
     final currentUserEmail = getCurrentUid().toString();
-    final chatRoomId = _getChatRoomId(currentUserEmail, otherUserEmail);
+    final chatRoomId = _getChatRoomId( otherUserEmail,currentUserEmail);
 
     final chatRoomDoc = FirebaseFirestore.instance.collection('chatRooms').doc(chatRoomId);
     final chatRoomSnapshot = await chatRoomDoc.get();
 
     if (chatRoomSnapshot.exists) {
       await chatRoomDoc.set({
-        'users': [currentUserEmail, otherUserEmail],
+        'users': [otherUserEmail,currentUserEmail],
         'lastMessage': lastMessage,
         'isMessage': getCurrentUid().toString(),
         'lastTimestamp': FieldValue.serverTimestamp(),
@@ -149,9 +191,9 @@ class ChatProvider extends ChangeNotifier{
   }
 
   String _getChatRoomId(String user1, String user2) {
-    return user1.hashCode <= user2.hashCode
-        ? '$user1-$user2'
-        : '$user2-$user1';
+    return user2.hashCode <= user1.hashCode
+        ? '$user2-$user1'
+        : '$user1-$user2';
   }
   Stream<List<ChatRoomModel>> getChatRoomsStream() {
     final currentUserEmail = getCurrentUid();

@@ -368,38 +368,38 @@ class AddMealScreen extends StatelessWidget {
     }
 
     return imageData != null &&
-            mealType == cloudinaryProvider.currentType.toString()
+        mealType == cloudinaryProvider.currentType.toString()
         ? Container(
-            height: 20.h,
-            width: 20.w,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: Colors.black),
-            ),
-            child: Image.memory(
-              imageData,
-              fit: BoxFit.cover,
-            ),
-          )
+      height: 20.h,
+      width: 20.w,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.black),
+      ),
+      child: Image.memory(
+        imageData,
+        fit: BoxFit.cover,
+      ),
+    )
         : Container(
-            height: 20.h,
-            width: 20.w,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Center(
-              child: AppTextWidget(
-                text: 'No image selected',
-                color: Colors.grey,
-              ),
-            ),
-          );
+      height: 20.h,
+      width: 20.w,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Center(
+        child: AppTextWidget(
+          text: 'No image selected',
+          color: Colors.grey,
+        ),
+      ),
+    );
   }
 
   Future<void> _pickAndUploadImage(
       BuildContext context, String mealType) async {
     final html.FileUploadInputElement uploadInput =
-        html.FileUploadInputElement();
+    html.FileUploadInputElement();
     uploadInput.accept = 'image/*'; // Accept only images
 
     uploadInput.onChange.listen((e) async {
@@ -413,7 +413,7 @@ class AddMealScreen extends StatelessWidget {
         final bytes = reader.result as Uint8List;
 
         final cloudinaryProvider =
-            Provider.of<CloudinaryProvider>(context, listen: false);
+        Provider.of<CloudinaryProvider>(context, listen: false);
         cloudinaryProvider.setImageData(bytes);
 
         // Assign the image data to the respective meal field

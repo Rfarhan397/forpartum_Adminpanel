@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:forpartum_adminpanel/controller/menu_App_Controller.dart';
 import 'package:forpartum_adminpanel/model/res/routes/routes_name.dart';
+import 'package:forpartum_adminpanel/provider/action/action_provider.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:provider/provider.dart';
@@ -176,9 +177,7 @@ class CustomNavigationBar extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 25,vertical: 28),
               child:   InkWell(
                 onTap: () {
-                  // Provider.of<MenuAppController>(context,listen: false).changeScreen(34);
-                  
-                  Get.offAllNamed(RoutesName.splashScreen);
+                  _showDeleteDialog(context);
                 },
                 child: Tooltip(
                   message: 'Log Out',
@@ -202,4 +201,32 @@ class CustomNavigationBar extends StatelessWidget {
       ),
     );
   }
+  void _showDeleteDialog(BuildContext context,) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Leaving!'),
+          content: Text('Are you sure you want to Log Out?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+            ),
+            TextButton(
+              onPressed: () {
+                Future.delayed(Duration(milliseconds: 1000));
+                Get.offAllNamed(RoutesName.splashScreen);
+
+              },
+              child: const Text('Yes', style: TextStyle(color: primaryColor)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 }
