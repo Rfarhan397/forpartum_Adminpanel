@@ -59,7 +59,7 @@ class AddMealScreen extends StatelessWidget {
                           title: "Meal Type",
                           heading: "Select Meal Type",
                           value: mealProvider.selectedMealType,
-                          options: ['Breakfast', 'Lunch', 'Snack', 'Dinner'],
+                          options: ['breakfast', 'lunch', 'snack', 'dinner'],
                           onSelected: (value) => mealProvider.setMealType(value),
                         ),
                         SizedBox(width: 5.h),
@@ -397,6 +397,7 @@ class AddMealScreen extends StatelessWidget {
      final cloudinaryProvider = Provider.of<CloudinaryProvider>(context, listen: false);
 
      ActionProvider.startLoading();  // Show loading indicator
+     
      var mealId = FirebaseFirestore.instance.collection('addMeal').doc().id.toString();
 
      // Check for null or empty values

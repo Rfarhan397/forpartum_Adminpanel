@@ -69,6 +69,8 @@ class AddMeal{
   final String? recommended;
   final String? ingredients;
   final String? recipe;
+  final String? deitary;
+  final String? days;
   final String description;
 
 
@@ -83,7 +85,9 @@ class AddMeal{
      this.createdAt,
      this.recommended,
      this.ingredients,
+     this.deitary,
      this.recipe,
+     this.days,
      this.description = "",
 
   });
@@ -103,6 +107,8 @@ class AddMeal{
       ingredients: data['ingredients'] ?? '',
       recipe: data['recipe'] ?? '',
       description: data['description'] ?? '',
+      deitary: data['mealCategory'] ?? '',
+      days: data['days'] ?? '',
 
     );
   }

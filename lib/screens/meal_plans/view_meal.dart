@@ -260,7 +260,7 @@ class _ViewMealScreenState extends State<ViewMealScreen> {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     }
                     if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return const Center(child: Text('No Meal found'));
+                      return const Center(child: Text('No meals found'));
                     }
                     List<AddMeal> addMeal = snapshot.data!;
                     log("Length of addMeals is:: ${snapshot.data!.length}");
