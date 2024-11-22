@@ -150,6 +150,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         });
         ActionProvider.stopLoading();
         AppUtils().showToast(text: 'Data uploaded successfully');
+        //clear
+        nameController.clear();
+        emailController.clear();
+        addressController.clear();
+        phoneController.clear();
+        roleController.clear();
+        cloudinaryProvider.clearImage();
       } else {
         ActionProvider.stopLoading();
         cloudinaryProvider.clearImage();
