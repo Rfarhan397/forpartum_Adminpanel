@@ -198,7 +198,6 @@ class _ViewMealScreenState extends State<ViewMealScreen> {
                     List<AddMealCategory> addMealCategory = snapshot.data!;
                     addMealCategory.sort((a, b) =>
                         a.createdAt.compareTo(b.createdAt)); // Sort by datetime
-
                     log("Length of addMeal Categories are :: ${snapshot.data!.length}");
                     return SizedBox(
                       height: 4.h,
@@ -247,10 +246,12 @@ class _ViewMealScreenState extends State<ViewMealScreen> {
              SizedBox(
               height: 3.h,
             ),
-            Consumer<StreamDataProvider>(
-                builder: (context, productProvider, child) {
+            Consumer2<StreamDataProvider,ChipProvider>(
+                builder: (context, productProvider,chip, child) {
               return StreamBuilder<List<AddMeal>>(
-                  stream: productProvider.getMealPlan(),
+                  stream: productProvider.getMealPlan(
+                      chip.selectedCategory
+                  ),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());

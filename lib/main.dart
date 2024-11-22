@@ -11,6 +11,7 @@ import 'package:forpartum_adminpanel/provider/cloudinary/cloudinary_provider.dar
 import 'package:forpartum_adminpanel/provider/constant/password_visibility_provider.dart';
 import 'package:forpartum_adminpanel/provider/dropDOwn/dropdown.dart';
 import 'package:forpartum_adminpanel/provider/libraryCard/card_provider.dart';
+import 'package:forpartum_adminpanel/provider/meal/mealProvider.dart';
 import 'package:forpartum_adminpanel/provider/milestone/mileStoneProvider.dart';
 import 'package:forpartum_adminpanel/provider/navigation/navigationProvider.dart';
 import 'package:forpartum_adminpanel/provider/notification_provider/notification_provider.dart';
@@ -86,6 +87,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => TrackerProvider()),
         ChangeNotifierProvider(create: (_) => ChatProvider()),
         ChangeNotifierProvider(create: (_) => ProfileInfoProvider()),
+        ChangeNotifierProvider(create: (_) => MealProvider()),
       ],
       child: Consumer<ThemeLanguageProvider>(
         builder: (context,provider,child){

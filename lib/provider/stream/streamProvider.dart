@@ -61,14 +61,26 @@ class StreamDataProvider extends ChangeNotifier{
   }
 
 
-  Stream<List<AddMeal>> getMealPlan() {
-    // String? userUID = auth.currentUser?.uid.toString();
-    return FirebaseFirestore.instance.collection('addMeal').snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) {
-        return AddMeal.fromMap(doc.data());
-      }).toList();
-    });
+  //this is for getting meal categories from firebase
+  Stream<List<AddMeal>> getMealPlan(String selectedCategory) {
+    final query = FirebaseFirestore.instance.collection('addMeal');
+
+    if (selectedCategory != "All") {
+      return query.where('mealType', isEqualTo: selectedCategory).snapshots().map(
+            (snapshot) => snapshot.docs
+            .map((doc) => AddMeal.fromMap(doc.data())
+        )
+            .toList(),
+      );
+    } else {
+      return query.snapshots().map(
+            (snapshot) => snapshot.docs
+            .map((doc) => AddMeal.fromMap(doc.data()))
+            .toList(),
+      );
+    }
   }
+
   Stream<List<AddMilestone>> getMilestones() {
     // String? userUID = auth.currentUser?.uid.toString();
     return FirebaseFirestore.instance.collection('milestones').snapshots().map((snapshot) {

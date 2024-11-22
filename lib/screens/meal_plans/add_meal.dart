@@ -1,570 +1,497 @@
 import 'dart:developer';
-import 'dart:typed_data';
 import 'dart:html' as html;
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:forpartum_adminpanel/model/res/components/app_button_widget.dart';
+import 'package:forpartum_adminpanel/model/res/constant/app_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../constant.dart';
-import '../../model/res/components/app_button_widget.dart';
 import '../../model/res/components/custom_appBar.dart';
-import '../../model/res/constant/app_utils.dart';
 import '../../model/res/widgets/app_text.dart.dart';
+import '../../model/res/widgets/app_text_field.dart';
 import '../../model/res/widgets/button_widget.dart';
 import '../../provider/action/action_provider.dart';
 import '../../provider/cloudinary/cloudinary_provider.dart';
+import '../../provider/meal/mealProvider.dart';
 
 class AddMealScreen extends StatelessWidget {
-  AddMealScreen({super.key});
-  Uint8List? _imageData; // Store image data
-  Uint8List? _breakfastImageData;
-  Uint8List? _lunchImageData;
-  Uint8List? _snackImageData;
-  Uint8List? _dinnerImageData;
-  TextEditingController breakFastController = TextEditingController();
-  TextEditingController lunchController = TextEditingController();
-  TextEditingController snackController = TextEditingController();
-  TextEditingController dinnerController = TextEditingController();
+   AddMealScreen({Key? key}) : super(key: key);
+
+   Uint8List? _imageData;
+
+   TextEditingController mealController = TextEditingController();
   TextEditingController proteinController = TextEditingController();
   TextEditingController carbsController = TextEditingController();
   TextEditingController fatController = TextEditingController();
   TextEditingController recipeController = TextEditingController();
   TextEditingController ingredientsController = TextEditingController();
-  TextEditingController recommendedBreakfastController =
-      TextEditingController();
-  TextEditingController descriptionBreakfastController =
-      TextEditingController();
-  TextEditingController recommendedLunchController = TextEditingController();
-  TextEditingController descriptionLunchController = TextEditingController();
-  TextEditingController recommendedSnackController = TextEditingController();
-  TextEditingController descriptionSnackController = TextEditingController();
-  TextEditingController recommendedDinnerController = TextEditingController();
-  TextEditingController descriptionDinnerController = TextEditingController();
-  TextEditingController lunchProteinController = TextEditingController();
-  TextEditingController lunchCarbsController = TextEditingController();
-  TextEditingController lunchFatController = TextEditingController();
-  TextEditingController lunchRecipeController = TextEditingController();
-  TextEditingController lunchIngredientsController = TextEditingController();
-  TextEditingController snackProteinController = TextEditingController();
-  TextEditingController snackCarbsController = TextEditingController();
-  TextEditingController snackFatController = TextEditingController();
-  TextEditingController snackRecipeController = TextEditingController();
-  TextEditingController snackIngredientsController = TextEditingController();
-  TextEditingController dinnerProteinController = TextEditingController();
-  TextEditingController dinnerCarbsController = TextEditingController();
-  TextEditingController dinnerFatController = TextEditingController();
-  TextEditingController dinnerRecipeController = TextEditingController();
-  TextEditingController dinnerIngredientsController = TextEditingController();
-
+  TextEditingController recommendedController =
+  TextEditingController();
+  TextEditingController descriptionController =
+  TextEditingController();
   @override
   Widget build(BuildContext context) {
-    final currentP = Provider.of<CloudinaryProvider>(context);
+    final mealProvider = Provider.of<MealProvider>(context);
+
     return Scaffold(
-      appBar: CustomAppbar(text: 'Mother Essence Plan'),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              height: 40,
-              width: 120,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(25),
-                color: primaryColor,
-              ),
-              child: Center(
-                child: AppTextWidget(
-                  text: 'Day 1',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w300,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            SizedBox(height: 1.h),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      buildMealFields(context, () {
-                        currentP.setCurrentType("Breakfast");
-                        _uploadBreakFast(context);
-                      },
-                          'Breakfast',
-                          breakFastController,
-                          proteinController,
-                          carbsController,
-                          fatController,
-                          recipeController,
-                          ingredientsController,
-                          recommendedBreakfastController,
-                          descriptionBreakfastController),
-                      buildMealFields(context, () {
-                        currentP.setCurrentType("Lunch");
-                        _uploadLunch(context);
-                      },
-                          'Lunch',
-                          lunchController,
-                          lunchProteinController,
-                          lunchCarbsController,
-                          lunchFatController,
-                          lunchRecipeController,
-                          lunchIngredientsController,
-                          recommendedLunchController,
-                          descriptionLunchController),
-                      buildMealFields(context, () {
-                        currentP.setCurrentType("Snack");
-                        _uploadsnack(context);
-                      },
-                          'Snack',
-                          snackController,
-                          snackProteinController,
-                          snackCarbsController,
-                          snackFatController,
-                          snackRecipeController,
-                          snackIngredientsController,
-                          recommendedSnackController,
-                          descriptionSnackController),
-                      buildMealFields(context, () {
-                        currentP.setCurrentType("Dinner");
-                        _uploadDinner(context);
-                      },
-                          'Dinner',
-                          dinnerController,
-                          dinnerProteinController,
-                          dinnerCarbsController,
-                          dinnerFatController,
-                          dinnerRecipeController,
-                          dinnerIngredientsController,
-                          recommendedDinnerController,
-                          descriptionDinnerController),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Column buildMealFields(
-    BuildContext context,
-    VoidCallback onPressed,
-    String heading,
-    TextEditingController mealController,
-    TextEditingController proteinController,
-    TextEditingController carbsController,
-    TextEditingController fatController,
-    TextEditingController recipeController,
-    TextEditingController ingredientsController,
-    TextEditingController recommendedController,
-    TextEditingController descriptionController,
-  ) {
-    bool isRecommended = false; // Track recommendation state
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ButtonWidget(
-          fontWeight: FontWeight.w400,
-          height: 5.h,
-          width: 120,
-          alignment: Alignment.centerRight,
-          onClicked: onPressed,
-          text: 'Upload',
-          radius: 20,
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 8.0, right: 200),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                width: 30.w,
-                height: 100,
+      appBar: CustomAppbar(text: 'Add Meal Plan'),
+      body: Column(
+        children: [
+          Divider(
+            thickness: 1,
+            color: Colors.grey,
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    AppTextWidget(text: heading, fontWeight: FontWeight.w600),
-                    SizedBox(height: 1.h),
-                    TextField(
-                      controller: mealController,
-                      decoration: InputDecoration(
-                        fillColor: Color(0xffF7FAFC),
-                        filled: true,
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Color(0xffD1DBE8)),
-                          borderRadius: BorderRadius.circular(15),
+                    Row(
+                      children: [
+                        _buildSelectButton(
+                          context: context,
+                          title: "Meal Type",
+                          heading: "Select Meal Type",
+                          value: mealProvider.selectedMealType,
+                          options: ['Breakfast', 'Lunch', 'Snack', 'Dinner'],
+                          onSelected: (value) => mealProvider.setMealType(value),
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Color(0xffD1DBE8)),
-                          borderRadius: BorderRadius.circular(15),
+                        SizedBox(width: 5.h),
+                        _buildSelectButton(
+                          context: context,
+                          title: "Dietary Category",
+                          heading: "Select Dietary Category",
+                          value: mealProvider.selectedCategory,
+                          options: ['Traditional', 'Vegan', 'Vegetarian'],
+                          onSelected: (value) => mealProvider.setCategory(value),
                         ),
-                        hintText: 'Mother Essence',
-                        hintStyle:
-                            TextStyle(fontSize: 16, color: Color(0xff4F7396)),
+                        SizedBox(width: 5.h),
+                        _buildSelectButton(
+                          context: context,
+                          title: "Meal Plan Duration",
+                          heading: "Select Meal Plan Duration",
+
+                          value: mealProvider.selectedDays,
+                          options: ['7 Days', '15 Days', '21 Days'],
+                          onSelected: (value) => mealProvider.setDays(value),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 2.h),
+                    IntrinsicHeight(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildTextField("Meal Name","Basic",mealController),
+                            _buildNutrientFields(),
+                            Container(
+                              height: 50.h,
+                              child: Row(
+                                children: [
+                                  SingleChildScrollView(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        _buildTextFieldF("Recipe","Recipe",recipeController),
+                                        _buildTextFieldF("Ingredients","Ingredients",ingredientsController),
+                                        _buildTextFieldF("Description","Description",descriptionController),
+                                        SizedBox(height: 1.h,),
+                                        _buildRecommendedRadioButtons(context,mealProvider),
+                                    
+                                    
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(width: 5.w,),
+                                  _buildUploadImageSection(context, mealProvider),
+
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 4.h),
+                            ButtonWidget(
+                              fontWeight: FontWeight.w600,
+                              height: 5.h,
+                              width: 10.w,
+                              alignment: Alignment.centerRight,
+                              onClicked: () {
+                                _saveMeal(context, mealProvider);
+                              },
+                              text: 'Save Meal',
+                              radius: 10.w,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
-              SizedBox(
-                width: 35.w,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    buildNutrientField(proteinController, 'Protein', '20'),
-                    buildNutrientField(carbsController, 'Carbs', '30'),
-                    buildNutrientField(fatController, 'Fat', '4'),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        Row(
-          children: [
-            buildTextFieldColumn('Recipe', recipeController),
-            SizedBox(width: 5.w),
-            buildTextFieldColumn('Ingredients', ingredientsController),
-            SizedBox(width: 5.w),
-            buildUploadImagedButton(context, heading),
-            SizedBox(width: 0.5.w),
-            buildImageDisplay(
-              context,
-              heading,
-            ), // Display corresponding image
-          ],
-        ),
-        // Add the Recommend button here
-        Row(
-          children: [
-            buildNutrientField(
-                recommendedController, 'Recommended', 'eg: Yes/No'),
-            SizedBox(
-              width: 5.w,
             ),
-            buildNutrientField(
-                descriptionController, 'Description', 'Description'),
-          ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSelectButton({
+    required BuildContext context,
+    required String title,
+    required String heading,
+    required String? value,
+    required List<String> options,
+    required Function(String) onSelected,
+  }) {
+    return Row(
+      children: [
+        AppTextWidget(text:
+        heading,
+          fontSize: 18,
+          fontWeight: FontWeight.w500,
+        ),
+        SizedBox(width: 2.h,),
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          decoration: BoxDecoration(
+            color: Theme.of(context).primaryColor,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: DropdownButton<String>(
+            value: value,
+            hint: Text(
+              title,
+              style: TextStyle(color: Colors.white),
+            ),
+            dropdownColor: Theme.of(context).primaryColor, // Dropdown menu background color
+            style: TextStyle(color: Colors.white), // Text color inside dropdown
+            underline: SizedBox.shrink(), // Removes the underline
+            icon: Icon(Icons.arrow_drop_down, color: Colors.white),
+            items: options
+                .map((option) => DropdownMenuItem<String>(
+              value: option,
+              child: Text(option, style: TextStyle(color: Colors.white)),
+            ))
+                .toList(),
+            onChanged: (newValue) => onSelected(newValue!),
+          ),
         ),
       ],
     );
   }
 
-  Widget buildNutrientField(
-      TextEditingController controller, String heading, String hintText) {
-    return SizedBox(
-      width: 10.w,
-      height: 100,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AppTextWidget(text: heading, fontWeight: FontWeight.w600),
-          SizedBox(height: 1.h),
-          TextField(
-            controller: controller,
-            decoration: InputDecoration(
-              fillColor: Color(0xffF7FAFC),
-              filled: true,
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xffD1DBE8)),
-                borderRadius: BorderRadius.circular(15),
+   Widget _buildNutrientFields() {
+     return Row(
+       mainAxisAlignment: MainAxisAlignment.start,
+       crossAxisAlignment: CrossAxisAlignment.start,
+       children: [
+         _buildTextField("Protein", "Protein", proteinController),
+         SizedBox(width: 2.w),
+         _buildTextField("Carbs", "Carbs", carbsController),
+         SizedBox(width: 2.w),
+         _buildTextField("Fat", "Fat", fatController),
+       ],
+     );
+   }
+   Widget _buildTextField(String label,hintText,TextEditingController controller,) {
+     return Padding(
+       padding: const EdgeInsets.symmetric(vertical: 8.0),
+       child: SizedBox(
+         width: 10.w,
+         height: 100,
+         child: Column(
+           crossAxisAlignment: CrossAxisAlignment.start,
+           children: [
+             AppTextWidget(text: label, fontWeight: FontWeight.w600),
+             SizedBox(height: 1.h),
+             TextField(
+               controller: controller,
+               decoration: InputDecoration(
+                 fillColor: Color(0xffF7FAFC),
+                 filled: true,
+                 enabledBorder: OutlineInputBorder(
+                   borderSide: BorderSide(color: Color(0xffD1DBE8)),
+                   borderRadius: BorderRadius.circular(15),
+                 ),
+                 focusedBorder: OutlineInputBorder(
+                   borderSide: BorderSide(color: Color(0xffD1DBE8)),
+                   borderRadius: BorderRadius.circular(15),
+                 ),
+                 hintText: hintText,
+                 hintStyle:
+                 TextStyle(fontSize: 16, color: Color(0xff4F7396)),
+               ),
+             ),
+           ],
+         ),
+       ),
+     );
+   }
+   Widget _buildRecommendedRadioButtons(BuildContext context, MealProvider mealProvider) {
+     return Row(
+       children: [
+         AppTextWidget(
+           text: "Recommended:",
+           fontSize: 18,
+           fontWeight: FontWeight.w500,
+         ),
+         SizedBox(width: 2.h),
+         Row(
+           children: [
+             Row(
+               children: [
+                 Radio<String>(
+                   value: 'Yes',
+                   groupValue: mealProvider.selectedRecommended,
+                   onChanged: (value) => mealProvider.setRecommended(value!),
+                 ),
+                 AppTextWidget(
+                   text: "Yes",
+                   fontSize: 16,
+                 ),
+               ],
+             ),
+             Row(
+               children: [
+                 Radio<String>(
+                   value: 'No',
+                   groupValue: mealProvider.selectedRecommended,
+                   onChanged: (value) => mealProvider.setRecommended(value!),
+                 ),
+                 AppTextWidget(
+                   text: "No",
+                   fontSize: 16,
+                 ),
+               ],
+             ),
+           ],
+         ),
+       ],
+     );
+   }
+
+   Widget _buildTextFieldF(
+       String label,
+       String hintText,
+       TextEditingController controller,
+       ) {
+     return Padding(
+       padding: const EdgeInsets.symmetric(vertical: 8.0),
+       child: Column(
+         crossAxisAlignment: CrossAxisAlignment.start,
+         children: [
+           AppTextWidget(text: label, fontWeight: FontWeight.w600),
+           SizedBox(height: 1.h),
+           Container(
+             width: 30.w, // Adjust width as needed
+             child: IntrinsicHeight(
+               child: TextField(
+                 controller: controller,
+                 expands: true,
+                 maxLines: null,
+                 decoration: InputDecoration(
+                   fillColor: const Color(0xffF7FAFC),
+                   filled: true,
+                   enabledBorder: OutlineInputBorder(
+                     borderSide: const BorderSide(color: Color(0xffD1DBE8)),
+                     borderRadius: BorderRadius.circular(15),
+                   ),
+                   focusedBorder: OutlineInputBorder(
+                     borderSide: const BorderSide(color: Color(0xffD1DBE8)),
+                     borderRadius: BorderRadius.circular(15),
+                   ),
+                   hintText: hintText,
+                   hintStyle: const TextStyle(
+                     fontSize: 16,
+                     color: Color(0xff4F7396),
+                   ),
+                 ),
+               ),
+             ),
+           ),
+         ],
+       ),
+     );
+   }
+
+   Future<void> _pickAndUploadImage(BuildContext context) async {
+     final html.FileUploadInputElement uploadInput = html.FileUploadInputElement();
+     uploadInput.accept = 'image/*'; // Accept only images
+
+     uploadInput.onChange.listen((e) async {
+       final files = uploadInput.files;
+       if (files!.isEmpty) return;
+
+       final reader = html.FileReader();
+       reader.readAsArrayBuffer(files[0]);
+
+       reader.onLoadEnd.listen((e) async {
+         final bytes = reader.result as Uint8List;
+         _imageData = bytes;
+
+         // Set image data using Provider to display in the container
+         final cloudinaryProvider = Provider.of<CloudinaryProvider>(context, listen: false);
+         cloudinaryProvider.setImageData(bytes);
+
+         AppUtils().showToast(text: 'Image uploaded successfully');
+       });
+     });
+
+     uploadInput.click(); // Trigger the file picker dialog
+   }
+  Widget _buildUploadImageSection(BuildContext context, MealProvider mealProvider) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Consumer<CloudinaryProvider>(
+          builder: (context, provider, child) {
+            return provider.imageData != null
+                ? Container(
+              height: 20.h,
+              width: 20.w,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.black),
               ),
-              hintText: hintText,
-              hintStyle: TextStyle(fontSize: 16, color: Color(0xff4F7396)),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildTextFieldColumn(
-      String heading, TextEditingController controller) {
-    return Container(
-      height: 30.h,
-      width: 18.w,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AppTextWidget(
-              text: heading, fontWeight: FontWeight.w400, fontSize: 14),
-          SizedBox(height: 3.h),
-          TextFormField(
-            maxLines: 6,
-            controller: controller,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.black),
+              child: Image.memory(
+                provider.imageData!,
+                fit: BoxFit.cover,
               ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildUploadImagedButton(BuildContext context, String mealType) {
-    return InkWell(
-      splashColor: Colors.transparent,
-      highlightColor: Colors.transparent,
-      hoverColor: Colors.transparent,
-      focusColor: Colors.transparent,
-      onTap: () async {
-        Provider.of<CloudinaryProvider>(context, listen: false)
-            .setCurrentType(mealType);
-        _pickAndUploadImage(context, mealType);
-      },
-      child: Container(
-        padding: EdgeInsets.all(15),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
-          color: Color(0xffF7FAFC),
-          border: Border.all(color: Color(0xffD1DBE1), width: 1),
+            )
+                : Container(
+              height: 20.h,
+              width: 20.w,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                //border: Border.all(color: Colors.black),
+              ),
+              child: const Center(
+                child: AppTextWidget(text:
+                'No image selected',
+                    color: Colors.grey),
+              ),
+            );
+          },
         ),
-        child: AppTextWidgetFira(
-          text: 'Upload Image for $mealType',
-          color: Color(0xff4F7396),
-          fontSize: 12,
-          fontWeight: FontWeight.w400,
-        ),
-      ),
+        SizedBox(height: 10),
+        AppButtonWidget(
+            width: 10.w,
+            height: 5.h,
+            radius: 8,
+            onPressed: () async {
+              _pickAndUploadImage(context);
+            },
+            text: 'Upload Image'),
+
+      ],
     );
   }
 
-  Widget buildImageDisplay(BuildContext context, String mealType) {
-    final cloudinaryProvider = Provider.of<CloudinaryProvider>(context);
-    log('sdsdasds ::  ${cloudinaryProvider.currentType}');
-    Uint8List? imageData;
-    switch (mealType) {
-      case 'Breakfast':
-        imageData = cloudinaryProvider.imageData;
-        log('breakfast image data is :$imageData');
-        break;
-      case 'Lunch':
-        imageData = cloudinaryProvider.luchImageData;
-        log('Lunch image data is :$imageData');
+   void _saveMeal(BuildContext context, MealProvider mealProvider) async {
+     final cloudinaryProvider = Provider.of<CloudinaryProvider>(context, listen: false);
 
-        break;
-      case 'Snack':
-        imageData = cloudinaryProvider.snackImageData;
-        log('Snack image data is :$imageData');
+     ActionProvider.startLoading();  // Show loading indicator
+     var mealId = FirebaseFirestore.instance.collection('addMeal').doc().id.toString();
 
-        break;
-      case 'Dinner':
-        imageData = cloudinaryProvider.dinnerImageData;
-        log('Dinner image data is :$imageData');
+     // Check for null or empty values
+     if (mealProvider.selectedMealType == null || mealProvider.selectedMealType!.isEmpty) {
+       log("Meal type is null or empty");
+     }
+     if (mealProvider.selectedRecommended == null || mealProvider.selectedRecommended!.isEmpty) {
+       log("Recommended value is null or empty");
+     }
+     if (mealProvider.selectedDays == null || mealProvider.selectedDays!.isEmpty) {
+       log("Selected days value is null or empty");
+     }
+     if (mealController.text.isEmpty) {
+       log("Meal name is empty");
+     }
+     if (proteinController.text.isEmpty) {
+       log("Protein value is empty");
+     }
+     if (carbsController.text.isEmpty) {
+       log("Carbs value is empty");
+     }
+     if (fatController.text.isEmpty) {
+       log("Fat value is empty");
+     }
+     if (recipeController.text.isEmpty) {
+       log("Recipe value is empty");
+     }
+     if (ingredientsController.text.isEmpty) {
+       log("Ingredients value is empty");
+     }
+     if (descriptionController.text.isEmpty) {
+       log("Description value is empty");
+     }
+     if (mealProvider.selectedCategory == null || mealProvider.selectedCategory!.isEmpty) {
+       log("Meal category is null or empty");
+     }
 
-        break;
-    }
+     // Check if any required field is empty
+     if (mealProvider.selectedMealType!.isEmpty ||
+         mealProvider.selectedRecommended!.isEmpty ||
+         mealProvider.selectedDays!.isEmpty ||
+         mealController.text.isEmpty ||
+         proteinController.text.isEmpty ||
+         carbsController.text.isEmpty ||
+         fatController.text.isEmpty ||
+         recipeController.text.isEmpty ||
+         ingredientsController.text.isEmpty ||
+         descriptionController.text.isEmpty ||
+         mealProvider.selectedCategory!.isEmpty) {
+       ActionProvider.stopLoading();
+       ScaffoldMessenger.of(context).showSnackBar(
+         SnackBar(content: Text("Please select meal type and category")),
+       );
+       return;
+     }
 
-    return imageData != null &&
-        mealType == cloudinaryProvider.currentType.toString()
-        ? Container(
-      height: 20.h,
-      width: 20.w,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.black),
-      ),
-      child: Image.memory(
-        imageData,
-        fit: BoxFit.cover,
-      ),
-    )
-        : Container(
-      height: 20.h,
-      width: 20.w,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Center(
-        child: AppTextWidget(
-          text: 'No image selected',
-          color: Colors.grey,
-        ),
-      ),
-    );
-  }
-
-  Future<void> _pickAndUploadImage(
-      BuildContext context, String mealType) async {
-    final html.FileUploadInputElement uploadInput =
-    html.FileUploadInputElement();
-    uploadInput.accept = 'image/*'; // Accept only images
-
-    uploadInput.onChange.listen((e) async {
-      final files = uploadInput.files;
-      if (files!.isEmpty) return;
-
-      final reader = html.FileReader();
-      reader.readAsArrayBuffer(files[0]);
-
-      reader.onLoadEnd.listen((e) async {
-        final bytes = reader.result as Uint8List;
-
-        final cloudinaryProvider =
-        Provider.of<CloudinaryProvider>(context, listen: false);
-        cloudinaryProvider.setImageData(bytes);
-
-        // Assign the image data to the respective meal field
-        switch (mealType) {
-          case 'Breakfast':
-            _breakfastImageData = bytes;
-            break;
-          case 'Lunch':
-            _lunchImageData = bytes;
-            break;
-          case 'Snack':
-            _snackImageData = bytes;
-            break;
-          case 'Dinner':
-            _dinnerImageData = bytes;
-            break;
-        }
-
-        AppUtils().showToast(text: '$mealType image uploaded successfully');
-      });
-    });
-    uploadInput.click(); // Trigger the file picker dialog
-  }
-
-  Future<void> _uploadMeal(
-      BuildContext context,
-      String mealType,
-      TextEditingController mealController,
-      TextEditingController proteinController,
-      TextEditingController carbsController,
-      TextEditingController fatController,
-      TextEditingController recipeController,
-      TextEditingController ingredientsController,
-      TextEditingController recommendedController,
-      TextEditingController descriptionController,
-      Uint8List? mealImageData) async {
-
-    ActionProvider.startLoading();  // Show loading indicator
-    final cloudinaryProvider = Provider.of<CloudinaryProvider>(context, listen: false);
-
-    if (mealController.text.isEmpty ||
-        proteinController.text.isEmpty ||
-        carbsController.text.isEmpty ||
-        fatController.text.isEmpty ||
-        recipeController.text.isEmpty ||
-        ingredientsController.text.isEmpty ||
-        recommendedController.text.isEmpty ||
-        descriptionController.text.isEmpty ||
-        mealImageData == null) {
-      ActionProvider.stopLoading();  // Hide loading indicator
-      AppUtils().showToast(text: 'Please fill all fields and upload an image');
-      return;
-    }
-
-    try {
-      // Upload the image to Cloudinary and get the image URL
-      await cloudinaryProvider.uploadImage(mealImageData);
-      var mealId = FirebaseFirestore.instance.collection('addMeal').doc().id.toString();
-
-      if (cloudinaryProvider.imageUrl.isNotEmpty) {
-        // Save the meal data to Firestore
-        await FirebaseFirestore.instance.collection('addMeal').doc(mealId).set({
-          'mealType': mealType.toLowerCase(),
-          'name': mealController.text,
-          'protein': proteinController.text,
-          'carbs': carbsController.text,
-          'fat': fatController.text,
-          'imageUrl': cloudinaryProvider.imageUrl,  // URL from Cloudinary
-          'createdAt': DateTime.now().millisecondsSinceEpoch.toString(),
-          'Id': mealId,
-          'ingredients': ingredientsController.text,
-          'recipe': recipeController.text,
-          'recommended': recommendedController.text.toLowerCase() == 'yes' ? "true" : "false",
-          'description': descriptionController.text,
-          'likes': [],  // You can adjust this as necessary
-        });
-
-        ActionProvider.stopLoading();  // Hide loading indicator
-        AppUtils().showToast(text: '$mealType uploaded successfully');
-      } else {
-        ActionProvider.stopLoading();  // Hide loading indicator
-        AppUtils().showToast(text: 'Image upload failed');
-      }
-    } catch (e) {
-      log('Error uploading $mealType: $e');
-      ActionProvider.stopLoading();  // Hide loading indicator
-      AppUtils().showToast(text: 'Failed to upload $mealType');
-    }
-  }
-
-
-  Future<void> _uploadBreakFast(BuildContext context) async {
-    await _uploadMeal(
-      context,
-      'Breakfast',
-      breakFastController,
-      proteinController,
-      carbsController,
-      fatController,
-      recipeController,
-      ingredientsController,
-      recommendedBreakfastController,
-      descriptionBreakfastController,
-      Provider.of<CloudinaryProvider>(context, listen: false).imageData,
-    );
-  }
-
-  Future<void> _uploadLunch(BuildContext context) async {
-    await _uploadMeal(
-        context,
-        'Lunch',
-        lunchController,
-        lunchProteinController,
-        lunchCarbsController,
-        lunchFatController,
-        lunchRecipeController,
-        lunchIngredientsController,
-        recommendedLunchController,
-        descriptionLunchController,
-        Provider.of<CloudinaryProvider>(context, listen: false).luchImageData);
-  }
-
-// Similar refactor for other meals
-  Future<void> _uploadsnack(BuildContext context) async {
-    await _uploadMeal(
-        context,
-        'Snack',
-        snackController,
-        snackProteinController,
-        snackCarbsController,
-        snackFatController,
-        snackRecipeController,
-        snackIngredientsController,
-        recommendedSnackController,
-        descriptionSnackController,
-        Provider.of<CloudinaryProvider>(context, listen: false).snackImageData);
-  }
-
-  Future<void> _uploadDinner(BuildContext context) async {
-    await _uploadMeal(
-        context,
-        'Dinner',
-        dinnerController,
-        dinnerProteinController,
-        dinnerCarbsController,
-        dinnerFatController,
-        dinnerRecipeController,
-        dinnerIngredientsController,
-        recommendedDinnerController,
-        descriptionDinnerController,
-        Provider.of<CloudinaryProvider>(context, listen: false)
-            .dinnerImageData);
-  }
+     try {
+       await cloudinaryProvider.uploadImage(cloudinaryProvider.imageData!);
+       if(cloudinaryProvider.imageUrl.isNotEmpty){
+         await FirebaseFirestore.instance.collection('addMeal').doc(mealId).set({
+           'mealType': mealProvider.selectedMealType,
+           'Id': mealId.toString(),
+           'name': mealController.text,
+           'protein': proteinController.text,
+           'carbs': carbsController.text,
+           'fat': fatController.text,
+           'days': mealProvider.selectedDays,
+           'mealCategory': mealProvider.selectedCategory,
+           'imageUrl': cloudinaryProvider.imageUrl.toString(),
+           'createdAt': DateTime.now().millisecondsSinceEpoch.toString(),
+           'ingredients': ingredientsController.text,
+           'recipe': recipeController.text,
+           'recommended': mealProvider.selectedRecommended,
+           'description': descriptionController.text,
+           'likes': [],
+         });
+         AppUtils().showToast(text: "Meal saved successfully!");
+         //clear controllers
+         proteinController.clear();
+         carbsController.clear();
+         fatController.clear();
+         recipeController.clear();
+         ingredientsController.clear();
+         descriptionController.clear();
+         mealController.clear();
+         mealProvider.clearMealData();
+       }
+       else {
+         ActionProvider.stopLoading();
+         AppUtils().showToast(text: 'Image upload failed',);
+       }
+     } catch (e) {
+       log("Error saving meal: $e");
+       AppUtils().showToast(text: "Error saving meal: $e");
+     }
+     ActionProvider.stopLoading();
+   }
 }

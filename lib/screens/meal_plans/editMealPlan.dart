@@ -170,10 +170,11 @@ class EditMealPlan extends StatelessWidget {
             SizedBox(
               width: 5.w,
             ),
-            buildNutrientField(
-                descriptionController,  'Description',descriptionController.text = menuApp.model!.description!,),
+
           ],
         ),
+        _buildTextFieldF(
+          descriptionController,  'Description',descriptionController.text = menuApp.model!.description!,),
         ButtonWidget(
           fontWeight: FontWeight.w400,
           height: 5.h,
@@ -268,6 +269,50 @@ class EditMealPlan extends StatelessWidget {
           fontSize: 12,
           fontWeight: FontWeight.w400,
         ),
+      ),
+    );
+  }
+  Widget _buildTextFieldF(
+
+      TextEditingController controller,
+      String label,
+      String hintText,
+      ) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AppTextWidget(text: label, fontWeight: FontWeight.w600),
+          SizedBox(height: 1.h),
+          Container(
+            width: 30.w, // Adjust width as needed
+            child: IntrinsicHeight(
+              child: TextField(
+                controller: controller,
+                expands: true,
+                maxLines: null,
+                decoration: InputDecoration(
+                  fillColor: const Color(0xffF7FAFC),
+                  filled: true,
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Color(0xffD1DBE8)),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Color(0xffD1DBE8)),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  hintText: hintText,
+                  hintStyle: const TextStyle(
+                    fontSize: 16,
+                    color: Color(0xff4F7396),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
