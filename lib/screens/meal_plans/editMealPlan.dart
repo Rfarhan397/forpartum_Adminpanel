@@ -41,14 +41,14 @@ class EditMealPlan extends StatelessWidget {
 
     // Pre-fill the fields if mealData exists
     if (mealData != null) {
-      mealNameController.text = mealData.name ?? '';
-      proteinController.text = mealData.protein ?? '';
-      carbsController.text = mealData.carbs ?? '';
-      fatController.text = mealData.fat ?? '';
-      recipeController.text = mealData.recipe ?? '';
-      ingredientsController.text = mealData.ingredients ?? '';
-      recommendedController.text = mealData.recommended ?? '';
-      descriptionController.text = mealData.description ?? '';
+      mealNameController.text = mealData.name ?? 'N/A';
+      proteinController.text = mealData.protein ?? 'N/A';
+      carbsController.text = mealData.carbs ?? 'N/A';
+      fatController.text = mealData.fat ?? 'N/A';
+      recipeController.text = mealData.recipe ?? 'N/A';
+      ingredientsController.text = mealData.ingredients ?? 'N/A';
+      recommendedController.text = mealData.recommended ?? 'N/A';
+      descriptionController.text = mealData.description ?? 'N/A';
     }
 
     return Scaffold(
@@ -289,40 +289,64 @@ class EditMealPlan extends StatelessWidget {
 
       if (mealNameController.text != mealData?.name) {
         updates['name'] = mealNameController.text;
+        log("name iss:: ${updates['name']}");
+        log("name data iss:: ${mealData?.name}");
       }
       if (proteinController.text != mealData?.protein) {
         updates['protein'] = proteinController.text;
+        log("protein iss:: ${updates['protein']}");
+        log("protein data iss:: ${mealData?.protein}");
+
       }
       if (carbsController.text != mealData?.carbs) {
         updates['carbs'] = carbsController.text;
+        log("carbs iss:: ${updates['carbs']}");
+        log("carbs data iss:: ${mealData?.carbs}");
       }
       if (fatController.text != mealData?.fat) {
         updates['fat'] = fatController.text;
+        log("fat iss:: ${updates['fat']}");
+        log("fat data iss:: ${mealData?.fat}");
+
       }
       if (recipeController.text != mealData?.recipe) {
         updates['recipe'] = recipeController.text;
+        log("recipe iss:: ${updates['recipe']}");
+        log("recipe data iss:: ${mealData?.recipe}");
       }
       if (ingredientsController.text != mealData?.ingredients) {
         updates['ingredients'] = ingredientsController.text;
+        log("ingredients iss:: ${updates['ingredients']}");
+        log("ingredients data iss:: ${mealData?.ingredients}");
       }
       if (recommendedController.text != mealData?.recommended) {
-        updates['recommended'] = recommendedController.text;
+        updates['recommended'] = recommendedController.text.toLowerCase();
+        log("recommended iss:: ${updates['recommended']}");
+        log("recommended data iss:: ${mealData?.recommended}");
       }
       if (descriptionController.text != mealData?.description) {
         updates['description'] = descriptionController.text;
+        log("description iss:: ${updates['description']}");
+        log("description data iss:: ${mealData?.description}");
       }
       if (mealProvider.selectedCategory?.isNotEmpty == true &&
           mealProvider.selectedCategory != mealData?.deitary) {
         updates['mealCategory'] = mealProvider.selectedCategory;
+        log("mealCategory iss:: ${updates['mealCategory']}");
+        log("mealCategory data iss:: ${mealData?.deitary}");
       }
       if (mealProvider.selectedMealType?.isNotEmpty == true &&
       mealProvider.selectedMealType != mealData?.mealType) {
         updates['mealType'] = mealProvider.selectedMealType.toString().isEmpty ? mealProvider.selectedMealType : mealData?.mealType;
+        log("mealType iss:: ${updates['mealType']}");
+        log("mealType data iss:: ${mealData?.mealType}");
       }
       if (mealProvider.selectedDays != mealData?.days) {
         updates['days'] = mealProvider.selectedDays?.isNotEmpty == true
             ? mealProvider.selectedDays
             : mealData?.days;
+        log("days iss:: ${updates['days']}");
+        log("days data iss:: ${mealData?.days}");
       }
 
 
@@ -331,13 +355,15 @@ class EditMealPlan extends StatelessWidget {
         // Upload image to Cloudinary
         await cloudinaryProvider.uploadImage(_imageData!);
         if (cloudinaryProvider.imageUrl.isNotEmpty) {
-          updates['imageUrl'] = cloudinaryProvider.imageUrl; // Use the new uploaded URL
+          updates['imageUrl'] = cloudinaryProvider.imageUrl;
+          log('Image uploaded to Cloudinary: ${cloudinaryProvider.imageUrl}');
         } else {
           log('Image upload failed: Cloudinary URL is empty.');
         }
       } else if (mealProvider.mealImage?.isNotEmpty == true &&
           mealProvider.mealImage != mealData?.imageUrl) {
-        updates['imageUrl'] = mealProvider.mealImage; // Use the newly selected image URL
+        updates['imageUrl'] = mealProvider.mealImage;
+        log('Image updated to Firestore: ${mealProvider.mealImage}');
       }
 
 

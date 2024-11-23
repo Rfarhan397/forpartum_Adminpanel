@@ -41,9 +41,9 @@ class SplashScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                GestureDetector(
-                    onTap: () {},
-                    child: SvgPicture.asset(AppIcons.closeButton,fit: BoxFit.cover,height: 40,)),
+                // GestureDetector(
+                //     onTap: () {},
+                //     child: SvgPicture.asset(AppIcons.closeButton,fit: BoxFit.cover,height: 40,)),
                 SizedBox(
                   height: 2.h,
                 ),

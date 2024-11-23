@@ -277,28 +277,62 @@ class _AddBlogScreenState extends State<AddBlogScreen> {
 
     try {
       await cloudinaryProvider.uploadImage(cloudinaryProvider.imageData!);
-      var id = FirebaseFirestore.instance.collection('blogs').doc().id.toString();
-      if (cloudinaryProvider.imageUrl.isNotEmpty) {
-        await FirebaseFirestore.instance.collection('blogs').doc(id).set({
+      if (cloudinaryProvider.imageUrl.isEmpty) {
+        ActionProvider.stopLoading();
+        AppUtils().showToast(text: 'Image upload failed');
+        return;
+      }
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+      // Example: Creating multiple blogs (adjust `blogsData` for your use case)
+      List<Map<String, dynamic>> blogsData = [
+        {
           'title': _titleController.text,
-          'content': contentJson, // save as JSON for formatted text
+          'content': contentJson, // Save as JSON for formatted text
           'categoryId': dropdownProvider.selectedCategoryId,
           'category': dropdownProvider.selectedCategory,
           'imageUrl': cloudinaryProvider.imageUrl.toString(),
-          'readTime': '5 mints',
+          'readTime': '5 mins',
           'createdAt': DateTime.now().millisecondsSinceEpoch.toString(),
-          'id': id,
-        });
-        ActionProvider.stopLoading();
-        _titleController.clear();
-        _quillController.clear();
-        cloudinaryProvider.clearImage();
-
-        AppUtils().showToast(text: 'Blog uploaded successfully');
-      } else {
-        ActionProvider.stopLoading();
-        AppUtils().showToast(text: 'Image upload failed');
+        },
+        // Add more blog data maps here as needed.
+      ];
+      // Add each blog to the batch
+      for (var blogData in blogsData) {
+        var blogDoc = FirebaseFirestore.instance.collection('blogs').doc();
+        blogData['id'] = blogDoc.id; // Assign generated document ID to the data
+        batch.set(blogDoc, blogData);
       }
+
+      // Commit the batch
+      await batch.commit();
+      ActionProvider.stopLoading();
+      _titleController.clear();
+      _quillController.clear();
+      cloudinaryProvider.clearImage();
+      AppUtils().showToast(text: 'Blogs uploaded successfully');
+
+      //var id = FirebaseFirestore.instance.collection('blogs').doc().id.toString();
+      // if (cloudinaryProvider.imageUrl.isNotEmpty) {
+      //   await FirebaseFirestore.instance.collection('blogs').doc(id).set({
+      //     'title': _titleController.text,
+      //     'content': contentJson, // save as JSON for formatted text
+      //     'categoryId': dropdownProvider.selectedCategoryId,
+      //     'category': dropdownProvider.selectedCategory,
+      //     'imageUrl': cloudinaryProvider.imageUrl.toString(),
+      //     'readTime': '5 mints',
+      //     'createdAt': DateTime.now().millisecondsSinceEpoch.toString(),
+      //     'id': id,
+      //   });
+      //   ActionProvider.stopLoading();
+      //   _titleController.clear();
+      //   _quillController.clear();
+      //   cloudinaryProvider.clearImage();
+      //
+      //   AppUtils().showToast(text: 'Blog uploaded successfully');
+      // } else {
+      //   ActionProvider.stopLoading();
+      //   AppUtils().showToast(text: 'Image upload failed');
+      // }
     } catch (e) {
       log('Error uploading blog: $e');
       ActionProvider.stopLoading();

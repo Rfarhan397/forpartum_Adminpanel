@@ -275,10 +275,7 @@ class _EditBlogPostState extends State<EditBlogPost> {
     final cloudinaryProvider = Provider.of<CloudinaryProvider>(context, listen: false);
     final dropdownProvider = Provider.of<DropdownProviderN>(context, listen: false);
     final mneuP = Provider.of<MenuAppController>(context, listen: false);
-    log('title:${_titleController.text.toString()}');
-    log('image:${mneuP.arguments!.imageUrl}');
-    log('categoryId:${dropdownProvider.selectedCategoryId}');
-    log('category:${dropdownProvider.selectedCategory}');
+
     // Convert Quill document to JSON
     String contentJson = jsonEncode(_quillController.document.toDelta().toJson());
     log('contentJson:$contentJson');
@@ -287,37 +284,33 @@ class _EditBlogPostState extends State<EditBlogPost> {
     try {
 
       var id = mneuP.arguments!.id;
+
       if(cloudinaryProvider.imageData !=null){
         await cloudinaryProvider.uploadImage(cloudinaryProvider.imageData!);
       }
-      if (cloudinaryProvider.imageUrl.isNotEmpty) {
-        await FirebaseFirestore.instance.collection('blogs').doc(id).update({
-          'title': _titleController.text,
-          'content': contentJson,
-          'categoryId': dropdownProvider.selectedCategoryId,
-          'category': dropdownProvider.selectedCategory,
-          'imageUrl': cloudinaryProvider.imageUrl.toString(),
-        });
+      // Prepare the image URL (either new or existing)
+      final imageUrl = cloudinaryProvider.imageUrl.isNotEmpty
+          ? cloudinaryProvider.imageUrl
+          : mneuP.arguments!.imageUrl.toString();
+      // Initialize Firestore batch
+      final batch = FirebaseFirestore.instance.batch();
+      final blogDoc = FirebaseFirestore.instance.collection('blogs').doc(id);
+
+      batch.update(blogDoc, {
+        'title': _titleController.text,
+        'content': contentJson,
+        'categoryId': dropdownProvider.selectedCategoryId,
+        'category': dropdownProvider.selectedCategory,
+        'imageUrl': imageUrl,
+      });
+
+      // Commit the batch
+      await batch.commit();
         ActionProvider.stopLoading();
         _titleController.clear();
         _quillController.clear();
         cloudinaryProvider.clearImage();
-
         AppUtils().showToast(text: 'Blog updated successfully');
-      } else {
-        ActionProvider.startLoading();
-        await FirebaseFirestore.instance.collection('blogs').doc(id).update({
-          'title': _titleController.text,
-          'content': contentJson,
-          'categoryId': dropdownProvider.selectedCategoryId,
-          'category': dropdownProvider.selectedCategory,
-          'imageUrl': mneuP.arguments!.imageUrl.toString(),
-        });
-        AppUtils().showToast(text: 'Blog updated successfully');
-        ActionProvider.stopLoading();
-        _titleController.clear();
-        _quillController.clear();
-      }
     } catch (e) {
       log('Error uploading blog: $e');
       ActionProvider.stopLoading();

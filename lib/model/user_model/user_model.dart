@@ -118,6 +118,7 @@ class Tracker {
   String? intensity;
   String? wakeDuringNight;
   String? wakeUpAt;
+  String? createdAt;
   String? timeStamp;
   List<String>? options;
   List<dynamic>? causesList;
@@ -141,6 +142,7 @@ class Tracker {
     this.timeStamp,
     this.questions,
     this.causesList,
+    this.createdAt,
   });
 
   factory Tracker.fromMap(Map<String, dynamic> data) {
@@ -149,6 +151,7 @@ class Tracker {
       type: data['type'],
       stressLevel: data['stressLevel'],
       image: data['image'],
+      createdAt: data['createdAt'],
       days: data['days'],
       painLevel: data['painLevel'],
       id: data['id'],

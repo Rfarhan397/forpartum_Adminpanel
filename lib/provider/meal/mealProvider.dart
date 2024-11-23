@@ -37,9 +37,9 @@ class MealProvider with ChangeNotifier {
   }
 
   void clearMealData() {
-    _selectedMealType ;
-    _selectedCategory ;
-    _selectedDays ;
+    _selectedMealType = '' ;
+    _selectedCategory = '';
+    _selectedDays  = '';
     _mealImage ;
     notifyListeners();
   }

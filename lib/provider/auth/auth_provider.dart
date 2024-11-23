@@ -23,7 +23,7 @@ class AuthProvider extends ChangeNotifier {
           .get();
 
       if (adminSnapshot.docs.isNotEmpty) {
-        AppUtils().showToast(text: 'Please enter your correct username and password');
+        // AppUtils().showToast(text: 'Please enter your correct username and password');
         // Admin record found, proceed with login logic
         ActionProvider.stopLoading();
         AppUtils().showToast(text: "Login Successful");

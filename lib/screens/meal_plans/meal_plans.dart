@@ -87,17 +87,17 @@ class MealPlanScreen extends StatelessWidget {
                         SizedBox(
                           width: 10.w,
                         ),
-                        Container(
-                          width: 200,
-                          height: 30,
-                          decoration: BoxDecoration(
-                            color: secondaryColor,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: const Center(
-                              child:
-                                  AppTextWidget(text: 'Meal Plan Management')),
-                        ),
+                        // Container(
+                        //   width: 200,
+                        //   height: 30,
+                        //   decoration: BoxDecoration(
+                        //     color: secondaryColor,
+                        //     borderRadius: BorderRadius.circular(10),
+                        //   ),
+                        //   child: const Center(
+                        //       child:
+                        //           AppTextWidget(text: 'Meal Plan Management')),
+                        // ),
                       ],
                     ),
                   ),
@@ -258,7 +258,7 @@ class MealPlanScreen extends StatelessWidget {
                               SizedBox(
                                 width: 4.w,
                               ),
-                              buildContainer('Avg Completion Rate:', "${(double.parse( value.totalUsersWhoTookMeals.toString()) / double.parse(blogPostProvider.totalDocuments.toString()) * 100).toStringAsFixed(2)}%"),
+                              buildContainer('Avg Completion Rate:', "${(double.parse(blogPostProvider.totalDocuments.toString() ) / double.parse(value.totalUsersWhoTookMeals.toString()) * 100).toStringAsFixed(2)}%"),
                             ],
                           ),
                           SizedBox(height: 2.h),

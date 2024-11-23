@@ -247,7 +247,7 @@ class AddMealScreen extends StatelessWidget {
              Row(
                children: [
                  Radio<String>(
-                   value: 'Yes',
+                   value: 'yes',
                    groupValue: mealProvider.selectedRecommended,
                    onChanged: (value) => mealProvider.setRecommended(value!),
                  ),
@@ -260,7 +260,7 @@ class AddMealScreen extends StatelessWidget {
              Row(
                children: [
                  Radio<String>(
-                   value: 'No',
+                   value: 'no',
                    groupValue: mealProvider.selectedRecommended,
                    onChanged: (value) => mealProvider.setRecommended(value!),
                  ),
@@ -397,7 +397,8 @@ class AddMealScreen extends StatelessWidget {
      final cloudinaryProvider = Provider.of<CloudinaryProvider>(context, listen: false);
 
      ActionProvider.startLoading();  // Show loading indicator
-     
+     final batch = FirebaseFirestore.instance.batch();
+
      var mealId = FirebaseFirestore.instance.collection('addMeal').doc().id.toString();
 
      // Check for null or empty values
@@ -457,23 +458,25 @@ class AddMealScreen extends StatelessWidget {
      try {
        await cloudinaryProvider.uploadImage(cloudinaryProvider.imageData!);
        if(cloudinaryProvider.imageUrl.isNotEmpty){
-         await FirebaseFirestore.instance.collection('addMeal').doc(mealId).set({
+         final mealData = {
+           'id': mealId,
+           'name': mealController.text.trim(),
+           'protein': proteinController.text.trim(),
+           'carbs': carbsController.text.trim(),
+           'fat': fatController.text.trim(),
+           'imageUrl': cloudinaryProvider.imageUrl,
+           'description': descriptionController.text.trim(),
+           'recipe': recipeController.text.trim(),
+           'ingredients': ingredientsController.text.trim(),
            'mealType': mealProvider.selectedMealType,
-           'Id': mealId.toString(),
-           'name': mealController.text,
-           'protein': proteinController.text,
-           'carbs': carbsController.text,
-           'fat': fatController.text,
-           'days': mealProvider.selectedDays,
            'mealCategory': mealProvider.selectedCategory,
-           'imageUrl': cloudinaryProvider.imageUrl.toString(),
-           'createdAt': DateTime.now().millisecondsSinceEpoch.toString(),
-           'ingredients': ingredientsController.text,
-           'recipe': recipeController.text,
+           'days': mealProvider.selectedDays,
            'recommended': mealProvider.selectedRecommended,
-           'description': descriptionController.text,
-           'likes': [],
-         });
+           'createdAt': DateTime.now().millisecondsSinceEpoch.toString(),
+           'likes':[],
+         };
+         batch.set(FirebaseFirestore.instance.collection('addMeal').doc(mealId), mealData);
+         await batch.commit();
          AppUtils().showToast(text: "Meal saved successfully!");
          //clear controllers
          proteinController.clear();
@@ -483,7 +486,9 @@ class AddMealScreen extends StatelessWidget {
          ingredientsController.clear();
          descriptionController.clear();
          mealController.clear();
+         cloudinaryProvider.clearImage();
          mealProvider.clearMealData();
+         mealProvider.selectedRecommended = '';
        }
        else {
          ActionProvider.stopLoading();

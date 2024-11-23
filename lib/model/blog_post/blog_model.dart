@@ -100,7 +100,7 @@ class AddMeal{
       imageUrl: data['imageUrl'] ?? '',
       name: data['name'] ?? '',
       protein: data['protein'] ?? '',
-      id: data['Id'] ?? '',
+      id: data['id'] ?? '',
       createdAt: data['createdAt'] ?? '',
       mealType: data['mealType'] ?? '',
       recommended: data['recommended']?? '',

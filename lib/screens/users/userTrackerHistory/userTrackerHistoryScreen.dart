@@ -26,21 +26,23 @@ class UserTrackerHistoryScreen extends StatelessWidget {
       appBar: const CustomAppbar(text: 'Tracker History'),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Divider(height: 1, color: customGrey),
-            SizedBox(height: 1.h),
-            AppTextWidget(
-              text: '$type Tracker History',
-              fontSize: 22,
-              fontWeight: FontWeight.w500,
-            ),
-            const SizedBox(height: 20),
-            _buildTrackerView(type!),
-            const SizedBox(height: 10),
-            TrackerLodData(type: type, uid: uid),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Divider(height: 1, color: customGrey),
+              SizedBox(height: 1.h),
+              AppTextWidget(
+                text: '$type Tracker History',
+                fontSize: 22,
+                fontWeight: FontWeight.w500,
+              ),
+              const SizedBox(height: 20),
+              _buildTrackerView(type!),
+              const SizedBox(height: 10),
+              TrackerLodData(type: type, uid: uid),
+            ],
+          ),
         ),
       ),
     );
@@ -118,14 +120,14 @@ class TrackerLodData extends StatelessWidget {
               return const Center(child: Text('No log found'));
             }
 
-            return _buildTrackerList(context,snapshot.data!, type,uid);
+            return _buildTrackerList(context,snapshot.data!, type,uid,);
           },
         );
       },
     );
   }
 
-  Widget _buildTrackerList(context ,List<Tracker> trackerList, String type,userId) {
+  Widget _buildTrackerList(context ,List<Tracker> trackerList, String type,userId,) {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -133,8 +135,8 @@ class TrackerLodData extends StatelessWidget {
       itemCount: trackerList.length,
       itemBuilder: (ctx, index) {
         Tracker tracker = trackerList[index];
-        DateTime date = DateTime.fromMillisecondsSinceEpoch(int.parse(tracker.timeStamp!));
-        bool showIcon = DateTime.now().difference(date).inDays > 7;
+        DateTime date = DateTime.fromMillisecondsSinceEpoch(int.parse(tracker.createdAt!));
+        bool showIcon = DateTime.now().difference(date).inDays < 7;
         return Column(
           children: [
             Table(
@@ -161,7 +163,7 @@ class TrackerLodData extends StatelessWidget {
                 splashColor: Colors.transparent,
                 highlightColor: Colors.transparent,
                 onTap: () {
-                  _showDialog(context,userId);
+                  _showNoteDialog(context,userId,tracker.timeStamp);
                 },
                 child: Container(
                   margin: EdgeInsets.all(4),
@@ -176,51 +178,115 @@ class TrackerLodData extends StatelessWidget {
     );
   }
   // Method to show the dialog with a text field and save button
-  Future<void> _showDialog(BuildContext context,userID) async {
+  // Future<void> _showDialog(BuildContext context,userID) async {
+  //   TextEditingController textController = TextEditingController();
+  //
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) {
+  //       return AlertDialog(
+  //         title: Text("Enter Details"),
+  //         content: AppTextField(
+  //           hintText: 'Result',
+  //           controller: textController,
+  //         ),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () {
+  //               // Save the text to Firestore
+  //               _saveToFirestore(textController.text,userID);
+  //               Navigator.pop(context); // Close the dialog
+  //             },
+  //             child: Text("Save"),
+  //           ),
+  //           TextButton(
+  //             onPressed: () {
+  //               Navigator.pop(context); // Close the dialog
+  //             },
+  //             child: Text("Cancel"),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
+  Future<void> _showNoteDialog(BuildContext context, String userID,timestamp) async {
     TextEditingController textController = TextEditingController();
 
     showDialog(
       context: context,
+      barrierDismissible: false, // Prevent accidental dismissal
       builder: (context) {
-        return AlertDialog(
-          title: Text("Enter Details"),
-          content: AppTextField(
-            hintText: 'Result',
-            controller: textController,
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                // Save the text to Firestore
-                _saveToFirestore(textController.text,userID);
-                Navigator.pop(context); // Close the dialog
-              },
-              child: Text("Save"),
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.5, // Adaptive width
+            height: MediaQuery.of(context).size.height * 0.6, // Adaptive height
+            padding: EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AppTextWidget(text:
+                  "Add Note",
+                  fontSize: 20, fontWeight: FontWeight.bold),
+                SizedBox(height: 16),
+                Expanded(
+                  child: Scrollbar(
+                    child: SingleChildScrollView(
+                      child: TextField(
+                        controller: textController,
+                        maxLines: null, // Allows multiline input
+                        decoration: InputDecoration(
+                          hintText: "Enter your note here...",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 1.h,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text("Cancel"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        _saveToFirestore(textController.text, userID,timestamp); // Save to Firestore
+                        Navigator.pop(context);
+                      },
+                      child: Text("Save"),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context); // Close the dialog
-              },
-              child: Text("Cancel"),
-            ),
-          ],
+          ),
         );
       },
     );
   }
-  Future<void> _saveToFirestore(String text, userId) async {
+
+  Future<void> _saveToFirestore(String text, userId,timestamp) async {
     if (text.isNotEmpty) {
       try {
         var id = FirebaseFirestore.instance.collection('users').doc(userId).collection('trackerResult').doc().id;
-        FirebaseFirestore.instance.collection('users').doc(userId).collection('trackerResult').doc(id).set({
-          'id' : id,
+        FirebaseFirestore.instance.collection('users').doc(userId).collection('trackerResult').doc(timestamp).set({
           'type': type,
           'text': text,
-          'timestamp': DateTime.now().microsecondsSinceEpoch.toString(),
+          'timestamp': timestamp,
         });
 
         // Optionally, you can confirm the save by fetching the document after it's been added
-        DocumentSnapshot doc = await FirebaseFirestore.instance.collection('users').doc(userId).collection('trackerResult').doc(id).get();
+        DocumentSnapshot doc = await FirebaseFirestore.instance.collection('users').doc(userId).collection('trackerResult').doc(timestamp).get();
         if (doc.exists) {
           log("Data saved successfully: ${doc.data()}");
         } else {
@@ -254,21 +320,21 @@ class TrackerLodData extends StatelessWidget {
     switch (type) {
       case 'sleep':
         return [
-          _buildContentCell(formatTimestamp(tracker.timeStamp!)),
+          _buildContentCell(formatTimestamp(tracker.createdAt!)),
           _buildContentCell(tracker.sleetAt ?? 'N/A'),
           _buildContentCell(tracker.wakeUpAt ?? 'N/A'),
           _buildContentCell(tracker.wakeDuringNight ?? 'N/A'),
         ];
       case 'mood':
         return [
-          _buildContentCell(formatTimestamp(tracker.timeStamp!)),
+          _buildContentCell(formatTimestamp(tracker.createdAt!)),
           _buildContentCellImage(tracker.image ?? ''),
           _buildContentCell(tracker.moodName ?? 'N/A'),
           _buildContentCell(tracker.messageNote ?? 'N/A'),
         ];
       case 'pain':
         return [
-          _buildContentCell(formatTimestamp(tracker.timeStamp!)),
+          _buildContentCell(formatTimestamp(tracker.createdAt!)),
           _buildContentCell(tracker.intensity ?? 'N/A'),
           _buildContentCell(tracker.causesList?.first ?? 'N/A'),
           _buildContentCell('${tracker.days} days'),
@@ -276,14 +342,14 @@ class TrackerLodData extends StatelessWidget {
         ];
       case 'stress':
         return [
-          _buildContentCell(formatTimestamp(tracker.timeStamp!)),
+          _buildContentCell(formatTimestamp(tracker.createdAt!)),
           _buildContentCell(tracker.stressLevel ?? 'N/A'),
           _buildContentCell(tracker.causesList?.first ?? 'N/A'),
           _buildContentCell(tracker.messageNote ?? 'N/A'),
         ];
       case 'energy':
         return [
-          _buildContentCell(formatTimestamp(tracker.timeStamp!)),
+          _buildContentCell(formatTimestamp(tracker.createdAt!)),
           _buildContentCell(tracker.questions?[0].allOptions[0] ?? 'N/A'),
           _buildContentCell(tracker.questions?[1].allOptions[0] ?? 'N/A'),
           _buildContentCell(tracker.questions?[2].allOptions[0] ?? 'N/A'),
