@@ -150,7 +150,7 @@ class StreamDataProvider extends ChangeNotifier{
 
   Stream<List<Tracker>> getTrackerLogs({int? limit, String? type,required String uid}) {
     Query query = FirebaseFirestore.instance
-          .collection("users").doc(uid).collection("tracker");
+          .collection("users").doc(uid).collection("tracker").orderBy('createdAt',descending: false);
     if (limit != null) {
       query = query.limit(limit);
     }
@@ -162,6 +162,7 @@ class StreamDataProvider extends ChangeNotifier{
       return snapshot.docs.map((doc) {
         return Tracker.fromMap(doc.data() as Map<String, dynamic>);
       }).toList();
+      
     });
   }
   Stream<List<Admin>> getAdminStream() {

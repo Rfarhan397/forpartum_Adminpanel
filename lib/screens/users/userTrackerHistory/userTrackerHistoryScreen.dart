@@ -1,8 +1,5 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:forpartum_adminpanel/model/res/widgets/app_text_field.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
@@ -12,10 +9,18 @@ import '../../../controller/menu_App_Controller.dart';
 import '../../../model/res/components/custom_appBar.dart';
 import '../../../model/res/constant/app_assets.dart';
 import '../../../model/res/widgets/app_text.dart.dart';
-import '../../../model/user_model/user_model.dart';
 import '../../../provider/stream/streamProvider.dart';
+import '../../../model/user_model/user_model.dart';
 
-class UserTrackerHistoryScreen extends StatelessWidget {
+class UserTrackerHistoryScreen extends StatefulWidget {
+  @override
+  _UserTrackerHistoryScreenState createState() =>
+      _UserTrackerHistoryScreenState();
+}
+
+class _UserTrackerHistoryScreenState extends State<UserTrackerHistoryScreen> {
+  String? selectedMonth;
+
   @override
   Widget build(BuildContext context) {
     final dataP = Provider.of<MenuAppController>(context);
@@ -38,15 +43,46 @@ class UserTrackerHistoryScreen extends StatelessWidget {
                 fontWeight: FontWeight.w500,
               ),
               const SizedBox(height: 20),
+              SizedBox(
+                width: 15.w,
+                child: DropdownButtonFormField<String>(
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Color(0xffF7FAFC),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  hint: const Text("Select Month"),
+                  value: selectedMonth,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedMonth = value!;
+                    });
+                  },
+                  items: _getMonthOptions()
+                      .map((month) => DropdownMenuItem<String>(
+                    value: month,
+                    child: Text(month),
+                  ))
+                      .toList(),
+                ),
+              ),
+              const SizedBox(height: 20),
               _buildTrackerView(type!),
-              const SizedBox(height: 10),
-              TrackerLodData(type: type, uid: uid),
+              const SizedBox(height: 20),
+              TrackerLodData(
+                type: type,
+                uid: uid,
+                selectedMonth: selectedMonth,
+              ),
             ],
           ),
         ),
       ),
     );
   }
+
   Widget _buildTrackerView(String type) {
     final headerTitles = _getHeaderTitles(type);
     if (headerTitles.isEmpty) return Container();
@@ -64,7 +100,6 @@ class UserTrackerHistoryScreen extends StatelessWidget {
       ],
     );
   }
-
 
   List<String> _getHeaderTitles(String type) {
     switch (type) {
@@ -85,7 +120,7 @@ class UserTrackerHistoryScreen extends StatelessWidget {
 
   Widget _buildHeaderCell(String text) {
     return Padding(
-      padding:  EdgeInsets.symmetric(horizontal: 3.w), // Adjust the horizontal padding as needed
+      padding: EdgeInsets.symmetric(horizontal: 3.w), // Adjust the horizontal padding as needed
       child: Container(
         padding: const EdgeInsets.all(8.0),
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: primaryColor),
@@ -96,38 +131,81 @@ class UserTrackerHistoryScreen extends StatelessWidget {
   }
 }
 
+List<String> _getMonthOptions() {
+  return List.generate(12, (index) {
+    DateTime month = DateTime(DateTime.now().year, index + 1);
+    return DateFormat('MMMM yyyy').format(month);
+  });
+}
+
 class TrackerLodData extends StatelessWidget {
   final String type;
   final String uid;
-  final int? limit;
+  final String? selectedMonth;
 
-  TrackerLodData({required this.type, required this.uid, this.limit});
+  TrackerLodData({
+    required this.type,
+    required this.uid,
+    this.selectedMonth,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Consumer<StreamDataProvider>(
       builder: (context, provider, child) {
         return StreamBuilder<List<Tracker>>(
-          stream: provider.getTrackerLogs(type: type, uid: uid, limit: limit),
+          stream: provider.getTrackerLogs(type: type, uid: uid),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: Text("loading..."));
             }
             if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
+              return Center(child: SelectableText('Error: ${snapshot.error}'));
             }
             if (!snapshot.hasData || snapshot.data!.isEmpty) {
               return const Center(child: Text('No log found'));
             }
 
-            return _buildTrackerList(context,snapshot.data!, type,uid,);
+            // Filter data by selected month
+            List<Tracker> filteredTrackers =
+            _filterTrackersByMonth(snapshot.data!, selectedMonth);
+
+            if (filteredTrackers.isEmpty) {
+              return const Center(child: Text('No data for selected month'));
+            }
+
+            return _buildTrackerList(
+                context, filteredTrackers, type, uid);
           },
         );
       },
     );
   }
 
-  Widget _buildTrackerList(context ,List<Tracker> trackerList, String type,userId,) {
+  List<Tracker> _filterTrackersByMonth(
+      List<Tracker> trackers, String? selectedMonth) {
+    if (selectedMonth == null) return trackers;
+
+    return trackers.where((tracker) {
+      DateTime date = DateTime.fromMillisecondsSinceEpoch(
+          int.parse(tracker.createdAt!));
+      String trackerMonth = DateFormat('MMMM yyyy').format(date);
+      return trackerMonth == selectedMonth;
+    }).toList();
+  }
+
+  Widget _buildTrackerList(
+      BuildContext context,
+      List<Tracker> trackerList,
+      String type,
+      String userId
+      ) {
+    // Sort tracker list by date
+    trackerList.sort((a, b) => int.parse(a.createdAt!).compareTo(int.parse(b.createdAt!)));
+
+    // Track the weeks for which buttons have been shown
+    Set<int> displayedWeeks = {};
+
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -135,185 +213,129 @@ class TrackerLodData extends StatelessWidget {
       itemCount: trackerList.length,
       itemBuilder: (ctx, index) {
         Tracker tracker = trackerList[index];
-        DateTime date = DateTime.fromMillisecondsSinceEpoch(int.parse(tracker.createdAt!));
-        bool showIcon = DateTime.now().difference(date).inDays < 7;
-        return Column(
-          children: [
-            Table(
-              columnWidths: {
-                for (int i = 0; i < _getColumnCount(type); i++) i: const FlexColumnWidth(1),
-              },
-              children: [
-                TableRow(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: customGrey),
-                    color: Colors.white,
-                  ),
-                  children: [
-                    ..._buildContentCells(tracker, type),
+        DateTime weekDate = DateTime.fromMillisecondsSinceEpoch(
+          int.parse(tracker.createdAt!),
+        );
 
-                  ],                ),
-              ],
-            ),
-            if (showIcon)
-              InkWell(
-                hoverColor: Colors.transparent,
-                focusColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                onTap: () {
-                  _showNoteDialog(context,userId,tracker.timeStamp);
+        // Calculate the week number
+        int weekOfYear = _getWeekOfMonth(weekDate);
+
+        return Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Table(
+                columnWidths: {
+                  for (int i = 0; i < _getColumnCount(type); i++) i: const FlexColumnWidth(1),
                 },
-                child: Container(
-                  margin: EdgeInsets.all(4),
-                  alignment: Alignment.centerRight,
-                  child: AppTextWidget(text: 'Add results',fontWeight: FontWeight.w500,fontSize: 16,textDecoration: TextDecoration.underline,underlinecolor: Colors.black,color: primaryColor,) // Customize icon as needed
-                ),
+                children: [
+                  TableRow(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: customGrey),
+                      color: Colors.white,
+                    ),
+                    children: [
+                      ..._buildContentCells(tracker, type),
+                    ],
+                  ),
+                ],
               ),
-            SizedBox(height: 1.h),
+              // Show the button only once per week
+              if (!displayedWeeks.contains(weekOfYear) && _isPastWeek(weekDate))
+                InkWell(
+                  hoverColor: Colors.transparent,
+                  focusColor: Colors.transparent,
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  onTap: () {
+                    _showNoteDialog(context, userId, weekOfYear, tracker.createdAt);
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.all(4),
+                    alignment: Alignment.centerRight,
+                    child: AppTextWidget(
+                      text: 'Add week $weekOfYear results',
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16,
+                      textDecoration: TextDecoration.underline,
+                      underlinecolor: Colors.black,
+                      color: primaryColor,
+                    ),
+                  ),
+                ),
+              SizedBox(height: 1.h),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+// Helper to get the week number of the year
+  // Helper to get the week number of the month
+  int _getWeekOfMonth(DateTime date) {
+    // Get the first day of the month
+    DateTime firstDayOfMonth = DateTime(date.year, date.month, 1);
+
+    // Calculate the difference in days from the first day of the month to the given date
+    int dayOfMonth = date.day;
+
+    // Calculate the week number (1-based index)
+    return ((dayOfMonth + firstDayOfMonth.weekday - 1) / 7).ceil();
+  }
+
+
+// Helper to check if the date is in the past week
+  bool _isPastWeek(DateTime date) {
+    return DateTime.now().difference(date).inDays >= 7;
+  }
+
+
+  void _showNoteDialog(
+      BuildContext context, String userId, int weekOfYear, timeStamp) {
+    TextEditingController noteController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: const Text("Add Note"),
+          content: TextField(
+            controller: noteController,
+            decoration: const InputDecoration(hintText: "Enter your note here"),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                String note = noteController.text.trim();
+                if (note.isNotEmpty) {
+                  FirebaseFirestore.instance
+                      .collection("users")
+                      .doc(userId)
+                      .collection("notes")
+                      .doc(timeStamp)
+                      .set({
+                    'week': weekOfYear,
+                    'createdAt': timeStamp,
+                    'note': note,
+                  }, SetOptions(merge: true));
+                  Navigator.pop(ctx);
+                }
+              },
+              child: const Text("Save"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(ctx);
+              },
+              child: const Text("Cancel"),
+            ),
           ],
         );
       },
     );
-  }
-  // Method to show the dialog with a text field and save button
-  // Future<void> _showDialog(BuildContext context,userID) async {
-  //   TextEditingController textController = TextEditingController();
-  //
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) {
-  //       return AlertDialog(
-  //         title: Text("Enter Details"),
-  //         content: AppTextField(
-  //           hintText: 'Result',
-  //           controller: textController,
-  //         ),
-  //         actions: [
-  //           TextButton(
-  //             onPressed: () {
-  //               // Save the text to Firestore
-  //               _saveToFirestore(textController.text,userID);
-  //               Navigator.pop(context); // Close the dialog
-  //             },
-  //             child: Text("Save"),
-  //           ),
-  //           TextButton(
-  //             onPressed: () {
-  //               Navigator.pop(context); // Close the dialog
-  //             },
-  //             child: Text("Cancel"),
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
-  Future<void> _showNoteDialog(BuildContext context, String userID,timestamp) async {
-    TextEditingController textController = TextEditingController();
-
-    showDialog(
-      context: context,
-      barrierDismissible: false, // Prevent accidental dismissal
-      builder: (context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.5, // Adaptive width
-            height: MediaQuery.of(context).size.height * 0.6, // Adaptive height
-            padding: EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AppTextWidget(text:
-                  "Add Note",
-                  fontSize: 20, fontWeight: FontWeight.bold),
-                SizedBox(height: 16),
-                Expanded(
-                  child: Scrollbar(
-                    child: SingleChildScrollView(
-                      child: TextField(
-                        controller: textController,
-                        maxLines: null, // Allows multiline input
-                        decoration: InputDecoration(
-                          hintText: "Enter your note here...",
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 1.h,),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text("Cancel"),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        _saveToFirestore(textController.text, userID,timestamp); // Save to Firestore
-                        Navigator.pop(context);
-                      },
-                      child: Text("Save"),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> _saveToFirestore(String text, userId,timestamp) async {
-    if (text.isNotEmpty) {
-      try {
-        var id = FirebaseFirestore.instance.collection('users').doc(userId).collection('trackerResult').doc().id;
-        FirebaseFirestore.instance.collection('users').doc(userId).collection('trackerResult').doc(timestamp).set({
-          'type': type,
-          'text': text,
-          'timestamp': timestamp,
-        });
-
-        // Optionally, you can confirm the save by fetching the document after it's been added
-        DocumentSnapshot doc = await FirebaseFirestore.instance.collection('users').doc(userId).collection('trackerResult').doc(timestamp).get();
-        if (doc.exists) {
-          log("Data saved successfully: ${doc.data()}");
-        } else {
-          log("Data not found in Firestore.");
-        }
-      } catch (e) {
-        log("Error saving text to Firestore: $e");
-      }
-    } else {
-      log("Text input is empty, nothing to save.");
-    }
-  }
-  int _getColumnCount(String type) {
-    switch (type) {
-      case 'sleep':
-        return 4;
-      case 'mood':
-        return 4;
-      case 'pain':
-        return 5;
-      case 'stress':
-        return 4;
-      case 'energy':
-        return 6;
-      default:
-        return 0;
-    }
   }
 
   List<Widget> _buildContentCells(Tracker tracker, String type) {
@@ -360,15 +382,6 @@ class TrackerLodData extends StatelessWidget {
         return [];
     }
   }
-
-  Widget _buildContentCell(String text) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 15),
-      alignment: Alignment.center,
-      child: Text(text, style: const TextStyle(fontSize: 16)),
-    );
-  }
-
   Widget _buildContentCellImage(String image) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
@@ -389,3 +402,34 @@ class TrackerLodData extends StatelessWidget {
     return 'N/A';
   }
 }
+
+  int _getColumnCount(String type) {
+    switch (type) {
+      case 'sleep':
+        return 4;
+      case 'mood':
+        return 4;
+      case 'pain':
+        return 5;
+      case 'stress':
+        return 4;
+      case 'energy':
+        return 6;
+      default:
+        return 0;
+    }
+  }
+
+  Widget _buildContentCell(String text) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 3.w), // Adjust padding as needed
+      child: Text(text, style: const TextStyle(fontSize: 14)),
+    );
+  }
+
+  // int _getWeekOfMonth(DateTime date) {
+  //   final firstDayOfMonth = DateTime(date.year, date.month, 1);
+  //   final offset = (firstDayOfMonth.weekday - 1) % 7;
+  //   return ((date.day + offset) / 7).ceil();
+  // }
+

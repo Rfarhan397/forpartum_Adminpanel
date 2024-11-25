@@ -161,7 +161,6 @@ class TermsNCondition extends StatelessWidget {
                         var document = snapshot.data!.docs[index];
                         var termCondition = document['text'];  // Assuming 'privacy' is the field storing the policy
                         var createdAt = (document['created_at']).toString();  // Convert Timestamp to DateTime
-
                         return Card(
                           margin: const EdgeInsets.all(8.0),
                           child: ListTile(

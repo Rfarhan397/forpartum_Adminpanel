@@ -159,12 +159,12 @@ class CustomNavigationBar extends StatelessWidget {
                   title: "Guidelines",
                   svgSrc: AppIcons.gudlines,
                 ),
-                const DrawerListTile(
-                  index: 26,
-                  screenIndex: 26,
-                  title: "Learning Center",
-                  svgSrc: AppIcons.learning_center,
-                ),
+                // const DrawerListTile(
+                //   index: 26,
+                //   screenIndex: 26,
+                //   title: "Learning Center",
+                //   svgSrc: AppIcons.learning_center,
+                // ),
                 const SizedBox(
                   height: defaultDrawerHeadHeight,
                 ),

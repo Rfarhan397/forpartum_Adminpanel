@@ -141,10 +141,12 @@ class FaqScreen extends StatelessWidget {
                               if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                                 return const Center(child: Text('No privacy policies found'));
                               }
+                              final faqDocs = snapshot.data!.docs;
+                              Provider.of<FaqProvider>(context, listen: false).updateExpandedList(faqDocs.length);
 
                               return ListView.builder(
                                 shrinkWrap: true,
-                                itemCount: snapshot.data!.docs.length,
+                                itemCount: faqDocs.length,
                                 itemBuilder: (context, index) {
                                   var document = snapshot.data!.docs[index];
                                   var question = document['question'];

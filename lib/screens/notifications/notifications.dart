@@ -11,6 +11,7 @@ import '../../model/res/components/custom_appBar.dart';
 import '../../model/res/components/custom_switch_widget.dart';
 import '../../model/res/components/stats_card.dart';
 import '../../model/res/constant/app_icons.dart';
+import '../../model/res/constant/app_utils.dart';
 import '../../model/res/widgets/app_text.dart.dart';
 import '../../model/res/widgets/button_widget.dart';
 import '../../provider/activity/acitivity_provider.dart';
@@ -22,6 +23,7 @@ class Notifications extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final notificationProvider = Provider.of<NotificationProviderForNotifications>(context);
+    final action = Provider.of<ActionProvider>(context);
     // Fetch notifications when the widget is built
 
     if (notificationProvider.notifications.isEmpty) {
@@ -115,41 +117,40 @@ class Notifications extends StatelessWidget {
                                 SizedBox(width: 2.w,),
                               _buildHeaderButton(context,primaryColor,1, 'Status', secondaryColor,0.0),
                                 SizedBox(width: 2.w,),
-                              _buildHeaderButton(context, secondaryColor,1,'Action', secondaryColor,0.0),
+                              _buildHeaderButton(context, secondaryColor,2,'Action', secondaryColor,0.0),
                                 SizedBox(width: 2.w,),
                             ],),
                             SizedBox(height: 0.8.h),
                             Expanded(
-                              child: Consumer<ActivityProvider>(
-                                builder: (context, provider, child) {
-                                  return ListView.builder(
-                                    shrinkWrap: true,
-                                    physics: const NeverScrollableScrollPhysics(),
-                                    itemCount: notificationProvider.notifications.length,
-                                    itemBuilder: (context, index) {
-                                      final activity = provider.activitiesForNotifications[index];
-                                      final notification = notificationProvider.notifications[index];
-                                      String readableDate = notificationProvider.formatTimestamp(notification.timestamp);
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: notificationProvider.notifications.length,
+                                itemBuilder: (context, index) {
+                                  final notification = notificationProvider.notifications[index];
+                                  String readableDate = notificationProvider.formatTimestamp(notification.timestamp);
 
-                                      return Padding(
-                                        padding:  EdgeInsets.symmetric(vertical: 0.8.w),
-                                        child: 
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  return Padding(
+                                    padding:  EdgeInsets.symmetric(vertical: 0.8.w),
+                                    child:
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Expanded(flex: 1,child: AppTextWidget(text:readableDate, fontSize: 12)),
+                                            SizedBox(width: 3.5.w),
+                                            Expanded(flex: 2,child: Padding(
+                                              padding:  EdgeInsets.only(left: 1.w),
+                                              child: AppTextWidget(text:notification.title,textAlign: TextAlign.start, fontSize: 12),
+                                            )),
+                                            SizedBox(width: 3.5.w),
+                                            Expanded(flex: 1,child: Padding(
+                                              padding:  EdgeInsets.only(left: 1.w),
+                                              child: AppTextWidget(text:notification .status,fontWeight: FontWeight.bold,textAlign: TextAlign.start, fontSize: 12),
+                                            )),
+                                          SizedBox(width: 1.5.w),
+                                            Expanded(flex: 2,child: Row(
                                               children: [
-                                                Expanded(flex: 1,child: AppTextWidget(text:readableDate, fontSize: 12)),
-                                                SizedBox(width: 3.5.w),
-                                                Expanded(flex: 2,child: Padding(
-                                                  padding:  EdgeInsets.only(left: 1.w),
-                                                  child: AppTextWidget(text:notification.title,textAlign: TextAlign.start, fontSize: 12),
-                                                )),
-                                                SizedBox(width: 3.5.w),
-                                                Expanded(flex: 1,child: Padding(
-                                                  padding:  EdgeInsets.only(left: 1.w),
-                                                  child: AppTextWidget(text:notification .status,fontWeight: FontWeight.bold,textAlign: TextAlign.start, fontSize: 12),
-                                                )),
-                                              SizedBox(width: 3.5.w),
-                                                Expanded(flex: 1,child: InkWell(
+                                                InkWell(
                                                     onTap: () {
                                                      var show = Provider.of<ActionProvider>(context,listen: false);
                                                      show.showConfirmDialog(
@@ -158,11 +159,23 @@ class Notifications extends StatelessWidget {
                                                         notification.message
                                                       );
                                                     },
-                                                    child: AppTextWidget(text:activity.action,textAlign: TextAlign.start, fontWeight: FontWeight.bold,fontSize: 12))),
+                                                    child: AppTextWidget(text:'[View]',textAlign: TextAlign.start, fontWeight: FontWeight.bold,fontSize: 12)),
+                                                SizedBox(width: 2.w,),
+                                                InkWell(
+                                                    onTap: () async {
+                                                      bool confirmDelete = await action.showDeleteConfirmationDialog(
+
+                                                        context,'Delete!','Are you sure you want to delete?',);
+                                                      if (confirmDelete) {
+                                                        action.deleteItem('notifications',notification.id.toString());
+                                                      }
+                                                    },
+                                                    child: AppTextWidget(text:'[Delete]',textAlign: TextAlign.start, fontWeight: FontWeight.bold,fontSize: 12)),
                                               ],
-                                        ),
-                                      );
-                                    },
+                                            ),
+                                            ),
+                                          ],
+                                    ),
                                   );
                                 },
                               ),
@@ -283,6 +296,34 @@ class Notifications extends StatelessWidget {
         ),
       ),
     );
+  }
+  Future<bool> showDeleteConfirmationDialog(BuildContext context,String title,content) async {
+    return await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title:  Text(title),
+          content:  Text(content),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
+            TextButton(
+              child: const Text('Delete'),
+              onPressed: () {
+
+                Navigator.of(context).pop(true);
+                AppUtils().showToast(text: 'Deleted successfully');
+
+              },
+            ),
+          ],
+        );
+      },
+    ) ?? false;
   }
   Widget _buildHeaderButton(BuildContext context,Color backgroundColor,int flex, String text, Color color,double horizontalPadding) {
     return Expanded(

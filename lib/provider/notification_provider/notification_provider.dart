@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -63,14 +65,17 @@ class NotificationProviderForNotifications with ChangeNotifier {
           timestamp: doc['timestamp'],
           title: doc['title'],
           status: doc['status'],
+          id: doc['id'],
         );
       }).toList();
       notifyListeners();
     } catch (e) {
       // Handle errors if needed
-      print("Error fetching notifications: $e");
+      log("Error fetching notifications: $e");
     }
   }
+
+
   String formatTimestamp(String timestampString) {
     try {
       // Convert the string timestamp to an integer (assuming it's in microseconds)

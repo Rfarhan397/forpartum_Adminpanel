@@ -57,18 +57,32 @@ class CardProviderMenu with ChangeNotifier {
 }
 
 class FaqProvider with ChangeNotifier {
-  List<bool> _expanded = [false, false, false]; // Adjust according to your number of items
-  List<bool> _expandedd = [false, false, false, false, false, false, false, false, false]; // Adjust according to your number of items
-
-  List<bool> get expanded => _expanded;
-  List<bool> get expandedd => _expandedd;
+  List<bool> expanded = [];
 
   void toggleExpand(int index) {
-    _expanded[index] = !_expanded[index];
+    if (index < expanded.length) {
+      expanded[index] = !expanded[index];
+      notifyListeners();
+    }
+  }
+
+  void updateExpandedList(int newLength) {
+    if (newLength > expanded.length) {
+      expanded.addAll(List.generate(newLength - expanded.length, (index) => false));
+    } else if (newLength < expanded.length) {
+      expanded = expanded.sublist(0, newLength);
+    }
     notifyListeners();
   }
+  void initializeExpandedList(int itemCount) {
+    if (expanded.length != itemCount) {
+      expanded = List<bool>.filled(itemCount, false);
+      notifyListeners();
+    }
+  }
+
   void toggleExpandd(int index) {
-    _expandedd[index] = !_expandedd[index];
+    expanded[index] = !expanded[index];
     notifyListeners();
   }
 }

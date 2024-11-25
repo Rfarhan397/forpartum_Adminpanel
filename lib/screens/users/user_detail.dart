@@ -601,32 +601,34 @@ class TrackerLodData extends StatelessWidget {
             }
 
             List<Tracker> trackerList = snapshot.data!;
-            return Column(
-              children: [
-                AppTextWidget(
-                  text: 'Date Logged',
-                  fontSize: 16,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w500,
-                ),
-                SizedBox(
-                  height: 1.h,
-                ),
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  padding: const EdgeInsets.all(8.0),
-                  itemCount: trackerList.length,
-                  itemBuilder: (ctx, index) {
-                    Tracker trackerLog = trackerList[index];
-                    return AppTextWidget(
-                      text:
-                          "${convertTimestampToDate(int.parse(trackerLog.createdAt.toString()))}",
-                      fontSize: 14,
-                    );
-                  },
-                ),
-              ],
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  AppTextWidget(
+                    text: 'Date Logged',
+                    fontSize: 16,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  SizedBox(
+                    height: 1.h,
+                  ),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(8.0),
+                    itemCount: trackerList.length,
+                    itemBuilder: (ctx, index) {
+                      Tracker trackerLog = trackerList[index];
+                      return AppTextWidget(
+                        text:
+                            "${convertTimestampToDate(int.parse(trackerLog.createdAt.toString()))}",
+                        fontSize: 14,
+                      );
+                    },
+                  ),
+                ],
+              ),
             );
           },
         );

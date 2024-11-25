@@ -228,6 +228,7 @@ class ActionProvider extends ChangeNotifier{
             TextButton(
               child: const Text('Delete'),
               onPressed: () {
+
                 Navigator.of(context).pop(true);
                 AppUtils().showToast(text: 'Deleted successfully');
 

@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:forpartum_adminpanel/model/res/widgets/hover_button_loader.dart';
 import 'package:forpartum_adminpanel/provider/action/action_provider.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -119,14 +120,16 @@ appBar: const CustomAppbar(text: 'Create New Notification'),
                             children: [
                               Align(
                                 alignment: Alignment.centerRight,
-                                child: ButtonWidget(
-                                  onClicked: () {
+                                child: HoverLoadingButton(
+                                  onClicked: () async{
                                     Provider.of<MenuAppController>(context, listen: false)
                                         .changeScreen(6);
                                   },
                                   text:('Cancel'),
+                                  isIcon: false,
+                                  index: 1,
+                                  loader: false,
                                   backgroundColor: secondaryColor,
-                                  oneColor: true,
                                   borderColor: secondaryColor,
                                   height: 4.h,
                                   width: 8.w,
@@ -209,8 +212,10 @@ appBar: const CustomAppbar(text: 'Create New Notification'),
 
    Future<void> saveNotificationToFirestore(String title, String message,{bool isSent = true}) async {
      try {
+       var id = FirebaseFirestore.instance.collection('notifications').doc().id;
        CollectionReference notifications = FirebaseFirestore.instance.collection('notifications');
-       await notifications.add({
+       await notifications.doc(id).set({
+         'id':id,
          'title': title,
          'message': message,
          'description' : _descriptionController.isNull ? "" : _descriptionController.text.toString(),
