@@ -142,7 +142,7 @@ class BlogPostCard extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8.0),
               ),
-              child: AppTextWidget(text: title,textAlign: TextAlign.start,fontSize: 18,fontWeight: FontWeight.w400,)
+              child: AppTextWidget(text: title,maxLines: 2,textAlign: TextAlign.start,fontSize: 18,fontWeight: FontWeight.w400,)
             ),
           ),
         ],
