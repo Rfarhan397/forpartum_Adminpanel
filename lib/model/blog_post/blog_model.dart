@@ -165,12 +165,14 @@ class AddMilestone{
   final String title;
   final String id;
   final String createdAt;
+  final String months;
 
 
   AddMilestone({
     required this.title,
     required this.id,
     required this.createdAt,
+    required this.months,
 
   });
 
@@ -181,6 +183,7 @@ class AddMilestone{
 
       id: data['id'] ?? '',
       createdAt: data['createdAt'] ?? '',
+      months: data['months'] ?? '',
 
     );
   }

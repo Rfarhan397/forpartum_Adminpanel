@@ -143,86 +143,103 @@ class _BlogScreenState extends State<BlogScreen> {
                   SizedBox(height: 2.h,),
 
                   Consumer<StreamDataProvider>(
-                      builder: (context, productProvider, child) {
-                        return StreamBuilder<List<BlogCategory>>(
-                            stream: productProvider.getBlogCategory(),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                return Center(child: CircularProgressIndicator());
-                              }
-                              if (snapshot.hasError) {
-                                return Center(child: Text('Error: ${snapshot.error}'));
-                              }
-                              if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                                return Center(child: Text('No Blog Category found'));
-                              }
-                              List<BlogCategory> blogCategory= snapshot.data!;
-                              blogCategory.sort((a, b) => a.createdAt.compareTo(b.createdAt)); // Sort by datetime
+                    builder: (context, productProvider, child) {
+                      return StreamBuilder<List<BlogCategory>>(
+                        stream: productProvider.getBlogCategory(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return Center(child: CircularProgressIndicator());
+                          }
+                          if (snapshot.hasError) {
+                            return Center(child: Text('Error: ${snapshot.error}'));
+                          }
+                          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                            return Center(child: Text('No Blog Category found'));
+                          }
 
-                              log("Length of Blog Categories are :: ${snapshot.data!.length}");
-                              return SizedBox(
-                                height: 4.h,
-                                width: 80.w,
-                                child: ListView.builder(
-                                    shrinkWrap: true,
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: blogCategory.length,
-                                    itemBuilder: (context, index) {
-                                      BlogCategory model = blogCategory[index];
-                                      final isSelected = chipProvider.selectedCategory.toString() == blogCategory[index].category;
-                                      final isHovered = chipProvider.hoveredCategory == blogCategory[index].createdAt;
-                                      return InkWell(
-                                        splashColor: Colors.transparent,
-                                        highlightColor: Colors.transparent,
-                                        onTap: () {
-                                          chipProvider.selectCategory(blogCategory[index].category);
-                                          if(blogCategory[index].category.toLowerCase() == "all"){
-                                            Provider.of<DropdownProviderN>(context,listen: false)
-                                                .setSelectedCategory(
-                                                blogCategory[index].category, "");
-                                          }else{
-                                            Provider.of<DropdownProviderN>(context,listen: false)
-                                                .setSelectedCategory(
-                                                blogCategory[index].category, blogCategory[index].id);
-                                          }
+                          // Get dynamic categories
+                          List<BlogCategory> blogCategory = snapshot.data!;
+                          // Sort dynamic categories
+                          blogCategory.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+                          // Prepend a static "All" category
+                          blogCategory.insert(
+                            0,
+                            BlogCategory(
+                              id: "all",
+                              category: "All",
+                              createdAt: DateTime.now().millisecondsSinceEpoch.toString(),
+                            ),
+                          );
 
-                                          log("Category Id: ${blogCategory[index].id}");
-                                        },
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                          child: Container(
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 5.0, horizontal: 10.0),
-                                            decoration: BoxDecoration(
-                                              color:
-                                              isSelected
-                                                  ? primaryColor
-                                                  : isHovered
-                                                  ? primaryColor
-                                                  :
-                                              secondaryColor,
-                                              borderRadius: BorderRadius.circular(6.0),
-                                            ),
-                                            child: Center(
-                                              child: AppTextWidget(
-                                                text: model.category,
-                                                color:
-                                                isSelected
-                                                    ? Colors.white
-                                                    : isHovered
-                                                    ? Colors.white
-                                                    :
-                                                Colors.black,
-                                                fontWeight: FontWeight.w700,
-                                              ),
-                                            ),
-                                          ),
+                          log("Length of Blog Categories are :: ${blogCategory.length}");
+
+                          return SizedBox(
+                            height: 4.h,
+                            width: 80.w,
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              itemCount: blogCategory.length,
+                              itemBuilder: (context, index) {
+                                BlogCategory model = blogCategory[index];
+                                final isSelected =
+                                    chipProvider.selectedCategory.toString() == model.category;
+                                final isHovered =
+                                    chipProvider.hoveredCategory == model.createdAt;
+
+                                return InkWell(
+                                  splashColor: Colors.transparent,
+                                  highlightColor: Colors.transparent,
+                                  onTap: () {
+                                    chipProvider.selectCategory(model.category);
+
+                                    if (model.category.toLowerCase() == "all") {
+                                      Provider.of<DropdownProviderN>(context, listen: false)
+                                          .setSelectedCategory(model.category, "");
+                                    } else {
+                                      Provider.of<DropdownProviderN>(context, listen: false)
+                                          .setSelectedCategory(model.category, model.id);
+                                    }
+
+                                    log("Category Id: ${model.id}");
+                                    log('selected category is :: ${Provider.of<DropdownProviderN>(context, listen: false)
+                                        .selectedCategory}');
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                    child: Container(
+                                      padding:
+                                      EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
+                                      decoration: BoxDecoration(
+                                        color: isSelected
+                                            ? primaryColor
+                                            : isHovered
+                                            ? primaryColor
+                                            : secondaryColor,
+                                        borderRadius: BorderRadius.circular(6.0),
+                                      ),
+                                      child: Center(
+                                        child: AppTextWidget(
+                                          text: model.category,
+                                          color: isSelected
+                                              ? Colors.white
+                                              : isHovered
+                                              ? Colors.white
+                                              : Colors.black,
+                                          fontWeight: FontWeight.w700,
                                         ),
-                                      );
-                                    }),
-                              );
-                            });
-                      }),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+
                   SizedBox(height: 2.h,),
 
 
@@ -270,20 +287,20 @@ class _BlogScreenState extends State<BlogScreen> {
                   //   ),
                   // ),
                   BlogPostGrid(posts: blogPostProvider.filteredPosts),
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: Container(
-                      margin: EdgeInsets.only(right: 40, bottom: 20),
-                      alignment: Alignment.centerRight,
-                      child: PaginationWidget(
-                        currentPage: blogPostProvider.currentPage,
-                        totalPages: blogPostProvider.totalPages,
-                        onPageChanged: (page) {
-                          blogPostProvider.goToPage(page);
-                        },
-                      ),
-                    ),
-                  ),
+                  // Align(
+                  //   alignment: Alignment.bottomRight,
+                  //   child: Container(
+                  //     margin: EdgeInsets.only(right: 40, bottom: 20),
+                  //     alignment: Alignment.centerRight,
+                  //     child: PaginationWidget(
+                  //       currentPage: blogPostProvider.currentPage,
+                  //       totalPages: blogPostProvider.totalPages,
+                  //       onPageChanged: (page) {
+                  //         blogPostProvider.goToPage(page);
+                  //       },
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             )

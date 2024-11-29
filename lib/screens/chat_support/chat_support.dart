@@ -121,10 +121,14 @@ class ChatSupportScreen extends StatelessWidget {
 
                   return ListTile(
                     leading: CircleAvatar(
-                      backgroundImage: otherUser.image.toString().isNotEmpty
-                          ? NetworkImage(otherUser.image.toString())
+                      backgroundImage: otherUser.image != null && otherUser.image!.isNotEmpty
+                          ? NetworkImage(otherUser.image!) as ImageProvider
                           : const AssetImage(AppAssets.person),
+                      onBackgroundImageError: (_, __) {
+                        log('Error loading image for ${otherUser.name}: ${otherUser.image}');
+                      },
                     ),
+
                     title: AppTextWidget(
                       text: otherUser.name,
                       fontSize: 14.0,

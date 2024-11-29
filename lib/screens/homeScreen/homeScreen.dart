@@ -26,7 +26,7 @@ class HomeScreen extends StatelessWidget {
     final isTablet = Responsive.isTablet(context);
 
     final dropdownProvider = Provider.of<DropdownProvider>(context);
-    final notifications = Provider.of<NotificationProvider>(context).notifications;
+    final notifications = Provider.of<NotificationProviderForNotifications>(context).notifications;
     final userProvider = Provider.of<UserProvider>(context);
 
 

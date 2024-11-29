@@ -178,22 +178,24 @@ class PrivacyScreen extends StatelessWidget {
                           var document = snapshot.data!.docs[index];
                           var privacyPolicy = document[
                               'text']; // Assuming 'privacy' is the field storing the policy
-                          var createdAt = (document['created_at']
-                              .toString()); // Convert Timestamp to DateTime
+                          var createdAtString = (document['created_at']).toString();
+
+                          var createdAt = DateTime.fromMillisecondsSinceEpoch(int.parse(createdAtString)); // Convert to DateTime
+                          var formattedDate = '${createdAt.day}/${createdAt.month}/${createdAt.year}';
         
                           return Card(
                             margin: const EdgeInsets.all(8.0),
                             child: ListTile(
                               title: AppTextWidget(
                                 text: privacyPolicy,
-                                maxLines: 80,
+                                maxLines: null,
                                 textAlign: TextAlign.start,
                                 fontWeight: FontWeight.w900,
                                 fontSize: 15,
+
                               ),
                               subtitle: AppTextWidget(
-                                text: 'Published on: ${createdAt.toString()}',
-                                maxLines: 80,
+                                text: 'Published on: ${formattedDate.toString()}',
                                 textAlign: TextAlign.start,
                                 fontWeight: FontWeight.w900,
                                 fontSize: 15,
@@ -210,10 +212,10 @@ class PrivacyScreen extends StatelessWidget {
                                         _policyController.text = document['text'];
                                         action.setEditingMode(document['id']);
                                         action.scrollToTextField(_scrollController);
-        
+
                                       },
                                     ),
-        
+
                                     // Delete Icon
                                     IconButton(
                                       icon: const Icon(Icons.delete, color: primaryColor),

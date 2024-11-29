@@ -44,7 +44,7 @@ class _AddBlogScreenState extends State<AddBlogScreen> {
     final blogPostProvider = Provider.of<BlogPostProvider>(context);
 
     return Scaffold(
-      appBar: const CustomAppbar(text: 'Dashboard'),
+      appBar: const CustomAppbar(text: 'Add Blog'),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

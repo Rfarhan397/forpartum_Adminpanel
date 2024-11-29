@@ -246,7 +246,7 @@ class BlogPostProvider extends ChangeNotifier {
     log('Total documents count: $_totalDocuments');
 
     // Get the number of documents where 'recommended' is true
-    QuerySnapshot recommendedSnapshot = await collectionRef.where('recommended', isEqualTo: 'true').get();
+    QuerySnapshot recommendedSnapshot = await collectionRef.where('recommended', isEqualTo: 'yes').get();
     _recommendedDocuments = recommendedSnapshot.docs.length;
     log('Recommended documents count: $_recommendedDocuments');
 

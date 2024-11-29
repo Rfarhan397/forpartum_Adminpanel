@@ -195,7 +195,7 @@ class BlogPostGrid extends StatelessWidget {
                         imageUrl: post.imageUrl ?? "",
                         title: post.title ?? "",
                         category: post.category   ?? "",
-                        readTime: post.readTime ?? "",
+                        readTime: formatTimestamp(post.createdAt) ?? "",
                         content: post.content ?? "",
                         id: post.id ?? "",
                         arguments: post
@@ -211,4 +211,32 @@ class BlogPostGrid extends StatelessWidget {
 
 
   }
+  String formatTimestamp(String timestamp) {
+    // Convert the string timestamp to a DateTime object (assuming it's in milliseconds)
+    DateTime createdAt = DateTime.fromMillisecondsSinceEpoch(int.parse(timestamp));
+
+    // Get the current time
+    DateTime now = DateTime.now();
+
+    // Calculate the difference
+    Duration difference = now.difference(createdAt);
+
+    if (difference.inSeconds < 60) {
+      // Less than 1 minute
+      return '${difference.inSeconds} seconds ago';
+    } else if (difference.inMinutes < 60) {
+      // Less than 1 hour
+      return '${difference.inMinutes} minutes ago';
+    } else if (difference.inHours < 24) {
+      // Less than 1 day
+      return '${difference.inHours} hours ago';
+    } else if (difference.inDays < 30) {
+      // Less than 30 days
+      return '${difference.inDays} days ago';
+    } else {
+      // More than 30 days
+      return '${createdAt.month}/${createdAt.day}/${createdAt.year}';
+    }
+  }
+
 }

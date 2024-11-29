@@ -22,9 +22,9 @@ import '../../provider/stream/streamProvider.dart';
 class MileStoneScreen extends StatelessWidget {
   MileStoneScreen({super.key});
   final List<String> categories = [
-    '1-12 Months Postpartum ',
-    '12-24 Months Postpartum ',
-    '24-36+ Months Postpartum ',
+    '1-12 Months Postpartum',
+    '12-24 Months Postpartum',
+    '24-36+ Months Postpartum',
   ];
   TextEditingController milestoneController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
@@ -54,8 +54,7 @@ class MileStoneScreen extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: categories.map((category) {
-                          final isSelected =
-                              chipProvider.selectedCategory == category;
+                          final isSelected = chipProvider.selectedCategory == category;
                     
                           return Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -105,87 +104,64 @@ class MileStoneScreen extends StatelessWidget {
                               Consumer<StreamDataProvider>(
                                 builder: (context, provider, child) {
                                   return StreamBuilder<List<AddMilestone>>(
-                                    stream: provider.getMilestones(),
+                                    stream: provider.getMilestones(chipProvider.selectedCategory),
                                     builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return Center(
-                                            child: CircularProgressIndicator());
+                                      if (snapshot.connectionState == ConnectionState.waiting) {
+                                        return Center(child: CircularProgressIndicator());
                                       }
                                       if (snapshot.hasError) {
-                                        return Center(
-                                            child:
-                                                Text('Error: ${snapshot.error}'));
+                                        return Center(child: Text('Error: ${snapshot.error}'));
                                       }
-                                      if (!snapshot.hasData ||
-                                          snapshot.data!.isEmpty) {
-                                        return Center(
-                                            child: Text('No milestone found'));
+                                      if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                        return Center(child: Text('No milestones found for the selected category.'));
                                       }
-                  
-                                      List<AddMilestone> addMilestone =
-                                          snapshot.data!;
-                                      log("Length of milestone is:: ${snapshot.data!.length}");
+
+                                      List<AddMilestone> addMilestone = snapshot.data!;
+                                      log("Filtered milestones count: ${snapshot.data!.length}");
+
                                       return ListView.builder(
                                         shrinkWrap: true,
                                         padding: const EdgeInsets.all(8.0),
                                         itemCount: addMilestone.length,
                                         itemBuilder: (ctx, index) {
-                                          AddMilestone model =
-                                              addMilestone[index];
+                                          AddMilestone model = addMilestone[index];
                                           return Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               Row(
                                                 children: [
                                                   Padding(
-                                                    padding: EdgeInsets.symmetric(
-                                                        vertical: 0.5.h),
+                                                    padding: EdgeInsets.symmetric(vertical: 0.5.h),
                                                     child: SizedBox(
                                                       width: 22.w,
                                                       child: AppTextWidget(
-                                                          text: model
-                                                              .title.capitalize!,
-                                                          textAlign:
-                                                              TextAlign.start,
-                                                          color:
-                                                              Color(0xff5B5B5B),
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          softWrap: true,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          fontSize: 12),
+                                                        text: model.title.capitalize!,
+                                                        textAlign: TextAlign.start,
+                                                        color: Color(0xff5B5B5B),
+                                                        fontWeight: FontWeight.w500,
+                                                        softWrap: true,
+                                                        overflow: TextOverflow.ellipsis,
+                                                        fontSize: 12,
+                                                      ),
                                                     ),
                                                   ),
                                                   Spacer(),
                                                   // Update Icon
                                                   IconButton(
-                                                    icon: Icon(Icons.edit,
-                                                        color: secondaryColor),
+                                                    icon: Icon(Icons.edit, color: secondaryColor),
                                                     onPressed: () {
-                                                      // _updateMilestone(context, model.id);
-                                                      milestoneController.text =
-                                                          model.title;
-                                                      action.setEditingMode(
-                                                          model.id);
+                                                      milestoneController.text = model.title;
+                                                      action.setEditingMode(model.id);
                                                       _scrollToTextField();
                                                     },
                                                   ),
-                  
                                                   // Delete Icon
                                                   IconButton(
-                                                    icon: Icon(Icons.delete,
-                                                        color: primaryColor),
+                                                    icon: Icon(Icons.delete, color: primaryColor),
                                                     onPressed: () async {
-                                                      bool confirmDelete =
-                                                          await _showDeleteConfirmationDialog(
-                                                              context);
+                                                      bool confirmDelete = await _showDeleteConfirmationDialog(context);
                                                       if (confirmDelete) {
-                                                        action.deleteItem(
-                                                            'milestones',
-                                                            model.id);
+                                                        action.deleteItem('milestones', model.id);
                                                       }
                                                     },
                                                   ),

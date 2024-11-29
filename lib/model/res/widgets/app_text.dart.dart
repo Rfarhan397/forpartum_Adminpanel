@@ -11,7 +11,7 @@ import '../constant/app_colors.dart';
 class AppTextWidget extends StatelessWidget {
   final String text;
   final double fontSize;
-  final int maxLines;
+  final int? maxLines;
   final FontWeight fontWeight;
   final TextOverflow overflow;
   final TextAlign textAlign;
@@ -28,7 +28,8 @@ class AppTextWidget extends StatelessWidget {
     this.textDecoration = TextDecoration.none,
     this.fontSize = 12,
     this.softWrap = true,
-     this.maxLines  = 2,  this.underlinecolor = primaryColor,  this.overflow = TextOverflow.clip,
+     this.maxLines,
+    this.underlinecolor = primaryColor,  this.overflow = TextOverflow.clip,
   });
 
   @override

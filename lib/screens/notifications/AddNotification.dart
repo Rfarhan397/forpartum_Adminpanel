@@ -221,6 +221,7 @@ appBar: const CustomAppbar(text: 'Create New Notification'),
          'description' : _descriptionController.isNull ? "" : _descriptionController.text.toString(),
          'timestamp': DateTime.now().microsecondsSinceEpoch.toString(),
          'status': isSent ? 'Sent' : 'Failed',
+         'clicked': '0'
 
        });
        ActionProvider.stopLoading();

@@ -39,6 +39,16 @@ class StreamDataProvider extends ChangeNotifier{
       }).toList();
     });
   }
+  Stream<List<NotificationModel>> getNotifications() {
+    return FirebaseFirestore.instance
+        .collection('notifications')
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return NotificationModel.fromMap(doc.data());
+      }).toList();
+    });
+  }
 
 
   //this is for getting meal categories from firebase
@@ -81,14 +91,21 @@ class StreamDataProvider extends ChangeNotifier{
     }
   }
 
-  Stream<List<AddMilestone>> getMilestones() {
-    // String? userUID = auth.currentUser?.uid.toString();
-    return FirebaseFirestore.instance.collection('milestones').snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) {
-        return AddMilestone.fromMap(doc.data());
-      }).toList();
+  Stream<List<AddMilestone>> getMilestones(String? selectedCategory) {
+    Query<Map<String, dynamic>> query = FirebaseFirestore.instance.collection('milestones');
+
+    // Apply category filter if a category is selected
+    if (selectedCategory != null && selectedCategory.isNotEmpty) {
+      query = query.where('months', isEqualTo: selectedCategory);
+    }
+
+    return query.snapshots().map((snapshot) {
+      return snapshot.docs
+          .map((doc) => AddMilestone.fromMap(doc.data()))
+          .toList();
     });
   }
+
   Stream<List<AddGuideline>> getGuideline() {
     // String? userUID = auth.currentUser?.uid.toString();
     return FirebaseFirestore.instance.collection('guideline').snapshots().map((snapshot) {
