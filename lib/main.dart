@@ -85,7 +85,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => StreamDataProvider()),
         ChangeNotifierProvider(create: (_) => MilestoneProvider()),
         ChangeNotifierProvider(create: (_) => TrackerProvider()),
-        ChangeNotifierProvider(create: (_) => ChatProvider()),
+       ChangeNotifierProvider(create: (_) => ChatProvider()),
         ChangeNotifierProvider(create: (_) => ProfileInfoProvider()),
         ChangeNotifierProvider(create: (_) => MealProvider()),
       ],

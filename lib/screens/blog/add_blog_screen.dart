@@ -93,6 +93,7 @@ class _AddBlogScreenState extends State<AddBlogScreen> {
                         ),
                       ],
                     ),
+
                     SizedBox(height: 3.h),
                     GestureDetector(
                       onTap: () async {
@@ -118,6 +119,7 @@ class _AddBlogScreenState extends State<AddBlogScreen> {
                         ),
                       ),
                     ),
+                    AppTextWidget(text: 'Image size shoul not exceed 5 mb',fontSize: 12,color: Colors.grey,),
                     SizedBox(height: 2.h),
                     Consumer<CloudinaryProvider>(
                       builder: (context, provider, child) {
@@ -239,8 +241,17 @@ class _AddBlogScreenState extends State<AddBlogScreen> {
       final files = uploadInput.files;
       if (files!.isEmpty) return;
 
+      final file = files[0];
+      final fileSizeInBytes = file.size; // Get the file size in bytes
+      final maxFileSizeInBytes = 5 * 1024 * 1024; // 5 MB in bytes
+
+      if (fileSizeInBytes > maxFileSizeInBytes) {
+        AppUtils().showToast(text: 'Image size exceed to 5 MB');
+        return;
+      }
+
       final reader = html.FileReader();
-      reader.readAsArrayBuffer(files[0]);
+      reader.readAsArrayBuffer(file);
 
       reader.onLoadEnd.listen((e) async {
         final bytes = reader.result as Uint8List;
@@ -256,6 +267,7 @@ class _AddBlogScreenState extends State<AddBlogScreen> {
 
     uploadInput.click(); // Trigger the file picker dialog
   }
+
 
   Future<void> _uploadBlog(BuildContext context) async {
     final cloudinaryProvider = Provider.of<CloudinaryProvider>(context, listen: false);

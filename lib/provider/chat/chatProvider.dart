@@ -14,8 +14,8 @@ class ChatProvider extends ChangeNotifier{
 
   List<ChatRoomModel> get chatRooms => _chatRooms;
 
-  Stream<List<Map<String, dynamic>>>? _messagesStream;
-  Stream<List<Map<String, dynamic>>>? get messagesStream => _messagesStream;
+  Stream<QuerySnapshot>? _messagesStream;
+  Stream<QuerySnapshot>? get messagesStream => _messagesStream;
 
 
 
@@ -44,19 +44,21 @@ class ChatProvider extends ChangeNotifier{
 
   void getSingleUserChat(String userID){
     _singleUserId = userID;
+    log('user id in get single is ::$userID');
 
     _messagesStream = FirebaseFirestore.instance
         .collection('chatRooms')
         .doc(userID)
         .collection('messages')
-        .orderBy('timestamp', descending: true)
-        .snapshots()
-        .map((snapshot) {
-      return snapshot.docs
-          .map((doc) => doc.data() as Map<String, dynamic>)
-          .toList();
-
-    });
+        // .orderBy('timestamp', descending: true)
+        .snapshots();
+    //     .map((snapshot) {
+    //   return snapshot.docs
+    //       .map((doc) => doc.data() as Map<String, dynamic>)
+    //       .toList();
+    //
+    // });
+    log('Messages $_messagesStream ');
 
   }
   //to get the user name,image

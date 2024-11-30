@@ -21,7 +21,9 @@ class StreamDataProvider extends ChangeNotifier{
 
   Stream<List<BlogPost>> getBlog() {
     // String? userUID = auth.currentUser?.uid.toString();
-    return FirebaseFirestore.instance.collection('blogs').snapshots().map((snapshot) {
+    return FirebaseFirestore.instance.collection('blogs')
+        .orderBy('createdAt',descending: true)
+        .snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
         return BlogPost.fromMap(doc.data());
       }).toList();
@@ -207,5 +209,7 @@ class StreamDataProvider extends ChangeNotifier{
       return milestones;
     });
   }
+
+
 
 }

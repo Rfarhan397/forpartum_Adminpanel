@@ -69,3 +69,34 @@ class UserChatModel {
     return 'UserModel{id: $uid, name: $name, email: $email, image:$image}';
   }
 }
+class MessageModel {
+  final String sender;
+  final String text;
+  final String url;
+  final Timestamp timestamp;
+  final bool delivered;
+  final bool read;
+  final String type;
+
+  MessageModel({
+    required this.sender,
+    required this.text,
+    required this.url,
+    required this.timestamp,
+    required this.delivered,
+    required this.read,
+    required this.type,
+  });
+
+  factory MessageModel.fromMap(Map<String, dynamic> map) {
+    return MessageModel(
+      sender: map['sender'],
+      text: map['text'],
+      timestamp: map['timestamp'],
+      delivered: map['delivered'],
+      read: map['read'],
+      type: map['type'],
+      url: map['url'],
+    );
+  }
+}
