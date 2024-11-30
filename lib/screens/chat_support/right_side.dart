@@ -28,7 +28,7 @@ class RightSideMessage extends StatelessWidget {
 
     final selectedUserId =
         Provider.of<ChatProvider>(context).singleUserId;
-    chat.getMessages(selectedUserId!);
+
 
     final messagesStream = Provider.of<ChatProvider>(context).messagesStream;
     final chatProvider = Provider.of<ChatProvider>(context);
@@ -41,156 +41,155 @@ class RightSideMessage extends StatelessWidget {
         child: Text('Select a user to start chatting'),
       );
     }
-return Text("");
 
-    // return StreamBuilder<QuerySnapshot>(
-    //   stream: messagesStream,
-    //   builder: (context, snapshot) {
-    //
-    //     if (snapshot.connectionState == ConnectionState.waiting) {
-    //       return Center(child: CircularProgressIndicator());
-    //     }
-    //
-    //     if ( !snapshot.hasData) {
-    //       return Center(child: Text('Failed to load messages.'));
-    //     }
-    //
-    //     final messages = snapshot.data!;
-    //     log('load messages $messages');
-    //
-    //     return Column(
-    //       children: [
-    //         // Text('Chat with User $selectedUserId'),
-    //                 _buildChatHeader(selectedUserName,selectedUserImage,selectedChatRoom),
-    //     Divider(
-    //               color: Colors.grey.shade300,
-    //               thickness: 1,
-    //             ),
-    //         Expanded(
-    //           child: ListView.builder(
-    //             shrinkWrap: true,
-    //             reverse: true,
-    //             itemCount: messages.length,
-    //             itemBuilder: (context, index) {
-    //               final message = messages[index];
-    //               log('messagesss ${message['text']}');
-    //               final messageSender = message['sender']?? '';
-    //                                 final type = message["type"];
-    //
-    //               final isCurrentUser = messageSender == getCurrentUid();
-    //                                 final messageTimestamp = message["timestamp"];
-    //               final relativeTime = messageTimestamp != null
-    //                   ? timeago.format(messageTimestamp.toDate())
-    //                   : '';
-    //               final isDelivered = message["delivered"];
-    //
-    //               return Align(
-    //                 alignment: isCurrentUser
-    //                     ? Alignment.centerRight
-    //                     : Alignment.centerLeft,
-    //                 child: Column(
-    //                   mainAxisAlignment: isCurrentUser
-    //                       ? MainAxisAlignment.end
-    //                       : MainAxisAlignment.start,
-    //                   crossAxisAlignment: isCurrentUser
-    //                       ? CrossAxisAlignment.end
-    //                       : CrossAxisAlignment.start,
-    //                   children: [
-    //                     Container(
-    //                       decoration: BoxDecoration(
-    //                         color: type == "image"
-    //                             ? Colors.transparent
-    //                             : isCurrentUser
-    //                             ? primaryColor
-    //                             : Colors.grey.shade100,
-    //                         borderRadius: BorderRadius.circular(10),
-    //                       ),
-    //                       padding: const EdgeInsets.all(10),
-    //                       margin: const EdgeInsets.symmetric(
-    //                           vertical: 5, horizontal: 10),
-    //                       child: Column(
-    //                         crossAxisAlignment: isCurrentUser
-    //                             ? CrossAxisAlignment.end
-    //                             : CrossAxisAlignment.start,
-    //                         children: [
-    //                           type == "text"
-    //                               ? Text(
-    //                             message['text'],
-    //                             style: TextStyle(
-    //                                 color: isCurrentUser
-    //                                     ? Colors.white
-    //                                     : Colors.black),
-    //                           )
-    //                               : type == "image"
-    //                               ? Image.network(
-    //                             message['url']!.toString(),
-    //                             width: 200.0,
-    //                             height: 200.0,
-    //                             fit: BoxFit.cover,
-    //                           )
-    //                               : type == "voice"
-    //                               ? SizedBox(
-    //                             width: Get.width * 0.54,
-    //                             child: const ListTile(
-    //                               title: Text("Voice Message"),
-    //                               // trailing: PlayButton(
-    //                               //     audioUrl: message['url']),
-    //                             ),
-    //                           )
-    //                               : const SizedBox.shrink(),
-    //                           const SizedBox(height: 3),
-    //                           Row(
-    //                             mainAxisSize: MainAxisSize.min,
-    //                             children: [
-    //                               Text(
-    //                                 relativeTime,
-    //                                 style: TextStyle(
-    //                                   color: type == "image"
-    //                                       ? Colors.black
-    //                                       : isCurrentUser
-    //                                       ? Colors.white70
-    //                                       : Colors.grey,
-    //                                   fontSize: 10,
-    //                                 ),
-    //                               ),
-    //                               if (isCurrentUser) ...[
-    //                                 const SizedBox(width: 5),
-    //                                 Icon(
-    //                                   message["read"]
-    //                                       ? Icons.done_all
-    //                                       : Icons.done,
-    //                                   color: type == "image"
-    //                                       ? Colors.black
-    //                                       : message["read"]
-    //                                       ? Colors.white
-    //                                       : Colors.white70,
-    //                                   size: 12,
-    //                                 ),
-    //                               ],
-    //                             ],
-    //                           ),
-    //                         ],
-    //                       ),
-    //                     ),
-    //                     if (isCurrentUser)
-    //                       Container(
-    //                           margin:
-    //                           const EdgeInsets.symmetric(horizontal: 10),
-    //                           child: AppTextWidget(
-    //                               text: isDelivered ? "seen" : "deliver",
-    //                               fontSize: 12.0))
-    //                   ],
-    //                 ),
-    //               );
-    //             },
-    //           ),
-    //         ),
-    //         _buildMessageInput(context,selectedChatRoom!.id,selectedUserId),
-    //
-    //       ],
-    //     );
-    //   },
-    // );
+    return StreamBuilder<List<Map<String,dynamic>>>(
+      stream: messagesStream,
+      builder: (context, snapshot) {
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
+
+        if ( !snapshot.hasData) {
+          return Center(child: Text('Failed to load messages.'));
+        }
+
+        final messages = snapshot.data!;
+        log('load messages $messages');
+
+        return Column(
+          children: [
+            // Text('Chat with User $selectedUserId'),
+                    _buildChatHeader(selectedUserName,selectedUserImage,selectedChatRoom),
+        Divider(
+                  color: Colors.grey.shade300,
+                  thickness: 1,
+                ),
+            Expanded(
+              child: ListView.builder(
+                shrinkWrap: true,
+                reverse: true,
+                itemCount: messages.length,
+                itemBuilder: (context, index) {
+                  final message = messages[index];
+                  log('messagesss ${message['text']}');
+                  final messageSender = message['sender']?? '';
+                                    final type = message["type"];
+
+                  final isCurrentUser = messageSender == getCurrentUid();
+                                    final messageTimestamp = message["timestamp"];
+                  final relativeTime = messageTimestamp != null
+                      ? timeago.format(messageTimestamp.toDate())
+                      : '';
+                  final isDelivered = message["delivered"];
+
+                  return Align(
+                    alignment: isCurrentUser
+                        ? Alignment.centerRight
+                        : Alignment.centerLeft,
+                    child: Column(
+                      mainAxisAlignment: isCurrentUser
+                          ? MainAxisAlignment.end
+                          : MainAxisAlignment.start,
+                      crossAxisAlignment: isCurrentUser
+                          ? CrossAxisAlignment.end
+                          : CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: type == "image"
+                                ? Colors.transparent
+                                : isCurrentUser
+                                ? primaryColor
+                                : Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          padding: const EdgeInsets.all(10),
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 5, horizontal: 10),
+                          child: Column(
+                            crossAxisAlignment: isCurrentUser
+                                ? CrossAxisAlignment.end
+                                : CrossAxisAlignment.start,
+                            children: [
+                              type == "text"
+                                  ? Text(
+                                message['text'],
+                                style: TextStyle(
+                                    color: isCurrentUser
+                                        ? Colors.white
+                                        : Colors.black),
+                              )
+                                  : type == "image"
+                                  ? Image.network(
+                                message['url']!.toString(),
+                                width: 200.0,
+                                height: 200.0,
+                                fit: BoxFit.cover,
+                              )
+                                  : type == "voice"
+                                  ? SizedBox(
+                                width: Get.width * 0.54,
+                                child: const ListTile(
+                                  title: Text("Voice Message"),
+                                  // trailing: PlayButton(
+                                  //     audioUrl: message['url']),
+                                ),
+                              )
+                                  : const SizedBox.shrink(),
+                              const SizedBox(height: 3),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    relativeTime,
+                                    style: TextStyle(
+                                      color: type == "image"
+                                          ? Colors.black
+                                          : isCurrentUser
+                                          ? Colors.white70
+                                          : Colors.grey,
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                  if (isCurrentUser) ...[
+                                    const SizedBox(width: 5),
+                                    Icon(
+                                      message["read"]
+                                          ? Icons.done_all
+                                          : Icons.done,
+                                      color: type == "image"
+                                          ? Colors.black
+                                          : message["read"]
+                                          ? Colors.white
+                                          : Colors.white70,
+                                      size: 12,
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (isCurrentUser)
+                          Container(
+                              margin:
+                              const EdgeInsets.symmetric(horizontal: 10),
+                              child: AppTextWidget(
+                                  text: isDelivered ? "seen" : "deliver",
+                                  fontSize: 12.0))
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+            _buildMessageInput(context,selectedChatRoom!.id,selectedUserId),
+
+          ],
+        );
+      },
+    );
   }
   Widget _buildMessageInput(context,chatRoomId,otherUserEmail) {
     final provider = Provider.of<ChatProvider>(context, listen: false);
