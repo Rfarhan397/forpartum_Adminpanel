@@ -48,12 +48,10 @@ class ChatProvider extends ChangeNotifier{
     _messagesStream = FirebaseFirestore.instance
         .collection('chatRooms')
         .doc(userID)
-        .collection('messages') // Removed `.doc()` to target all documents
-        // .orderBy('timestamp', descending: true) // Ensure `timestamp` exists in all documents
+        .collection('messages')
+        .orderBy('timestamp', descending: true) // Ensure `timestamp` exists in all documents
         .snapshots()
-        .map((snapshot) {
-      // Log snapshot metadata
-      int totalDocuments = snapshot.docs.length; // Count total documents
+        .map((snapshot) {// Count total documents
       for (var doc in snapshot.docs) {
         log('Document data: ${doc.data()}');
       }
