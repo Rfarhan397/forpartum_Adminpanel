@@ -1,5 +1,6 @@
 
 import 'package:forpartum_adminpanel/model/res/routes/routes_name.dart';
+import 'package:forpartum_adminpanel/screens/menu_settings/disclaimer/disclaimerScreen.dart';
 import 'package:forpartum_adminpanel/screens/users/user_detail.dart';
 import 'package:get/get.dart';
 
@@ -63,5 +64,6 @@ class Routes {
     GetPage(name: RoutesName.editBlogPost, page: () => EditBlogPost()),
     GetPage(name: RoutesName.feedbackScreen, page: () => FeedbackScreen()),
     GetPage(name: RoutesName.editMealPlan, page: () => EditMealPlan()),
+    GetPage(name: RoutesName.disclaimer, page: () => DisclaimerScreen()),
   ];
 }

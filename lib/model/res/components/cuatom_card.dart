@@ -87,6 +87,7 @@ class CustomCardM extends StatelessWidget {
       16,
       17,
         19,
+      35,
       // Add more routes here as needed
     ];
     return InkWell(

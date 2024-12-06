@@ -33,10 +33,12 @@ class CardProviderMenu with ChangeNotifier {
     'Privacy',
     'Terms & Conditions',
     'Settings',
+    'Disclaimer',
+
   ];
 
   int _currentPage = 0;
-  final int _itemsPerPage = 4;
+  final int _itemsPerPage = 8;
 
   List<String> get currentCards {
     int start = _currentPage * _itemsPerPage;

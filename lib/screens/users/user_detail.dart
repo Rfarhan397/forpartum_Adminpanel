@@ -684,7 +684,7 @@ class MilestoneListWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 50.w,
-      height: 20.h,
+      // height: 20.h,
       child: Column(
         children: [
           Padding(
@@ -712,6 +712,7 @@ class MilestoneListWidget extends StatelessWidget {
                         SizedBox(height: 1.h,),
                         ListView.builder(
                           shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
                           itemCount: milestoneList.length,
                           itemBuilder: (ctx, index) {
                             MilestoneModel milestone = milestoneList[index];

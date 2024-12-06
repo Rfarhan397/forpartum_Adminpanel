@@ -124,26 +124,26 @@ class SplashScreen extends StatelessWidget {
                           height: 1.h,
                         ),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Row(
-                              children: [
-                                Container(
-                                  height: 1.h,
-                                  width: 0.5.w,
-                                  decoration: BoxDecoration(
-                                      color: primaryColor,
-                                      borderRadius: BorderRadius.circular(0.3)),
-                                ),
-                                const SizedBox(
-                                  width: 5,
-                                ),
-                                const AppTextWidget(
-                                  text: 'Remember me',
-                                  fontSize: 10,
-                                )
-                              ],
-                            ),
+                            // Row(
+                            //   children: [
+                            //     Container(
+                            //       height: 1.h,
+                            //       width: 0.5.w,
+                            //       decoration: BoxDecoration(
+                            //           color: primaryColor,
+                            //           borderRadius: BorderRadius.circular(0.3)),
+                            //     ),
+                            //     const SizedBox(
+                            //       width: 5,
+                            //     ),
+                            //     const AppTextWidget(
+                            //       text: 'Remember me',
+                            //       fontSize: 10,
+                            //     )
+                            //   ],
+                            // ),
                             const AppTextWidget(
                               text: 'Forgot Password?',
                               textDecoration: TextDecoration.underline,
@@ -155,7 +155,8 @@ class SplashScreen extends StatelessWidget {
                         SizedBox(
                           height: 3.h,
                         ),
-                        HoverLoadingButton(text: 'Login',
+                        HoverLoadingButton(
+                          text: 'Login',
                           textColor: Colors.white,
                           radius: 80,
                           height: 6.h,

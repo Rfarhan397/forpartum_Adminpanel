@@ -14,8 +14,8 @@ class ChatProvider extends ChangeNotifier{
 
   List<ChatRoomModel> get chatRooms => _chatRooms;
 
-  Stream<List<Map<String,dynamic>>>? _messagesStream;
-  Stream<List<Map<String,dynamic>>>? get messagesStream => _messagesStream;
+  Stream<List<Map<String, dynamic>>>? _messagesStream;
+  Stream<List<Map<String, dynamic>>>? get messagesStream => _messagesStream;
 
 
 
@@ -49,7 +49,7 @@ class ChatProvider extends ChangeNotifier{
         .collection('chatRooms')
         .doc(userID)
         .collection('messages') // Removed `.doc()` to target all documents
-        // .orderBy('timestamp', descending: true) // Ensure `timestamp` exists in all documents
+     .orderBy('timestamp', descending: true) // Ensure `timestamp` exists in all documents
         .snapshots()
         .map((snapshot) {
       // Log snapshot metadata
@@ -66,15 +66,6 @@ class ChatProvider extends ChangeNotifier{
 
     return _messagesStream;
   }
-
-
-
-
-
-
-
-
-
   //to get the user name,image
   String? selectedUserId;
   String? selectedUserName;
@@ -91,7 +82,6 @@ class ChatProvider extends ChangeNotifier{
 
 
   Future<String?> getChatRoom(String otherUserEmail,String lastMessage) async {
-    log("otherUserEmail : $otherUserEmail");
     final currentUserEmail = getCurrentUid().toString();
     final chatRoomId = _getChatRoomId( otherUserEmail,currentUserEmail);
 

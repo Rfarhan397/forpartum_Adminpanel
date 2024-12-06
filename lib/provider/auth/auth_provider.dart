@@ -17,7 +17,7 @@ class AuthProvider extends ChangeNotifier {
     try {
       // Check if the user exists in the Firestore admin collection
       final adminSnapshot = await FirebaseFirestore.instance
-          .collection('admin') // Replace with your admin collection name
+          .collection('admin')
           .where('email', isEqualTo: email)
           .where('password', isEqualTo: password) // Assumes passwords are stored securely (hashed)
           .get();

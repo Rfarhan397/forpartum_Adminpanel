@@ -29,7 +29,6 @@ class RightSideMessage extends StatelessWidget {
     final selectedUserId =
         Provider.of<ChatProvider>(context).singleUserId;
 
-
     final messagesStream = Provider.of<ChatProvider>(context).messagesStream;
     final chatProvider = Provider.of<ChatProvider>(context);
     final selectedUserName = chatProvider.selectedUserName ?? 'Unknown';
@@ -42,7 +41,7 @@ class RightSideMessage extends StatelessWidget {
       );
     }
 
-    return StreamBuilder<List<Map<String,dynamic>>>(
+    return StreamBuilder<List<Map<String, dynamic>>>(
       stream: messagesStream,
       builder: (context, snapshot) {
 
@@ -359,7 +358,35 @@ class RightSideMessage extends StatelessWidget {
     );
   }
   Future<void> deleteChat(String id) async {
-    await FirebaseFirestore.instance.collection("chatRooms").doc(id).delete();
-    Get.back(); // Close the screen after deletion
+    try {
+      // Reference to the messages subcollection
+      final messagesCollection = FirebaseFirestore.instance
+          .collection("chatRooms")
+          .doc(id)
+          .collection('messages');
+
+      // Get all documents in the messages subcollection
+      final messagesSnapshot = await messagesCollection.get();
+
+      // Use batch writes to delete messages in chunks
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+
+      for (var doc in messagesSnapshot.docs) {
+        batch.delete(doc.reference);
+      }
+
+      // Commit the batch
+      await batch.commit();
+
+      // Delete the chat room document after deleting all messages
+      await FirebaseFirestore.instance.collection("chatRooms").doc(id).delete();
+
+      // Close the screen after deletion
+      Get.back();
+    } catch (e) {
+      print('Error deleting chat: $e');
+    }
   }
+
+
 }

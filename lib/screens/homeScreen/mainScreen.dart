@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:forpartum_adminpanel/provider/action/action_provider.dart';
 import 'package:forpartum_adminpanel/screens/blog/add_category.dart';
 import 'package:forpartum_adminpanel/screens/feedback/feedbacks.dart';
+import 'package:forpartum_adminpanel/screens/menu_settings/disclaimer/disclaimerScreen.dart';
 import 'package:forpartum_adminpanel/screens/users/userTrackerHistory/userTrackerHistoryScreen.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
@@ -160,6 +161,9 @@ class MainScreen extends StatelessWidget {
           break;
           case 34:
           screen =  MainScreen();
+          break;
+          case 35:
+          screen =  DisclaimerScreen();
           break;
 
       default:

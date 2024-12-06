@@ -422,7 +422,7 @@ class TrackerLodData extends StatelessWidget {
 
   Widget _buildContentCell(String text) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 3.w), // Adjust padding as needed
+      padding: EdgeInsets.symmetric(horizontal: 3.w,vertical: 1.h), // Adjust padding as needed
       child: Text(text, style: const TextStyle(fontSize: 14)),
     );
   }

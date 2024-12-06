@@ -43,4 +43,17 @@ class MealProvider with ChangeNotifier {
     _mealImage ;
     notifyListeners();
   }
+
+  //App Content disclaimer
+  String? selectedDisclaimer;
+
+  void setDisclaimer(String value) {
+    selectedDisclaimer = value;
+    notifyListeners();
+  }
+
+  void clearDisclaimer() {
+    selectedDisclaimer = null;
+    notifyListeners();
+  }
 }

@@ -79,10 +79,10 @@ class HomeScreen extends StatelessWidget {
       final percentage = totalUsersCount > 0 ? (count / totalUsersCount) : 0;
       return MapEntry(ageRange, percentage.toDouble());
     });
-    final previousTotalUsersCount = 100;
-    final previousActiveUsersCount = 80;
-    final previousNewSignupsCount = 10;
-    final previousFeedbackCount = 5;
+    final previousTotalUsersCount = 500;
+    final previousActiveUsersCount = 250;
+    final previousNewSignupsCount = 200;
+    final previousFeedbackCount = 50;
 
     // Calculate percentage changes
     final totalUsersPercentageChange = _calculatePercentageChange(totalUsersCount, previousTotalUsersCount);
@@ -147,6 +147,7 @@ class HomeScreen extends StatelessWidget {
 
                     ),
                   ),
+
                   StatsCard(
                     progressIcon: activeUsersPercentageChange >= 0 ? 'assets/icons/arrowUp.svg' : 'assets/icons/arrowDown.svg',
                     iconPath: AppIcons.activeUser,
@@ -155,8 +156,8 @@ class HomeScreen extends StatelessWidget {
                     count: activeUsersCount.toString(),
                     percentageIncrease: '${activeUsersPercentageChange.abs().toStringAsFixed(2)}% ${activeUsersPercentageChange >= 0 ? 'increase' : 'decrease'} from last month',
                     increaseColor: activeUsersPercentageChange >= 0 ? Colors.green : Colors.red,
-
                   ),
+
                   StatsCard(
                     progressIcon: newSignupsPercentageChange >= 0 ? 'assets/icons/arrowUp.svg' : 'assets/icons/arrowDown.svg',
                     iconPath: AppIcons.time,
@@ -165,7 +166,6 @@ class HomeScreen extends StatelessWidget {
                     count: newSignupsCount.toString(),
                     percentageIncrease: '${newSignupsPercentageChange.abs().toStringAsFixed(2)}% ${newSignupsPercentageChange >= 0 ? 'increase' : 'decrease'} from last month',
                     increaseColor: newSignupsPercentageChange >= 0 ? Colors.green : Colors.red,
-
                   ),
                   Tooltip(
                     message: 'Feedbacks',

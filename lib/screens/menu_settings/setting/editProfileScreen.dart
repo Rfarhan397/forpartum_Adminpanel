@@ -102,7 +102,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   alignment: Alignment.centerRight,
                   child: ButtonWidget(
                     text: 'Update',
-                    onClicked: () async { await _uploadData(context);},
+                    onClicked: () async {
+                      await _uploadData(context);
+                      },
                     width: 10.w,
                     height: 5.h,
                     fontWeight: FontWeight.w400,

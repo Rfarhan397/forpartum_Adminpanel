@@ -37,8 +37,6 @@ import 'model/res/routes/routes.dart';
 import 'model/res/routes/routes_name.dart';
 import 'model/services/Api/notification_API.dart';
 
-
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -51,7 +49,9 @@ void main() async {
   final prefs = await SharedPreferences.getInstance();
   final languageCode = prefs.getString('languageCode') ?? 'en';
 
-  runApp(MyApp(initialLocale: Locale(languageCode),));
+  runApp(MyApp(
+    initialLocale: Locale(languageCode),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -62,7 +62,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => ThemeLanguageProvider()..setLocale(initialLocale ?? Locale('en'))),
+        ChangeNotifierProvider(
+            create: (context) => ThemeLanguageProvider()
+              ..setLocale(initialLocale ?? Locale('en'))),
         ChangeNotifierProvider(create: (_) => VisibilityProvider()),
         ChangeNotifierProvider(create: (_) => ActionProvider()),
         ChangeNotifierProvider(create: (_) => MenuAppController()),
@@ -85,53 +87,48 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => StreamDataProvider()),
         ChangeNotifierProvider(create: (_) => MilestoneProvider()),
         ChangeNotifierProvider(create: (_) => TrackerProvider()),
-       ChangeNotifierProvider(create: (_) => ChatProvider()),
+        ChangeNotifierProvider(create: (_) => ChatProvider()),
         ChangeNotifierProvider(create: (_) => ProfileInfoProvider()),
         ChangeNotifierProvider(create: (_) => MealProvider()),
       ],
       child: Consumer<ThemeLanguageProvider>(
-        builder: (context,provider,child){
-          return Sizer(
-            builder: (context, orientation, deviceType) {
-              return GetMaterialApp(
-                debugShowCheckedModeBanner: false,
-                title: "Forpartum",
-                locale: provider.locale,
-                supportedLocales: const [
-                  Locale('en', ''),
-                  Locale('ur', ''),
-                ],
-                localizationsDelegates: const [
-                  GlobalMaterialLocalizations.delegate,
-                  GlobalWidgetsLocalizations.delegate,
-                  GlobalCupertinoLocalizations.delegate,
-                  AppLocalizationsDelegate(),
-                ],
-                themeMode: provider.themeMode,
-                theme: ThemeData(
-                  scaffoldBackgroundColor: AppColors.scaffoldColor,
-                  primaryColor: primaryColor,
-                  useMaterial3: true,
-                  primarySwatch: Colors.deepOrange,
-                  colorScheme: const ColorScheme.light(
-                    primary: primaryColor,
-                  ),
+        builder: (context, provider, child) {
+          return Sizer(builder: (context, orientation, deviceType) {
+            return GetMaterialApp(
+              debugShowCheckedModeBanner: false,
+              title: "Forpartum",
+              locale: provider.locale,
+              supportedLocales: const [
+                Locale('en', ''),
+                Locale('ur', ''),
+              ],
+              localizationsDelegates: const [
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+                AppLocalizationsDelegate(),
+              ],
+              themeMode: provider.themeMode,
+              theme: ThemeData(
+                scaffoldBackgroundColor: AppColors.scaffoldColor,
+                primaryColor: primaryColor,
+                useMaterial3: true,
+                primarySwatch: Colors.deepOrange,
+                colorScheme: const ColorScheme.light(
+                  primary: primaryColor,
                 ),
-                darkTheme: ThemeData(
-                  primaryColor: primaryColor,
-                  scaffoldBackgroundColor: AppColors.scaffoldColor,
-                  useMaterial3: true,
-                  colorScheme: const ColorScheme.dark(
-                      primary: primaryColor,
-                      surface: Colors.black
-                  ),
-                ),
-                initialRoute: RoutesName.splashScreen,
-                getPages: Routes.routes,
-
-              );
-            }
-          );
+              ),
+              darkTheme: ThemeData(
+                primaryColor: primaryColor,
+                scaffoldBackgroundColor: AppColors.scaffoldColor,
+                useMaterial3: true,
+                colorScheme: const ColorScheme.dark(
+                    primary: primaryColor, surface: Colors.black),
+              ),
+              initialRoute: RoutesName.splashScreen,
+              getPages: Routes.routes,
+            );
+          });
         },
       ),
     );
