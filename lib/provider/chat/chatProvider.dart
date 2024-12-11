@@ -7,8 +7,7 @@ import 'package:flutter/cupertino.dart';
 import '../../constant.dart';
 import '../../model/chat/chatMOdel.dart';
 
-class ChatProvider extends ChangeNotifier{
-
+class ChatProvider extends ChangeNotifier {
   List<ChatRoomModel> _chatRooms = [];
   Map<String, int> _unreadMessageCounts = {};
 
@@ -17,20 +16,16 @@ class ChatProvider extends ChangeNotifier{
   Stream<List<Map<String, dynamic>>>? _messagesStream;
   Stream<List<Map<String, dynamic>>>? get messagesStream => _messagesStream;
 
-
-
   Map<String, int> get unreadMessageCounts => _unreadMessageCounts;
 
   String? _singleUserId;
 
-
   String? get singleUserId => _singleUserId;
 
-  ChatProvider(){
+  ChatProvider() {
     loadUsers();
     _loadChatRooms();
   }
-
 
   Stream<QuerySnapshot> getMessages(String chatRoomId) {
     log("Message Get Chat Room $chatRoomId");
@@ -49,7 +44,8 @@ class ChatProvider extends ChangeNotifier{
         .collection('chatRooms')
         .doc(userID)
         .collection('messages') // Removed `.doc()` to target all documents
-     .orderBy('timestamp', descending: true) // Ensure `timestamp` exists in all documents
+        .orderBy('timestamp',
+            descending: true) // Ensure `timestamp` exists in all documents
         .snapshots()
         .map((snapshot) {
       // Log snapshot metadata
@@ -66,48 +62,49 @@ class ChatProvider extends ChangeNotifier{
 
     return _messagesStream;
   }
+
   //to get the user name,image
   String? selectedUserId;
   String? selectedUserName;
   String? selectedUserImage;
 
-  void setSelectedUser({required String userId, required String name, required String image}) {
+  void setSelectedUser(
+      {required String userId, required String name, required String image}) {
     selectedUserId = userId;
     selectedUserName = name;
     selectedUserImage = image;
     notifyListeners();
   }
 
-
-
-
-  Future<String?> getChatRoom(String otherUserEmail,String lastMessage) async {
+  Future<String?> getChatRoom(String otherUserEmail, String lastMessage) async {
     final currentUserEmail = getCurrentUid().toString();
-    final chatRoomId = _getChatRoomId( otherUserEmail,currentUserEmail);
+    final chatRoomId = _getChatRoomId(otherUserEmail, currentUserEmail);
 
-    final chatRoomDoc = FirebaseFirestore.instance.collection('chatRooms').doc(chatRoomId);
+    final chatRoomDoc =
+        FirebaseFirestore.instance.collection('chatRooms').doc(chatRoomId);
     final chatRoomSnapshot = await chatRoomDoc.get();
 
     if (chatRoomSnapshot.exists) {
       await chatRoomDoc.set({
-        'users': [otherUserEmail,currentUserEmail],
+        'users': [otherUserEmail, currentUserEmail],
         'lastMessage': lastMessage,
         'isMessage': getCurrentUid().toString(),
         'lastTimestamp': FieldValue.serverTimestamp(),
         'userStatus': "active",
-      });      return chatRoomId;
+      });
+      return chatRoomId;
     }
 
     // Chat room does not exist
     return chatRoomId; // Or throw an error if needed
   }
 
-
-
-
-  Future<void> updateMessageStatus(String chatRoomID) async{
+  Future<void> updateMessageStatus(String chatRoomID) async {
     log("message ${chatRoomID} : run");
-    await FirebaseFirestore.instance.collection("chatRooms").doc(chatRoomID).update({"isMessage" : "seen"});
+    await FirebaseFirestore.instance
+        .collection("chatRooms")
+        .doc(chatRoomID)
+        .update({"isMessage": "seen"});
   }
 
   Future<void> markMessageAsRead(String chatRoomId) async {
@@ -164,9 +161,11 @@ class ChatProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-
-  Future<void> sendMessage({required String chatRoomId,required String message,
-    required String otherEmail,required String type}) async {
+  Future<void> sendMessage(
+      {required String chatRoomId,
+      required String message,
+      required String otherEmail,
+      required String type}) async {
     final currentUserEmail = getCurrentUid().toString();
     final newMessage = {
       'text': message,
@@ -176,8 +175,15 @@ class ChatProvider extends ChangeNotifier{
       'delivered': false,
       'type': type, // Include type in the message data
     };
-    await FirebaseFirestore.instance.collection('chatRooms').doc(chatRoomId).collection('messages').add(newMessage);
-    await FirebaseFirestore.instance.collection('chatRooms').doc(chatRoomId).update({
+    await FirebaseFirestore.instance
+        .collection('chatRooms')
+        .doc(chatRoomId)
+        .collection('messages')
+        .add(newMessage);
+    await FirebaseFirestore.instance
+        .collection('chatRooms')
+        .doc(chatRoomId)
+        .update({
       'lastMessage': message,
       'isMessage': otherEmail,
       'lastTimestamp': FieldValue.serverTimestamp(),
@@ -198,10 +204,9 @@ class ChatProvider extends ChangeNotifier{
   }
 
   String _getChatRoomId(String user1, String user2) {
-    return user2.hashCode <= user1.hashCode
-        ? '$user1-$user2'
-        : '$user2-$user1';
+    return user2.hashCode <= user1.hashCode ? '$user1-$user2' : '$user2-$user1';
   }
+
   Stream<List<ChatRoomModel>> getChatRoomsStream() {
     final currentUserEmail = getCurrentUid();
     return FirebaseFirestore.instance
@@ -210,41 +215,45 @@ class ChatProvider extends ChangeNotifier{
         .snapshots()
         .asyncMap((snapshot) async {
       final chatRooms = snapshot.docs.map((doc) {
-        final chatRoom = ChatRoomModel.fromMap(doc.data() as Map<String, dynamic>, doc.id);
+        final chatRoom =
+            ChatRoomModel.fromMap(doc.data() as Map<String, dynamic>, doc.id);
         chatRoom.unreadMessageCount = _unreadMessageCounts[chatRoom.id] ?? 0;
         return chatRoom;
       }).toList();
       return chatRooms;
     });
   }
+
   List<UserChatModel> _users = [];
 
   List<UserChatModel> get users => _users;
 
   Future<void> loadUsers() async {
-    QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('users').get();
+    QuerySnapshot snapshot =
+        await FirebaseFirestore.instance.collection('users').get();
     _users = snapshot.docs
         .map((doc) => UserChatModel(
-      uid: doc['uid'] ?? "",
-      name: doc['name'] ?? "",
-      email: doc['email'] ?? "",
-       image: doc['imageUrl'] ?? "",
-    ))
+              uid: doc['uid'] ?? "",
+              name: doc['name'] ?? "",
+              email: doc['email'] ?? "",
+              image: doc['imageUrl'] ?? "",
+            ))
         .toList();
     notifyListeners();
   }
+
   String _chatRoomId = "";
   String _otherUserEmail = "";
 
   String get chatRoomId => _chatRoomId;
   String get otherUserEmail => _otherUserEmail;
 
-  void setResponse({required String chatRoomId,required String otherUserEmail}){
+  void setResponse(
+      {required String chatRoomId, required String otherUserEmail}) {
     _chatRoomId = chatRoomId;
     _otherUserEmail = otherUserEmail;
     notifyListeners();
   }
-
 
   ChatRoomModel? _selectedChatRoom;
   String? _selectedUserEmail;
@@ -255,5 +264,4 @@ class ChatProvider extends ChangeNotifier{
     _selectedUserEmail = userEmail;
     notifyListeners(); // Notify consumers about the change
   }
-
 }

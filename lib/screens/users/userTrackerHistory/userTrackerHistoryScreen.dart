@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:forpartum_adminpanel/model/res/components/app_button_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
@@ -20,6 +21,7 @@ class UserTrackerHistoryScreen extends StatefulWidget {
 
 class _UserTrackerHistoryScreenState extends State<UserTrackerHistoryScreen> {
   String? selectedMonth;
+  String? selectedWeek;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +37,7 @@ class _UserTrackerHistoryScreenState extends State<UserTrackerHistoryScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Divider(height: 1, color: customGrey),
+              const Divider(height: 1, color: customGrey),
               SizedBox(height: 1.h),
               AppTextWidget(
                 text: '$type Tracker History',
@@ -43,31 +45,81 @@ class _UserTrackerHistoryScreenState extends State<UserTrackerHistoryScreen> {
                 fontWeight: FontWeight.w500,
               ),
               const SizedBox(height: 20),
-              SizedBox(
-                width: 15.w,
-                child: DropdownButtonFormField<String>(
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Color(0xffF7FAFC),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  hint: const Text("Select Month"),
-                  value: selectedMonth,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedMonth = value!;
-                    });
-                  },
-                  items: _getMonthOptions()
-                      .map((month) => DropdownMenuItem<String>(
-                    value: month,
-                    child: Text(month),
-                  ))
-                      .toList(),
-                ),
-              ),
+             Row(
+               children: [
+                 SizedBox(
+                   width: 15.w,
+                   child: DropdownButtonFormField<String>(
+                     decoration: InputDecoration(
+                       filled: true,
+                       fillColor: const Color(0xffF7FAFC),
+                       border: OutlineInputBorder(
+                         borderRadius: BorderRadius.circular(12),
+                       ),
+                     ),
+                     hint: const Text("Select Month"),
+                     value: selectedMonth,
+                     onChanged: (value) {
+                       setState(() {
+                         selectedMonth = value;
+                         selectedWeek =
+                         null;
+                       });
+                     },
+                     items: _getMonthOptions()
+                         .map((month) => DropdownMenuItem<String>(
+                       value: month,
+                       child: Text(month),
+                     ))
+                         .toList(),
+                   ),
+                 ),
+                 const SizedBox(width: 20),
+                 if (selectedMonth != null)
+                   SizedBox(
+                     width: 15.w,
+                     child: DropdownButtonFormField<String>(
+                       decoration: InputDecoration(
+                         filled: true,
+                         fillColor: const Color(0xffF7FAFC),
+                         border: OutlineInputBorder(
+                           borderRadius: BorderRadius.circular(12),
+                         ),
+                       ),
+                       hint: const Text("Select Week"),
+                       value: selectedWeek,
+                       onChanged: (value) {
+                         setState(() {
+                           selectedWeek = value;
+                         });
+                       },
+                       items: _getWeekOptions(selectedMonth!)
+                           .map((week) => DropdownMenuItem<String>(
+                         value: week,
+                         child: Text(week),
+                       ))
+                           .toList(),
+                     ),
+                   ),
+                 const SizedBox(width: 20),
+                 if (selectedWeek != null)
+                   AppButtonWidget(
+                     onPressed: () {
+                     _showNoteDialog(
+                         context,
+                         uid,
+                         selectedMonth,
+                         type
+
+                     );
+                   },
+                     text: 'Add Note',
+                     width: 10.w,
+                     height: 4.h,
+                     radius: 8,
+                   ),
+               ],
+             ),
               const SizedBox(height: 20),
               _buildTrackerView(type!),
               const SizedBox(height: 20),
@@ -75,6 +127,7 @@ class _UserTrackerHistoryScreenState extends State<UserTrackerHistoryScreen> {
                 type: type,
                 uid: uid,
                 selectedMonth: selectedMonth,
+                selectedWeek: selectedWeek,
               ),
             ],
           ),
@@ -83,19 +136,69 @@ class _UserTrackerHistoryScreenState extends State<UserTrackerHistoryScreen> {
     );
   }
 
+
+  void _showNoteDialog(
+      BuildContext context, String userId, timeStamp,type) {
+    TextEditingController noteController = TextEditingController();
+    var time = DateTime.now().millisecondsSinceEpoch.toString();
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: const Text("Add Note"),
+          content: TextField(
+            controller: noteController,
+            decoration: const InputDecoration(hintText: "Enter your note here"),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                String note = noteController.text.trim();
+                if (note.isNotEmpty) {
+                  FirebaseFirestore.instance
+                      .collection("users")
+                      .doc(userId)
+                      .collection("notes")
+                      .doc(time)
+                      .set({
+                    'week': selectedWeek,
+                    'createdAt': time,
+                    'note': note,
+                  'year': timeStamp,
+                  'type':type
+                  ,
+                  }, SetOptions(merge: true));
+                  Navigator.pop(ctx);
+                }
+              },
+              child: const Text("Save"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(ctx);
+              },
+              child: const Text("Cancel"),
+            ),
+          ],
+        );
+      },
+    );
+  }
   Widget _buildTrackerView(String type) {
     final headerTitles = _getHeaderTitles(type);
     if (headerTitles.isEmpty) return Container();
 
     return Table(
       columnWidths: {
-        for (int i = 0; i < headerTitles.length; i++) i: const FlexColumnWidth(1),
+        for (int i = 0; i < headerTitles.length; i++)
+          i: const FlexColumnWidth(1),
       },
       border: TableBorder.all(color: Colors.transparent, width: 2),
       children: [
         TableRow(
           decoration: const BoxDecoration(color: Colors.transparent),
-          children: headerTitles.map((title) => _buildHeaderCell(title)).toList(),
+          children:
+              headerTitles.map((title) => _buildHeaderCell(title)).toList(),
         ),
       ],
     );
@@ -108,11 +211,24 @@ class _UserTrackerHistoryScreenState extends State<UserTrackerHistoryScreen> {
       case 'mood':
         return ['Date', 'Mood Emotion', 'Mood Title', 'Note'];
       case 'pain':
-        return ['Date', 'Pain', 'Troubling Issue', 'Pain Duration', 'Pain Level'];
+        return [
+          'Date',
+          'Pain',
+          'Troubling Issue',
+          'Pain Duration',
+          'Pain Level'
+        ];
       case 'stress':
         return ['Date', 'Stress Level', 'Stress Causing', 'Note'];
       case 'energy':
-        return ['Date', 'Energy Level', 'Meal Today', 'Rested Today', 'Time Spent Passion', 'Note'];
+        return [
+          'Date',
+          'Energy Level',
+          'Meal Today',
+          'Rested Today',
+          'Time Spent Passion',
+          'Note'
+        ];
       default:
         return [];
     }
@@ -120,12 +236,15 @@ class _UserTrackerHistoryScreenState extends State<UserTrackerHistoryScreen> {
 
   Widget _buildHeaderCell(String text) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 3.w), // Adjust the horizontal padding as needed
+      padding: EdgeInsets.symmetric(
+          horizontal: 3.w), // Adjust the horizontal padding as needed
       child: Container(
         padding: const EdgeInsets.all(8.0),
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: primaryColor),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20), color: primaryColor),
         alignment: Alignment.center,
-        child: Text(text, style: const TextStyle(fontSize: 16, color: Colors.white)),
+        child: Text(text,
+            style: const TextStyle(fontSize: 16, color: Colors.white)),
       ),
     );
   }
@@ -138,15 +257,39 @@ List<String> _getMonthOptions() {
   });
 }
 
+List<String> _getWeekOptions(String month) {
+  DateTime firstDayOfMonth = DateFormat('MMMM yyyy').parse(month);
+  DateTime firstDayOfNextMonth =
+      DateTime(firstDayOfMonth.year, firstDayOfMonth.month + 1, 1);
+  List<String> weeks = [];
+
+  int totalDaysInMonth = firstDayOfNextMonth.difference(firstDayOfMonth).inDays;
+
+  for (int i = 0; i < totalDaysInMonth; i += 7) {
+    DateTime weekStart = firstDayOfMonth.add(Duration(days: i));
+    DateTime weekEnd =
+        weekStart.add(Duration(days: 6)).isBefore(firstDayOfNextMonth)
+            ? weekStart.add(Duration(days: 6))
+            : firstDayOfNextMonth.subtract(Duration(days: 1));
+
+    String week =
+        '${DateFormat('dd').format(weekStart)} - ${DateFormat('dd').format(weekEnd)}';
+    weeks.add(week);
+  }
+  return weeks;
+}
+
 class TrackerLodData extends StatelessWidget {
   final String type;
   final String uid;
   final String? selectedMonth;
+  final String? selectedWeek;
 
   TrackerLodData({
     required this.type,
     required this.uid,
     this.selectedMonth,
+    this.selectedWeek,
   });
 
   @override
@@ -166,45 +309,58 @@ class TrackerLodData extends StatelessWidget {
               return const Center(child: Text('No log found'));
             }
 
-            // Filter data by selected month
-            List<Tracker> filteredTrackers =
-            _filterTrackersByMonth(snapshot.data!, selectedMonth);
+            // Filter data by selected month and week
+            List<Tracker> filteredTrackers = _filterTrackersByMonthAndWeek(
+                snapshot.data!, selectedMonth, selectedWeek);
 
             if (filteredTrackers.isEmpty) {
-              return const Center(child: Text('No data for selected month'));
+              return const Center(
+                  child: Text('No data for selected month/week'));
             }
 
-            return _buildTrackerList(
-                context, filteredTrackers, type, uid);
+            return _buildTrackerList(context, filteredTrackers, type, uid);
           },
         );
       },
     );
   }
 
-  List<Tracker> _filterTrackersByMonth(
-      List<Tracker> trackers, String? selectedMonth) {
-    if (selectedMonth == null) return trackers;
+  List<Tracker> _filterTrackersByMonthAndWeek(
+      List<Tracker> trackers, String? selectedMonth, String? selectedWeek) {
+    if (selectedMonth == null && selectedWeek == null) return trackers;
 
-    return trackers.where((tracker) {
-      DateTime date = DateTime.fromMillisecondsSinceEpoch(
-          int.parse(tracker.createdAt!));
-      String trackerMonth = DateFormat('MMMM yyyy').format(date);
-      return trackerMonth == selectedMonth;
-    }).toList();
+    List<Tracker> filteredTrackers = trackers;
+
+    if (selectedMonth != null) {
+      filteredTrackers = filteredTrackers.where((tracker) {
+        DateTime date =
+            DateTime.fromMillisecondsSinceEpoch(int.parse(tracker.createdAt!));
+        String trackerMonth = DateFormat('MMMM yyyy').format(date);
+        return trackerMonth == selectedMonth;
+      }).toList();
+    }
+
+    if (selectedWeek != null) {
+      DateTime firstDayOfMonth = DateFormat('MMMM yyyy').parse(selectedMonth!);
+      List<String> weekParts = selectedWeek.split(' - ');
+      int startDay = int.parse(weekParts[0]);
+      int endDay = int.parse(weekParts[1]);
+
+      filteredTrackers = filteredTrackers.where((tracker) {
+        DateTime date =
+            DateTime.fromMillisecondsSinceEpoch(int.parse(tracker.createdAt!));
+        return date.day >= startDay && date.day <= endDay;
+      }).toList();
+    }
+
+    return filteredTrackers;
   }
 
-  Widget _buildTrackerList(
-      BuildContext context,
-      List<Tracker> trackerList,
-      String type,
-      String userId
-      ) {
+  Widget _buildTrackerList(BuildContext context, List<Tracker> trackerList,
+      String type, String userId) {
     // Sort tracker list by date
-    trackerList.sort((a, b) => int.parse(a.createdAt!).compareTo(int.parse(b.createdAt!)));
-
-    // Track the weeks for which buttons have been shown
-    Set<int> displayedWeeks = {};
+    trackerList.sort(
+        (a, b) => int.parse(a.createdAt!).compareTo(int.parse(b.createdAt!)));
 
     return ListView.builder(
       shrinkWrap: true,
@@ -213,12 +369,8 @@ class TrackerLodData extends StatelessWidget {
       itemCount: trackerList.length,
       itemBuilder: (ctx, index) {
         Tracker tracker = trackerList[index];
-        DateTime weekDate = DateTime.fromMillisecondsSinceEpoch(
-          int.parse(tracker.createdAt!),
-        );
-
-        // Calculate the week number
-        int weekOfYear = _getWeekOfMonth(weekDate);
+        DateTime weekDate =
+            DateTime.fromMillisecondsSinceEpoch(int.parse(tracker.createdAt!));
 
         return Padding(
           padding: const EdgeInsets.all(16),
@@ -227,7 +379,8 @@ class TrackerLodData extends StatelessWidget {
             children: [
               Table(
                 columnWidths: {
-                  for (int i = 0; i < _getColumnCount(type); i++) i: const FlexColumnWidth(1),
+                  for (int i = 0; i < _getColumnCount(type); i++)
+                    i: const FlexColumnWidth(1),
                 },
                 children: [
                   TableRow(
@@ -242,29 +395,6 @@ class TrackerLodData extends StatelessWidget {
                   ),
                 ],
               ),
-              // Show the button only once per week
-              if (!displayedWeeks.contains(weekOfYear) && _isPastWeek(weekDate))
-                InkWell(
-                  hoverColor: Colors.transparent,
-                  focusColor: Colors.transparent,
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  onTap: () {
-                    _showNoteDialog(context, userId, weekOfYear, tracker.createdAt);
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.all(4),
-                    alignment: Alignment.centerRight,
-                    child: AppTextWidget(
-                      text: 'Add week $weekOfYear results',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
-                      textDecoration: TextDecoration.underline,
-                      underlinecolor: Colors.black,
-                      color: primaryColor,
-                    ),
-                  ),
-                ),
               SizedBox(height: 1.h),
             ],
           ),
@@ -273,69 +403,21 @@ class TrackerLodData extends StatelessWidget {
     );
   }
 
-// Helper to get the week number of the year
-  // Helper to get the week number of the month
-  int _getWeekOfMonth(DateTime date) {
-    // Get the first day of the month
-    DateTime firstDayOfMonth = DateTime(date.year, date.month, 1);
-
-    // Calculate the difference in days from the first day of the month to the given date
-    int dayOfMonth = date.day;
-
-    // Calculate the week number (1-based index)
-    return ((dayOfMonth + firstDayOfMonth.weekday - 1) / 7).ceil();
-  }
-
-
-// Helper to check if the date is in the past week
-  bool _isPastWeek(DateTime date) {
-    return DateTime.now().difference(date).inDays >= 7;
-  }
-
-
-  void _showNoteDialog(
-      BuildContext context, String userId, int weekOfYear, timeStamp) {
-    TextEditingController noteController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (ctx) {
-        return AlertDialog(
-          title: const Text("Add Note"),
-          content: TextField(
-            controller: noteController,
-            decoration: const InputDecoration(hintText: "Enter your note here"),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                String note = noteController.text.trim();
-                if (note.isNotEmpty) {
-                  FirebaseFirestore.instance
-                      .collection("users")
-                      .doc(userId)
-                      .collection("notes")
-                      .doc(timeStamp)
-                      .set({
-                    'week': weekOfYear,
-                    'createdAt': timeStamp,
-                    'note': note,
-                  }, SetOptions(merge: true));
-                  Navigator.pop(ctx);
-                }
-              },
-              child: const Text("Save"),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(ctx);
-              },
-              child: const Text("Cancel"),
-            ),
-          ],
-        );
-      },
-    );
+  int _getColumnCount(String type) {
+    switch (type) {
+      case 'sleep':
+        return 4;
+      case 'mood':
+        return 4;
+      case 'pain':
+        return 5;
+      case 'stress':
+        return 4;
+      case 'energy':
+        return 6;
+      default:
+        return 0;
+    }
   }
 
   List<Widget> _buildContentCells(Tracker tracker, String type) {
@@ -382,6 +464,7 @@ class TrackerLodData extends StatelessWidget {
         return [];
     }
   }
+
   Widget _buildContentCellImage(String image) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
@@ -396,40 +479,15 @@ class TrackerLodData extends StatelessWidget {
     if (timestamp.isNotEmpty) {
       int milliseconds = int.parse(timestamp);
       DateTime date = DateTime.fromMillisecondsSinceEpoch(milliseconds);
-      // Format the date (you can customize the format as per your needs)
       return DateFormat('dd-MM-yyyy').format(date);
     }
     return 'N/A';
   }
-}
-
-  int _getColumnCount(String type) {
-    switch (type) {
-      case 'sleep':
-        return 4;
-      case 'mood':
-        return 4;
-      case 'pain':
-        return 5;
-      case 'stress':
-        return 4;
-      case 'energy':
-        return 6;
-      default:
-        return 0;
-    }
-  }
 
   Widget _buildContentCell(String text) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 3.w,vertical: 1.h), // Adjust padding as needed
+      padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.h),
       child: Text(text, style: const TextStyle(fontSize: 14)),
     );
   }
-
-  // int _getWeekOfMonth(DateTime date) {
-  //   final firstDayOfMonth = DateTime(date.year, date.month, 1);
-  //   final offset = (firstDayOfMonth.weekday - 1) % 7;
-  //   return ((date.day + offset) / 7).ceil();
-  // }
-
+}

@@ -5,6 +5,7 @@ import 'package:forpartum_adminpanel/constant.dart';
 import 'package:forpartum_adminpanel/controller/menu_App_Controller.dart';
 import 'package:forpartum_adminpanel/model/res/components/app_back_button.dart';
 import 'package:forpartum_adminpanel/model/res/components/responsive.dart';
+import 'package:forpartum_adminpanel/model/res/routes/routes_name.dart';
 import 'package:forpartum_adminpanel/provider/profileInfo/profileInfoProvider.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -191,7 +192,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
                 ),
                 InkWell(
                   onTap: () {
-                    // Implement sign out logic here
+                    Get.offAllNamed(RoutesName.splashScreen);
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 10),

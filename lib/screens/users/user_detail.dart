@@ -171,19 +171,12 @@ class UserDetail extends StatelessWidget {
                           'Email Address',
                           'Status',
                           'Last log in',
-                          dataP.parameters!.name.toString().isNotEmpty
-                              ? dataP.parameters!.name
-                              : 'N/A',
-                          dataP.parameters!.email.toString().isNotEmpty
-                              ? dataP.parameters!.email
-                              : 'N/A',
-                          dataP.parameters!.status.toString().isNotEmpty
-                              ? dataP.parameters!.status
-                              : 'N/A',
-                          dataP.parameters!.createdAt.toString().isNotEmpty
-                              ? formatTimestamp(
-                                  dataP.parameters!.createdAt.toString())
-                              : 'N/A',
+                          // dataP.parameters!.name.toString().isNotEmpty ? dataP.parameters!.name : 'N/A',
+                          dataP.parameters!.name.toString().isNotEmpty ? '*****************' : 'N/A',
+                          // dataP.parameters!.email.toString().isNotEmpty ? dataP.parameters!.email : 'N/A',
+                          dataP.parameters!.email.toString().isNotEmpty ? '*****************' : 'N/A',
+                          dataP.parameters!.status.toString().isNotEmpty ? dataP.parameters!.status : 'N/A',
+                          dataP.parameters!.createdAt.toString().isNotEmpty ? formatTimestamp(dataP.parameters!.createdAt.toString()) : 'N/A',
                         ),
                         SizedBox(
                           height: 3.h,

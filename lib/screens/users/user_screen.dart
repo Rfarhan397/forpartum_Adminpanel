@@ -10,6 +10,7 @@ import '../../constant.dart';
 import '../../controller/menu_App_Controller.dart';
 import '../../model/res/components/custom_appBar.dart';
 import '../../model/res/components/pagination.dart';
+import '../../model/res/components/secretDialog.dart';
 import '../../model/res/components/stats_card.dart';
 import '../../model/res/constant/app_icons.dart';
 import '../../model/res/widgets/app_text.dart.dart';
@@ -454,7 +455,8 @@ class UserScreen extends StatelessWidget {
               Container(
                 alignment: Alignment.centerLeft,
                 padding: EdgeInsets.symmetric(vertical: 1.5.h),
-                child: AppTextWidget(text: user.email.toString(), color: Colors.black),
+                child: AppTextWidget(text: '*****************', color: Colors.black),
+                // child: AppTextWidget(text: user.email.toString(), color: Colors.black),
               ),
               Container(
                 alignment: Alignment.centerLeft,
@@ -465,9 +467,15 @@ class UserScreen extends StatelessWidget {
                 alignment: Alignment.centerLeft,
                 padding: EdgeInsets.symmetric(vertical: 1.5.h),
                 child: _buildActionButton('VIEW', onTap: () {
-                  Provider.of<MenuAppController>(context, listen: false).addBackPage(1);
-                  Provider.of<MenuAppController>(context, listen: false)
-                      .changeScreenWithParams(12, parameters: user);
+                  showDialog(
+                    context: context,
+                    builder: (context) => SecureAccessDialog(
+                      parameters: user,
+                    ),
+                  );
+                  // Provider.of<MenuAppController>(context, listen: false).addBackPage(1);
+                  // Provider.of<MenuAppController>(context, listen: false)
+                  //     .changeScreenWithParams(12, parameters: user);
                 }),
               ),
             ],

@@ -68,7 +68,7 @@ class AddMealScreen extends StatelessWidget {
                           title: "Dietary Category",
                           heading: "Select Dietary Category",
                           value: mealProvider.selectedCategory,
-                          options: ['Traditional', 'Vegan', 'Vegetarian'],
+                          options: ['Traditional', 'Vegan(Plant Based)', 'Vegetarian'],
                           onSelected: (value) => mealProvider.setCategory(value),
                         ),
                         SizedBox(width: 5.h),
